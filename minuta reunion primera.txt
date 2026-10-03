@@ -1,0 +1,50 @@
+# Contexto y Concepto del Producto
+
+- Sistema de fidelización agnóstico: el motor es genérico, cada negocio define sus recompensas
+- Diferencia clave vs. el video del grupo (sistema de contacto por chip)
+  - Ese sistema: cliente va, compra y se va, sin más interacción
+  - Este sistema: cliente acumula puntos, canjea beneficios, sigue enganchado post-visita
+- Oportunidad central: la interacción cliente-local no debería terminar cuando el cliente sale por la puerta
+
+# Criterios para Elegir Nichos
+
+- Foco en negocios que generan **hábito y frecuencia** en el cliente
+- Preferir locales independientes o cadenas chicas (sin sistema de fidelización propio)
+  - Ejemplo negativo: Grido ya tiene sistema de puntos; una heladería de 1-2 locales, no
+- Priorizar nichos con mayor frecuencia de visita para el primer lanzamiento
+  - Alta frecuencia: cafeterías, panaderías, estacionamientos (abono mensual), reparto de agua en bidones
+  - Frecuencia media: barberías, heladerías, lavaderos de autos
+  - Descartados por ahora: supermercados, aerolíneas, estaciones de servicio
+
+# Nichos Identificados (7)
+
+- Cafeterías y confiterías
+- Panaderías
+- Heladerías (con nota: estacionalidad importante; cadenas grandes ya tienen sistemas)
+- Barberías
+- Estacionamientos y cocheras
+- Lavaderos de autos
+- Vinos y otras bebidas
+- Reparto de agua en bidones
+
+# Metodología de Investigación
+
+- Antes de tocar una línea de código: salir a hablar con dueños y clientes
+  - Córdoba (JP, Ramiro) y Buenos Aires / Formosa (Facundo)
+  - Entrevistar tanto a dueños/encargados como a clientes frecuentes
+- Objetivo de las entrevistas: identificar fricciones (no “dolores” todavía, es prematuro)
+  - Preguntas clave: ¿cómo identifican quiénes vuelven? ¿qué hacen después de una compra para generar nuevas compras?
+- Columnas del Excel a investigar por nicho: hábito/frecuencia, fricción a investigar, zona, responsable, target (dueño/encargado o cliente)
+- Separar aspectos generales (aplican a todos los nichos) de los particulares de cada nicho
+- Meta final: gráfico ponderado con datos para decidir a qué 1-2 nichos apuntar primero
+
+# Próximos Pasos
+
+- **Investigar competencia: analizar 3-4 apps de sistemas de puntos** (JP)
+- **Scrapear Google Maps para armar mapa de leads por nicho** (Facundo)
+- **Completar y compartir el documento + Excel como únicas fuentes de verdad** (JP)
+- **Coordinar reunión del domingo con Nahuel**
+
+---
+
+Chat with meeting transcript: https://notes.granola.ai/t/a6f61a01-5c0e-4498-92b6-7c0ecaa75143
