@@ -363,10 +363,10 @@
     <!-- Slide 1: Portada -->
     <div class="slide active" id="slide-1">
       <div style="margin-top: 40px; display: flex; flex-direction: column; gap: 14px;">
-        <div class="card-meta">Informe Técnico de Competencia</div>
+        <div class="card-meta">Investigación Exhaustiva de Mercado</div>
         <h1>Benchmark de Plataformas de Fidelización</h1>
-        <p class="lead" style="max-width: 800px;">
-          Auditoría de soluciones locales e internacionales bajo 5 dimensiones operativas y comerciales para sustentar la arquitectura y el modelo del MVP.
+        <p class="lead" style="max-width: 840px;">
+          Auditoría exhaustiva y enfocada en los competidores directos y potenciales de este proyecto, evaluando su operativa real en mostrador, barreras de adopción técnica y modelos comerciales para definir la arquitectura del MVP.
         </p>
       </div>
 
@@ -384,7 +384,7 @@
         <div class="card">
           <div class="card-meta">Referente Global</div>
           <h3>Stamp Me</h3>
-          <p>Punch card digital por visitas y hardware NFC para cafeterías.</p>
+          <p>App nativa dedicada con hardware NFC en mostrador.</p>
         </div>
       </div>
     </div>
@@ -392,42 +392,42 @@
     <!-- Slide 2: Resumen Ejecutivo -->
     <div class="slide" id="slide-2">
       <h2>1. Resumen Ejecutivo: Tres Enfoques en el Mercado</h2>
-      <p class="lead">Actualmente coexisten tres modelos para abordar la retención en mostrador:</p>
+      <p class="lead">Actualmente coexisten tres modelos de entrega y arquitectura para abordar la retención:</p>
 
       <div class="grid-3">
         <div class="card">
-          <div class="card-meta">Modelo 1: Web Simple</div>
+          <div class="card-meta">Modelo 1: Web / DNI Directo</div>
           <h3>Puntos App (Argentina)</h3>
           <ul>
-            <li>Consulta por DNI en link web sin contraseñas.</li>
-            <li>Cero fricción de descarga para el cliente.</li>
-            <li><strong>Cuello de botella:</strong> El cajero debe entrar a un panel web y tipear el DNI a mano en cada venta.</li>
+            <li>Consulta por DNI en enlace web sin cuentas ni passwords.</li>
+            <li>Cero descarga obligatoria para el consumidor.</li>
+            <li><strong>Cuello de botella:</strong> Carga manual en mostrador; el cajero tipea el DNI en un panel web genérico.</li>
           </ul>
         </div>
 
         <div class="card">
-          <div class="card-meta">Modelo 2: Wallet + POS</div>
+          <div class="card-meta">Modelo 2: Mobile Wallet + POS</div>
           <h3>Novity (Argentina)</h3>
           <ul>
-            <li>Pase en Apple Wallet y Google Wallet.</li>
-            <li>Sincronización automática de tickets con Fudo POS.</li>
-            <li><strong>Barrera:</strong> Comercios sin Fudo requieren carga manual por email; Google Wallet ausente en teléfonos de gama baja.</li>
+            <li>Pases integrados en Apple Wallet y Google Wallet.</li>
+            <li>Sincronización automática de tickets desde el software POS (Fudo).</li>
+            <li><strong>Barrera:</strong> Sin Fudo la carga por email es lenta; usuarios con Android básico suelen no tener Google Wallet.</li>
           </ul>
         </div>
 
         <div class="card">
-          <div class="card-meta">Modelo 3: Sellos Digitales</div>
+          <div class="card-meta">Modelo 3: App Nativa + Hardware</div>
           <h3>Stamp Me (Global)</h3>
           <ul>
-            <li>Mecánica visual de sellitos (comprá 9, el 10 es gratis).</li>
-            <li>Hardware NFC (StampPod) en mostrador.</li>
-            <li><strong>Barrera:</strong> Obliga a bajar una app de 40 MB en la fila y cuesta entre USD 49 y 199 mensuales.</li>
+            <li>Aplicación móvil descargable en tiendas (Play Store / App Store).</li>
+            <li>Hardware físico propietario en mostrador (sensores NFC StampPod).</li>
+            <li><strong>Barrera:</strong> Fricción letal de forzar una descarga en la fila y precios prohibitivos en dólares (USD 49 a 199/mes).</li>
           </ul>
         </div>
       </div>
 
       <div class="status-block status-info" style="margin-top: 10px;">
-        <strong>Conclusión de mercado:</strong> Los comercios gastronómicos independientes (1 a 3 locales) en el interior del país no usan Fudo ni pueden pagar abonos en dólares. Necesitan resolución inmediata en caja y comunicación directa.
+        <strong>Conclusión técnica:</strong> Los comercios gastronómicos y de cercanía independientes (1 a 3 sucursales) en el interior del país no tienen POS integrado ni pagan en dólares. Requieren una solución autónoma, con carga en 3 segundos y comunicación directa.
       </div>
     </div>
 
@@ -449,38 +449,38 @@
           <tbody>
             <tr>
               <td class="dim-title">1. Fricción en Caja</td>
-              <td>Media / Alta (cajero tipea DNI en panel web manual)</td>
-              <td>Baja con Fudo POS / Media si es manual por email</td>
-              <td>Baja en mostrador con NFC StampPod</td>
-              <td class="highlight"><strong>Ultra-baja (&lt;3 seg):</strong> Teclado numérico gigante para DNI en mostrador</td>
+              <td>Alta (DNI manual en web)</td>
+              <td>Baja con Fudo / Media manual</td>
+              <td>Baja (NFC en mostrador)</td>
+              <td class="highlight"><strong>Ultra-baja (&lt;3 seg):</strong> Teclado táctil</td>
             </tr>
             <tr>
               <td class="dim-title">2. Experiencia Cliente</td>
-              <td>Web móvil directa con DNI. Sin descarga.</td>
-              <td>Pase en Apple / Google Wallet. Sin descarga de app.</td>
-              <td>Descarga obligatoria de app móvil (Stamp Me App).</td>
-              <td class="highlight"><strong>Zero-Friction:</strong> PWA / Enlace web móvil sin instalar nada de tiendas</td>
+              <td>Web móvil con DNI</td>
+              <td>Pase en Apple / Google Wallet</td>
+              <td>App nativa obligatoria (40 MB)</td>
+              <td class="highlight"><strong>Zero-Friction:</strong> Web / PWA sin tiendas</td>
             </tr>
             <tr>
               <td class="dim-title">3. Modelo de Precios</td>
-              <td>$20.000 a $50.000 ARS/mes por comercio</td>
-              <td>$14.700 a $41.900+ ARS/mes</td>
-              <td>USD 49 a 199/mes + costo de hardware</td>
-              <td class="highlight"><strong>Abono accesible en ARS</strong> por sucursal con prueba piloto</td>
+              <td>$20k a $50k ARS/mes</td>
+              <td>$14.7k a $41.9k+ ARS/mes</td>
+              <td>USD 49 a 199/mes + hardware</td>
+              <td class="highlight"><strong>Abono accesible en ARS</strong></td>
             </tr>
             <tr>
               <td class="dim-title">4. Canal Post-Venta</td>
-              <td>Débil (espera pasiva a que el cliente vuelva a consultar)</td>
-              <td>Fuerte (push directo a pantalla de bloqueo vía Wallet)</td>
-              <td>Fuerte (push nativo en app y SMS marketing)</td>
-              <td class="highlight"><strong>Activo por WhatsApp / Web Push</strong> con tasa de apertura del 90%+</td>
+              <td>Pasivo (espera al cliente)</td>
+              <td>Push en Wallet + Email</td>
+              <td>Push nativo + SMS marketing</td>
+              <td class="highlight"><strong>Activo por WhatsApp</strong> (90%+ apertura)</td>
             </tr>
             <tr>
-              <td class="dim-title">5. Punto Crítico</td>
-              <td>Cola lenta en hora pico; sin avisos directos</td>
-              <td>Dependencia de Fudo y de Google Wallet activo</td>
-              <td>Costo en USD y fricción de bajar app en el local</td>
-              <td class="highlight">Riesgo si el cajero no ofrece; se mitiga con QR en mesa y facilidad operativa</td>
+              <td class="dim-title">5. Barrera Principal</td>
+              <td>Demora en hora pico de caja</td>
+              <td>Dependencia de Fudo / Wallet</td>
+              <td>Costo en USD y app obligatoria</td>
+              <td class="highlight">Adopción del cajero (mitigada por rapidez)</td>
             </tr>
           </tbody>
         </table>

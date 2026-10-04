@@ -16,8 +16,8 @@ En el mercado conviven tres enfoques bien marcados para resolver la retención e
    Prioriza la cero-fricción para el cliente (consulta con DNI en un link web sin app ni contraseña). Sin embargo, traslada el cuello de botella al cajero, quien debe abrir un panel web administrativo para tipear DNI y asignar puntos manualmente.
 2. **El enfoque Smart Wallet + Integración POS (Ej. Novity - Argentina):**  
    Aprovecha las billeteras que ya vienen en los celulares (Apple Wallet y Google Wallet) para mandar notificaciones push a la pantalla de bloqueo sin desarrollar app nativa propia. Su mayor acierto es integrarse directamente a **Fudo POS**, logrando que cada ticket sume puntos sin fricción de caja. Su barrera: comerciantes sin Fudo o clientes que no tienen Google Wallet activo.
-3. **El enfoque Tarjeta de Sellos Digital / Gamificado (Ej. Stamp Me - Internacional):**  
-   Líder en cafeterías anglosajonas con dinámica visual "comprá 9 y el 10 es gratis". Utiliza hardware propio NFC (StampPod en mostrador) y app en tiendas. Si bien tiene alta retención, es inviable para el comercio independiente argentino promedio por costo en dólares (USD 49 a 199/mes), necesidad de hardware físico y exigencia de descarga de app.
+3. **El enfoque App Nativa Dedicada + Hardware Propietario (Ej. Stamp Me - Internacional):**  
+   Basado en la descarga de una app móvil en tiendas y hardware físico en mostrador (sensores NFC StampPod o terminales). Si bien ofrece alta retención y control de fraude, es inviable para el comercio independiente argentino por costo en dólares (USD 49 a 199/mes), necesidad de hardware importado y la fricción crítica de exigirle al cliente bajar 40 MB en la fila.
 
 ### La Gran Ventana de Oportunidad para Fideliz-Ar:
 > **El "Océano Azul" local:** La mayoría de los comercios gastronómicos y de cercanía independientes (1 a 3 locales) en el interior del país (Córdoba, Formosa, etc.) no tienen Fudo ni pagan USD 50/mes, pero sufren colas en mostrador.  
