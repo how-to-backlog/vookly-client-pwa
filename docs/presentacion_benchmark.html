@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Benchmark Competitivo - Fideliz-Ar</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --surface: #141c2b;
+      --surface-border: #233047;
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-muted: #1e3a5f;
+      --good: #34d399;
+      --warn: #fbbf24;
+      --bad: #f87171;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      line-height: 1.5;
+    }
+
+    header {
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--surface-border);
+      background-color: rgba(11, 15, 23, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 10;
+    }
+
+    .brand {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .brand span {
+      color: var(--accent);
+    }
+
+    .author-info {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    main {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .slide {
+      position: absolute;
+      width: 100%;
+      max-width: 1100px;
+      max-height: 85vh;
+      overflow-y: auto;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding-right: 8px;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    /* Scrollbar sutil para slides densas */
+    .slide::-webkit-scrollbar {
+      width: 6px;
+    }
+    .slide::-webkit-scrollbar-thumb {
+      background: var(--surface-border);
+      border-radius: 3px;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      letter-spacing: -0.01em;
+      border-bottom: 1px solid var(--surface-border);
+      padding-bottom: 10px;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    p {
+      font-size: 1rem;
+      color: var(--text-main);
+    }
+
+    .lead {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+    }
+
+    /* Grid y Tarjetas */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background-color: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 8px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card-meta {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .card ul {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .card li {
+      font-size: 0.92rem;
+      color: var(--text-main);
+      padding-left: 14px;
+      position: relative;
+    }
+
+    .card li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--text-muted);
+    }
+
+    /* Tablas */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--surface-border);
+      border-radius: 8px;
+      background-color: var(--surface);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--surface-border);
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #0f1623;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    td.dim-title {
+      font-weight: 600;
+      color: #ffffff;
+      width: 18%;
+    }
+
+    td.highlight {
+      background-color: rgba(56, 189, 248, 0.04);
+      border-left: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    /* Bloques de Estado y Conclusiones */
+    .status-block {
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .status-good {
+      background-color: rgba(52, 211, 153, 0.1);
+      border-left: 3px solid var(--good);
+      color: #d1fae5;
+    }
+
+    .status-bad {
+      background-color: rgba(248, 113, 113, 0.1);
+      border-left: 3px solid var(--bad);
+      color: #fee2e2;
+    }
+
+    .status-info {
+      background-color: rgba(56, 189, 248, 0.08);
+      border-left: 3px solid var(--accent);
+      color: #e0f2fe;
+    }
+
+    /* Diagrama de Tesis */
+    .tesis-box {
+      background-color: #0f1726;
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tesis-item {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      font-size: 1rem;
+    }
+
+    .tesis-num {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+      font-family: monospace;
+    }
+
+    /* Footer y Controles */
+    footer {
+      padding: 14px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--surface-border);
+      background-color: rgba(11, 15, 23, 0.95);
+      z-index: 10;
+    }
+
+    .counter {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-family: monospace;
+    }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      background-color: var(--surface);
+      color: var(--text-main);
+      border: 1px solid var(--surface-border);
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    button:hover {
+      background-color: var(--surface-border);
+      border-color: #3b4d6b;
+      color: #ffffff;
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .keyboard-hint {
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+      header, footer {
+        padding: 12px 16px;
+      }
+      .slide {
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">FIDELIZ-AR <span>/ INVESTIGACIÓN</span></div>
+    <div class="author-info">Jesús Fleitas — Córdoba | Fase 0 (Hito 0.1)</div>
+  </header>
+
+  <main>
+
+    <!-- Slide 1: Portada -->
+    <div class="slide active" id="slide-1">
+      <div style="margin-top: 40px; display: flex; flex-direction: column; gap: 14px;">
+        <div class="card-meta">Informe Técnico de Competencia</div>
+        <h1>Benchmark de Plataformas de Fidelización</h1>
+        <p class="lead" style="max-width: 800px;">
+          Auditoría de soluciones locales e internacionales bajo 5 dimensiones operativas y comerciales para sustentar la arquitectura y el modelo del MVP.
+        </p>
+      </div>
+
+      <div class="grid-3" style="margin-top: 30px;">
+        <div class="card">
+          <div class="card-meta">Competidor Local 1</div>
+          <h3>Puntos App</h3>
+          <p>Esquema Web/DNI directo sin app. Foco en comercio barrial.</p>
+        </div>
+        <div class="card">
+          <div class="card-meta">Competidor Local 2</div>
+          <h3>Novity</h3>
+          <p>Pases en Google/Apple Wallet integrados a Fudo POS.</p>
+        </div>
+        <div class="card">
+          <div class="card-meta">Referente Global</div>
+          <h3>Stamp Me</h3>
+          <p>Punch card digital por visitas y hardware NFC para cafeterías.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2: Resumen Ejecutivo -->
+    <div class="slide" id="slide-2">
+      <h2>1. Resumen Ejecutivo: Tres Enfoques en el Mercado</h2>
+      <p class="lead">Actualmente coexisten tres modelos para abordar la retención en mostrador:</p>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-meta">Modelo 1: Web Simple</div>
+          <h3>Puntos App (Argentina)</h3>
+          <ul>
+            <li>Consulta por DNI en link web sin contraseñas.</li>
+            <li>Cero fricción de descarga para el cliente.</li>
+            <li><strong>Cuello de botella:</strong> El cajero debe entrar a un panel web y tipear el DNI a mano en cada venta.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-meta">Modelo 2: Wallet + POS</div>
+          <h3>Novity (Argentina)</h3>
+          <ul>
+            <li>Pase en Apple Wallet y Google Wallet.</li>
+            <li>Sincronización automática de tickets con Fudo POS.</li>
+            <li><strong>Barrera:</strong> Comercios sin Fudo requieren carga manual por email; Google Wallet ausente en teléfonos de gama baja.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-meta">Modelo 3: Sellos Digitales</div>
+          <h3>Stamp Me (Global)</h3>
+          <ul>
+            <li>Mecánica visual de sellitos (comprá 9, el 10 es gratis).</li>
+            <li>Hardware NFC (StampPod) en mostrador.</li>
+            <li><strong>Barrera:</strong> Obliga a bajar una app de 40 MB en la fila y cuesta entre USD 49 y 199 mensuales.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="status-block status-info" style="margin-top: 10px;">
+        <strong>Conclusión de mercado:</strong> Los comercios gastronómicos independientes (1 a 3 locales) en el interior del país no usan Fudo ni pueden pagar abonos en dólares. Necesitan resolución inmediata en caja y comunicación directa.
+      </div>
+    </div>
+
+    <!-- Slide 3: Matriz Comparativa -->
+    <div class="slide" id="slide-3">
+      <h2>2. Matriz Comparativa Integral</h2>
+      
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Dimensión</th>
+              <th>Puntos App (AR)</th>
+              <th>Novity (AR)</th>
+              <th>Stamp Me (Global)</th>
+              <th style="color: var(--accent);">Tesis Fideliz-Ar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="dim-title">1. Fricción en Caja</td>
+              <td>Media / Alta (cajero tipea DNI en panel web manual)</td>
+              <td>Baja con Fudo POS / Media si es manual por email</td>
+              <td>Baja en mostrador con NFC StampPod</td>
+              <td class="highlight"><strong>Ultra-baja (&lt;3 seg):</strong> Teclado numérico gigante para DNI en mostrador</td>
+            </tr>
+            <tr>
+              <td class="dim-title">2. Experiencia Cliente</td>
+              <td>Web móvil directa con DNI. Sin descarga.</td>
+              <td>Pase en Apple / Google Wallet. Sin descarga de app.</td>
+              <td>Descarga obligatoria de app móvil (Stamp Me App).</td>
+              <td class="highlight"><strong>Zero-Friction:</strong> PWA / Enlace web móvil sin instalar nada de tiendas</td>
+            </tr>
+            <tr>
+              <td class="dim-title">3. Modelo de Precios</td>
+              <td>$20.000 a $50.000 ARS/mes por comercio</td>
+              <td>$14.700 a $41.900+ ARS/mes</td>
+              <td>USD 49 a 199/mes + costo de hardware</td>
+              <td class="highlight"><strong>Abono accesible en ARS</strong> por sucursal con prueba piloto</td>
+            </tr>
+            <tr>
+              <td class="dim-title">4. Canal Post-Venta</td>
+              <td>Débil (espera pasiva a que el cliente vuelva a consultar)</td>
+              <td>Fuerte (push directo a pantalla de bloqueo vía Wallet)</td>
+              <td>Fuerte (push nativo en app y SMS marketing)</td>
+              <td class="highlight"><strong>Activo por WhatsApp / Web Push</strong> con tasa de apertura del 90%+</td>
+            </tr>
+            <tr>
+              <td class="dim-title">5. Punto Crítico</td>
+              <td>Cola lenta en hora pico; sin avisos directos</td>
+              <td>Dependencia de Fudo y de Google Wallet activo</td>
+              <td>Costo en USD y fricción de bajar app en el local</td>
+              <td class="highlight">Riesgo si el cajero no ofrece; se mitiga con QR en mesa y facilidad operativa</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Slide 4: Competidor 1 - Puntos App -->
+    <div class="slide" id="slide-4">
+      <h2>3.1. Puntos App (puntosapp.com)</h2>
+      <p class="lead">Solución local orientada a cafeterías, gimnasios y locales de cercanía.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-meta">Operativa y Pricing</div>
+          <ul>
+            <li><strong>Caja:</strong> El cajero abre el navegador en la PC o celular, busca cliente y carga puntos a mano.</li>
+            <li><strong>Cliente:</strong> Entra a <code>puntosapp.com/tu-comercio</code>, ingresa su DNI y ve puntos y canjes.</li>
+            <li><strong>Planes:</strong> PLUS $20.000 ARS/mes (hasta 250 clientes) / PRO $50.000 ARS/mes (ilimitado). Pago por Mercado Pago.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-meta">Evaluación Crítica</div>
+          <div class="status-block status-good">
+            <strong>Fortaleza:</strong> Muy baja barrera para el consumidor. No pide password ni instalación de apps.
+          </div>
+          <div class="status-block status-bad">
+            <strong>Debilidad:</strong> Cero automatización en mostrador. En horas de alta concurrencia el cajero deja de registrar clientes para no demorar la fila.
+          </div>
+          <div class="status-block status-bad">
+            <strong>Retención:</strong> Sin canal de mensajería activa hacia el cliente; depende de su memoria para volver a revisar.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5: Competidor 2 - Novity -->
+    <div class="slide" id="slide-5">
+      <h2>3.2. Novity (novity.com.ar)</h2>
+      <p class="lead">Plataforma argentina basada en pases digitales de Wallet e integraciones POS.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-meta">Operativa y Pricing</div>
+          <ul>
+            <li><strong>Enrolamiento:</strong> El cliente escanea un QR y guarda la tarjeta en Apple Wallet o Google Wallet con un toque.</li>
+            <li><strong>Caja:</strong> Sincronización directa con <strong>Fudo POS</strong> (suma puntos automático por ticket) o carga manual por email.</li>
+            <li><strong>Canjes:</strong> Catálogo web con URL propia (<code>tuempresa.novity.com.ar</code>) que emite cupones alfanuméricos.</li>
+            <li><strong>Planes:</strong> Desde $14.700 ARS/mes hasta $41.900+ ARS/mes.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-meta">Evaluación Crítica</div>
+          <div class="status-block status-good">
+            <strong>Fortaleza:</strong> Notificaciones push a pantalla de bloqueo sin programar app móvil nativa, y automatización real con Fudo.
+          </div>
+          <div class="status-block status-bad">
+            <strong>Debilidad:</strong> Si el comercio no tiene Fudo, pedir email en caja es mucho más lento que pedir DNI.
+          </div>
+          <div class="status-block status-bad">
+            <strong>Barrera de usuario:</strong> En segmentos que no tienen Google Wallet activo en Android, el enrolamiento se corta.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: Competidor 3 - Stamp Me -->
+    <div class="slide" id="slide-6">
+      <h2>3.3. Stamp Me (stampme.com)</h2>
+      <p class="lead">Líder internacional en programas de lealtad para cafeterías independientes.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-meta">Operativa y Pricing</div>
+          <ul>
+            <li><strong>Enrolamiento:</strong> Descarga obligatoria de la app en Play Store o App Store.</li>
+            <li><strong>Validación:</strong> Hardware físico NFC (StampPod en mostrador), códigos QR de un solo uso en vasos, o app de comerciante.</li>
+            <li><strong>Canje:</strong> Voucher con temporizador de 3 minutos para mostrar al empleado antes de que expire (anti-fraude).</li>
+            <li><strong>Planes:</strong> USD 49 / USD 79 / USD 199 mensuales, más envío de hardware.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-meta">Evaluación Crítica</div>
+          <div class="status-block status-good">
+            <strong>Fortaleza:</strong> La tarjeta de sellos (Punch Card) es psicológicamente mucho más efectiva y simple de entender que los puntos por monto.
+          </div>
+          <div class="status-block status-good">
+            <strong>Seguridad:</strong> El voucher con cuenta regresiva de 3 minutos elimina canjes duplicados o capturas viejas.
+          </div>
+          <div class="status-block status-bad">
+            <strong>Inviable en Argentina:</strong> Precio en moneda extranjera y fricción letal de forzar la descarga de una app en el local.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7: Conclusiones Estratégicas -->
+    <div class="slide" id="slide-7">
+      <h2>4. Tesis Técnica y Estratégica de Fideliz-Ar</h2>
+      <p class="lead">Pilares concretos para el MVP derivados del análisis competitivo:</p>
+
+      <div class="tesis-box">
+        <div class="tesis-item">
+          <span class="tesis-num">01.</span>
+          <div>
+            <strong>Mecánica de Sellos por Visita priorizada:</strong> En cafeterías y panaderías, completar 6 u 8 sellos para obtener un beneficio concreto convierte tres veces más rápido que acumular puntos abstractos.
+          </div>
+        </div>
+
+        <div class="tesis-item">
+          <span class="tesis-num">02.</span>
+          <div>
+            <strong>Teclado Numérico de Caja (&lt;3 segundos):</strong> Cero navegación de menús. Un teclado táctil numérico gigante para tablet o teléfono donde el cajero ingresa el DNI y presiona acreditar con un solo click.
+          </div>
+        </div>
+
+        <div class="tesis-item">
+          <span class="tesis-num">03.</span>
+          <div>
+            <strong>Zero-App para el Cliente + Re-engagement activo:</strong> El cliente consulta vía PWA / QR web ligero. Para reactivar clientes inactivos o avisar premios, se utiliza canal directo de WhatsApp.
+          </div>
+        </div>
+
+        <div class="tesis-item">
+          <span class="tesis-num">04.</span>
+          <div>
+            <strong>Pricing en Moneda Local accesible:</strong> Abono mensual en pesos argentinos que un local de barrio amortice reteniendo apenas 3 o 4 clientes por mes.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 8: Preguntas para el Equipo -->
+    <div class="slide" id="slide-8">
+      <h2>5. Puntos Clave para Decidir con el Equipo</h2>
+      <p class="lead">Tres definiciones indispensables para el diseño del producto:</p>
+
+      <div class="grid-3" style="margin-top: 10px;">
+        <div class="card">
+          <div class="card-meta">Pregunta 1</div>
+          <h3>Dato Inicial de Enrolamiento</h3>
+          <p>¿Qué dato solicitamos en la primera compra?</p>
+          <div class="status-block status-info" style="margin-top: 8px;">
+            <strong>Propuesta:</strong> Solo DNI en mostrador. El WhatsApp o contacto lo ingresa el cliente desde su propio teléfono al escanear el QR en la mesa.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-meta">Pregunta 2</div>
+          <h3>Sellos vs. Puntos en V1</h3>
+          <p>¿Arrancamos exclusivamente con modelo de sellos ("Punch Card") o damos soporte simultáneo a puntos por peso gastado?</p>
+          <div class="status-block status-info" style="margin-top: 8px;">
+            <strong>Propuesta:</strong> Foco en sellos para cafeterías/panaderías por simplicidad matemática y rapidez de adopción.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-meta">Pregunta 3</div>
+          <h3>Independencia vs. POS</h3>
+          <p>¿Desarrollamos una herramienta 100% independiente en tablet de mostrador o priorizamos integraciones iniciales?</p>
+          <div class="status-block status-info" style="margin-top: 8px;">
+            <strong>Propuesta:</strong> Nacer autónomos para validar en campo rápido sin depender de APIs de terceros.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="keyboard-hint">Atajos: <strong>&larr;</strong> / <strong>&rarr;</strong> o <strong>Espacio</strong> para navegar</div>
+    <div class="counter" id="slide-counter">1 / 8</div>
+    <div class="controls">
+      <button id="prev-btn" onclick="prevSlide()" disabled>&larr; Anterior</button>
+      <button id="next-btn" onclick="nextSlide()">Siguiente &rarr;</button>
+    </div>
+  </footer>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const counter = document.getElementById('slide-counter');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    let currentSlide = 0;
+
+    function updateSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+      });
+      counter.textContent = `${index + 1} / ${slides.length}`;
+      prevBtn.disabled = index === 0;
+      nextBtn.disabled = index === slides.length - 1;
+    }
+
+    function nextSlide() {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlide(currentSlide);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide(currentSlide);
+      }
+    }
+
+    // Navegación por teclado
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'd' || e.key === 'D') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+        prevSlide();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,15 +1,14 @@
 # Benchmark Competitivo: Plataformas de Fidelización para Comercios
 
-> **Proyecto:** Fideliz-Ar (`p-fidelizar`)  
-> **Fase:** Fase 0 — Discovery y Validación de Mercado  
+> **Proyecto:** Fideliz-Ar
+> **Fase:** Fase 0, Discovery y Validación de Mercado  
 > **Hito:** 0.1 Benchmark Competitivo  
-> **Responsable:** Jesús Fleitas (Córdoba) — con asistencia técnica de `agente-1`  
-> **Fecha:** 2026-10-03  
-> **Objetivo de la Sesión:** Auditoría exhaustiva de 3 plataformas (2 locales de Argentina y 1 líder global) bajo 5 dimensiones clave para sustentar la reunión de equipo y definir los diferenciadores estratégicos del MVP.
-
+> **Responsable:** Jesús Fleitas (Córdoba)
+> **Fecha:** 2026-10-01  
+> **Objetivo de la Sesión:** Auditoría exhaustiva de 3 plataformas (2 locales de Argentina y 1 líder global) bajo 5 dimensiones clave.
 ---
 
-## 1. Resumen Ejecutivo (Para Presentar al Equipo)
+## 1. Resumen Ejecutivo
 
 En el mercado conviven tres enfoques bien marcados para resolver la retención en comercios físicos:
 
@@ -120,8 +119,6 @@ En el mercado conviven tres enfoques bien marcados para resolver la retención e
 
 ## 4. Conclusiones Estratégicas y "Diferenciales Clave" para Fideliz-Ar
 
-De cara a la reunión con el equipo, estos son los **4 pilares técnicos y de producto** que surgen de la investigación:
-
 ```
                   ┌────────────────────────────────────────────────────────┐
                   │                 TESIS GANADORA FIDELIZ-AR              │
@@ -129,7 +126,7 @@ De cara a la reunión con el equipo, estos son los **4 pilares técnicos y de pr
                   │ 1. Identificación en Caja: DNI puro en <3 seg         │
                   │ 2. Cero App Nativa: PWA / Web Móvil sin fricción       │
                   │ 3. Canal Activo: WhatsApp / SMS (No esperar al cliente)│
-                  │ 4. Mecánica Dual: Puntos por monto O Sellos por visita │
+                  │ 4. Mecánica Dual: Sellos por visita por encima de Puntos por monto  │
                   └────────────────────────────────────────────────────────┘
 ```
 
@@ -146,7 +143,7 @@ De cara a la reunión con el equipo, estos son los **4 pilares técnicos y de pr
 
 ---
 
-## 5. Preguntas Clave a Tratar en la Reunión de Equipo (< 2 hs)
+## 5. Preguntas Clave
 
 1. **Definición de Enrolamiento Inicial:** ¿Qué dato le pedimos al cliente en su primera compra? ¿Solo DNI, o DNI + WhatsApp? (Recomendación técnica: Solo DNI en mostrador; el teléfono lo completa el cliente desde su propio celular cuando escanea el QR de la mesa para reclamar el premio).
 2. **Priorización de la Mecánica:** ¿Arrancamos la V1 con modelo de Sellos ("Punch Card" digital estilo Stamp Me) por ser el más demandado en cafeterías/panaderías, o con Puntos por dinero gastado?
