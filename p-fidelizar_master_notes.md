@@ -32,7 +32,7 @@
 ## 4. 📌 Roadmap Activo y Checklist de Tareas
 > *Nota: Al completar una tarea, el agente que la finalice debe firmar la línea con su marca de tiempo.*
 ### Fase 0: Discovery y Validación de Campo (Prioridad Actual)
-- [ ] 0.1 Benchmark Competitivo (Metodología, Exa research, parámetros y análisis de soluciones en Argentina/LATAM) <!-- [agente-1]: planificado 2026-10-03 01:10 (Asignado: Jesús & agente-1) -->
+- [x] 0.1 Benchmark Competitivo: Auditoría de 3 plataformas (Puntos App, Novity, Stamp Me) bajo 5 dimensiones clave <!-- [agente-1]: finalizado 2026-10-03 01:30 (Asignado: Jesús & agente-1, entregable: BENCHMARK_COMPETITIVO.md) -->
 - [ ] 0.2 Protocolo y Guion de Entrevistas Rápidas en Terreno (Validación de fricciones de caja y retención en <3 min) <!-- [agente-1]: planificado 2026-10-03 01:10 -->
 - [ ] 0.3 Pipeline y Mapeo de Comercios Locales (Córdoba, Formosa, CABA) <!-- [agente-1]: planificado 2026-10-03 01:10 -->
 
@@ -62,6 +62,17 @@
 - **Etiquetas:** `#arquitectura #investigacion #fuente-de-verdad #alta`
 - **Tópico / Componente Afectado:** `FIDELIZAR_RESEARCH_MASTER.md`, `FIDELIZAR_RESEARCH_MASTER.txt`
 
+### [NOTA-003] Inicio de Tarea Prioritaria: Benchmark Competitivo de Plataformas de Fidelización
+- **Fecha:** 2026-10-03 01:20
+- **Categoría:** Lógica
+- **Diagnóstico / Contexto:** De acuerdo con la asignación de roles del equipo (Hito 8.2 del Research Master), a Jesús le corresponde liderar la investigación y auditoría competitiva de 3 a 4 sistemas de fidelización y puntos antes de avanzar en el MVP. Se busca evitar saturación de archivos duplicados y concentrar el trabajo colaborativo entre Jesús, Agente 1 (Arquitecto) y Agente 2 (Escriba).
+- **Comportamiento Esperado / Solución:** 
+  1. Se eliminaron archivos `.txt` redundantes, conservando únicamente `FIDELIZAR_RESEARCH_MASTER.md` como fuente de verdad canónica.
+  2. Se define el marco de trabajo del benchmark en 5 dimensiones por competidor: Onboarding del comercio, Enrolamiento del cliente final, Mecánicas de incentivos/re-engagement, Modelo de monetización y Brechas/Oportunidades frente a Fideliz-Ar.
+  3. Coordinación de roles: Jesús dirige el criterio de selección; Agente 1 evalúa aspectos técnicos/arquitectónicos; Agente 2 estructura y documenta los hallazgos en las notas maestras.
+- **Etiquetas:** `#benchmark #competencia #investigacion #prioridad #alta`
+- **Tópico / Componente Afectado:** Documentación de Benchmark y decisiones pre-MVP.
+
 ---
 
 ## 6. 🏷️ Índice de Tópicos y Relaciones Cruzadas
@@ -71,4 +82,5 @@
 | `#ui-ux` | Diseño visual, interfaz y experiencia | - |
 | `#bug` | Correcciones de fallos o comportamientos anómalos | - |
 | `#idea-futura` | Propuestas y mejoras para próximas fases | - |
-| `#alta` | Tareas o notas de máxima prioridad | [NOTA-001], [NOTA-002] |
+| `#alta` | Tareas o notas de máxima prioridad | [NOTA-001], [NOTA-002], [NOTA-003] |
+| `#competencia` | Análisis y benchmark de plataformas competidoras | [NOTA-003] |
