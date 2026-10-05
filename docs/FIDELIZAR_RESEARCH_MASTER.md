@@ -6,7 +6,7 @@
 
 **Estado: **Fase 0 — Discovery de Mercado & Validación de Campo
 
-**Fuentes Consolidadas: **FIDELIZ-AR-RESEARCH.csv, minuta-primer-reunion.txt, preguntas-aportadas-facu.txt
+**Fuentes Consolidadas: **FIDELIZ-AR-RESEARCH.csv, minuta-primer-reunion.txt, preguntas-aportadas-facu.txt, BENCHMARK_COMPETITIVO.md, minuta_reunion_segunda.md
 
 **Equipo Responsable: **Jesus Fleitas (Córdoba), Ramiro Gonzalez (Buenos Aires), Facundo Majda (Formosa), Nahuel Gonzalez (Formosa)
 
@@ -383,62 +383,100 @@ OPERATIVA EN CAJA                  │                   LOGÍSTICA / PROCESO
                      BAJO IMPACTO / MENOR FRECUENCIA
 ```
 
-- **Prioridad Alta (Top Contenders para el MVP):**
-- **Cafeterías / Panaderías / Confiterías: **Frecuencia récord (diaria/semanal), volumen masivo de datos para validar en 3 semanas, urgencia extrema de retención.
-- **Barberías: **Retorno periódico matemático (20-30 días), relación personal cercana, ticket atractivo y alto impacto del re-engagement automatizado.
-- **Prioridad Media (Segunda Etapa de Expansión):**
-- **Lavaderos de Autos / Estacionamientos: **Excelente frecuencia mensual, pero la dinámica de espera o ingreso vehicular añade fricciones de punto de contacto que complejizan la primera versión.
-- **Vinotecas: **Ticket alto pero frecuencia más espaciada (quincenal/mensual), requiriendo un ciclo más largo para medir recurrencia.
-- **Prioridad Baja / Descartados para V1:**
-- **Reparto de agua en bidones / Reparto de hielo: **Lógica logística de camiones en calle, muy distante del modelo de mostrador/POS.
-**Estaciones de servicio: **Copadas por corporaciones con billeteras virtuales propias.
+- **Scope Oficial Aprobado por el Equipo (4 Nichos de Trabajo):**
+  1. **Cafeterías (`CAF`):** Frecuencia récord (diaria), alta fidelización por hábito matutino, ideal para modelo de sellos.
+  2. **Panaderías (`PAN`):** Compra cotidiana de cercanía, alta rotación, volumen masivo de clientes recurrentes.
+  3. **Heladerías (`HEL`):** Consumo familiar y de impulso; necesidad de retención ante estacionalidad en comercios independientes.
+  4. **Barberías (`BAR`):** Ciclo periódico exacto (20 a 30 días), vínculo directo con el cliente y altísima efectividad de recordatorios automáticos.
 
-### 7.2. Foco Estratégico: Un Solo Nicho para la V1
+- **Nichos Formalmente Descartados para la V1:**
+  * **Confiterías (`CON`):** Descartada como categoría independiente; queda absorbida funcionalmente en Cafeterías y Panaderías.
+  * **Grandes Cadenas Corporativas (ej. Grido):** Excluidas por poseer sistemas de fidelización propios y barreras corporativas.
+  * **Estacionamientos y Lavaderos:** Descartados por baja frecuencia de interacción y baja adopción tecnológica en caja.
+  * **Reparto de Agua y Hielo:** Descartados por modelo logístico de camión/calle incompatible con mostrador de cobro.
 
-***La recomendación estratégica unánime es **concentrar el 100% del esfuerzo del MVP en un único nicho vertical** antes de abrir la plataforma multirrubro:***
+### 7.2. Foco Estratégico: Un Solo Nicho Ganador para el Lanzamiento
 
-**Veredicto Recomendado: **Iniciar con **Cafeterías, Confiterías y Panaderías** (con Barberías como back-up directo si las entrevistas de campo demuestran mejor apertura a pago de abono de software).
+El equipo validará en campo sobre estos 4 nichos simultáneamente con el fin de seleccionar **uno solo como vertical definitiva del MVP**.
 
-**Fundamento: **La recurrencia diaria permite validar hipótesis de retención, errores de usabilidad y mecánicas de puntos en cuestión de 15 a 20 días de prueba piloto.
+**Criterio de Selección:** El nicho que demuestre la combinación óptima de menor fricción en caja (<3 seg) y mayor predisposición del comercio a pagar un abono mensual SaaS.
 
 ### 7.3. Pilares No Negociables de Producto y Arquitectura Ligera
 
 ***Para garantizar que el MVP no muera por fricción tecnológica, se establecen tres mandamientos de diseño:***
 
-- **Cero Descarga Forzada para el Cliente en el Mostrador:**
-  * Prohibido obligar al usuario a bajar una app de 50 MB de la tienda al momento de pagar.
-  * El cliente simplemente dicta su DNI o teléfono, o escanea un QR en mesa/mostrador que abre una **Web App ultraligera (PWA o enlace web responsivo)** con autenticación mágica vía WhatsApp o SMS.
-- **Interfaz de Caja Ultrarrápida (El "Teclado de 3 Segundos"):**
-  * El empleado de caja no debe navegar pantallas. Necesita un teclado numérico táctil gigante (en tablet de mostrador o ventana flotante de PC) donde tipea el número y presiona un botón verde de sumar puntos.
-- **Canal de Consulta y Notificación Automática:**
-  * El cliente recibe su saldo y catálogo de recompensas de forma transparente en su navegador web o por mensaje automatizado.
-El panel del dueño (Dashboard simple) debe alertar de clientes inactivos con un solo click para reactivarlos.
+- **Identificador Único por Número de Teléfono (Sin DNI ni Descarga de App):**
+  * Se sustituye el DNI por el número de teléfono como dato central, ya que el DNI no permite contacto posterior.
+  * Sanitización obligatoria con Regex: sin prefijo 54, sin 9, sin 15; longitud máxima de 12 dígitos.
+  * El cliente consulta sus sellos/puntos vía PWA web responsiva accesible por QR o enlace directo, sin descargar nada de tiendas.
+- **Interfaz de Caja Ultrarrápida (< 3 Segundos):**
+  * Cero integración compleja con POSNET/NFC en esta etapa.
+  * Se utilizará un teclado numérico físico USB/Bluetooth (~$11k-$15k ARS) orientado hacia el cliente en el mostrador para que digite su teléfono, o bien digitación rápida del cajero en su PC.
+- **Canal Activo de Re-engagement vía WhatsApp:**
+  * WhatsApp es el canal oficial exclusivo por su tasa de apertura >95% en Argentina.
+  * Casos de uso automáticos: felicitación de cumpleaños, reactivación de clientes inactivos (+20 días) y avisos de premios disponibles.
 
-## 8. Hoja de Ruta Inmediata y Próximos Hitos
+## 8. Nomenclatura Estándar para Investigación y Scoring de Leads
+
+Para garantizar coherencia y comparabilidad en el relevamiento de campo llevado adelante por Facundo, Ramiro, Nahuel y Jesús en Formosa, Buenos Aires y Córdoba, se establece la siguiente taxonomía oficial:
+
+### 8.1. Código de Nicho
+- `CAF` — Cafeterías
+- `PAN` — Panaderías
+- `HEL` — Heladerías
+- `BAR` — Barberías
+
+### 8.2. Escala por Cantidad de Locales
+- `L1` — 1 local
+- `L2` — 2 locales
+- `L3` — 3 locales
+- `L4-5` — 4 a 5 locales
+- `L6-10` — 6 a 10 locales
+- `L10+` — Más de 10 locales
+
+### 8.3. Cobertura Geográfica
+- `LOC-1` — Una sola localidad
+- `LOC-M` — Múltiples localidades
+- `PROV-M` — Múltiples provincias
+
+### 8.4. Presencia Digital
+- `GMB` — Google Business Profile
+- `IG` — Instagram comercial activo
+- `WEB` — Sitio web propio
+- `WA` — WhatsApp comercial / Business
+- `DEL` — Delivery o plataforma de pedidos online
+
+### 8.5. Nivel de Actividad Digital
+- `A0` — Sin actividad observable
+- `A1` — Actividad ocasional
+- `A2` — Actividad frecuente
+- `A3` — Actividad muy frecuente
+
+### 8.6. Métricas Públicas Registradas
+- `REV` — Cantidad de reseñas públicas
+- `RAT` — Calificación promedio (1.0 a 5.0)
+- `FOL` — Cantidad de seguidores
+- `LOC` — Cantidad de sucursales
+
+---
+
+## 9. Hoja de Ruta Inmediata y Próximos Hitos
 
 ```text
-[ Hito 1: Cuestionario ] ──► [ Hito 2: Entrevistas Campo ] ──► [ Hito 3: Benchmark & Leads ] ──► [ Hito 4: Elección Final ]
-   Validación preguntas        10 locales por región              Análisis de 4 apps y Maps        Un solo nicho para MVP
-   en equipo (Nahuel)          (Córdoba, CABA, Formosa)           Scraping de comercios            Comienzo de Desarrollo
+[ Hito 1: Benchmark ] ──► [ Hito 2: Scoring de Leads ] ──► [ Hito 3: Entrevistas Campo ] ──► [ Hito 4: Elección Final ]
+   COMPLETADO                Facundo (3 provincias)          Ramiro & Equipo                  Reunión Martes 6 Octubre
+   docs/BENCHMARK...         Nomenclatura oficial            Cuestionario de 3 min            Nicho definitivo para MVP
 ```
 
-### 8.1. Plan de Acción de Campo
-
-- Realizar entre 5 y 10 entrevistas presenciales a dueños/encargados del nicho de Cafeterías/Panaderías y Barberías en Córdoba (JP/Ramiro) y CABA/Formosa (Facundo).
-Validar en el terreno si los comercios cuentan con tablets, qué software de facturación usan (ej. Maxirest, Fudo, Tango, cuadernos) y su apertura a una prueba piloto sin costo inicial.
-
-### 8.2. Benchmark Competitivo
-
-Asignado a **JP**: Auditar exhaustivamente de 3 a 4 sistemas de fidelización y puntos existentes en el mercado (locales e internacionales), documentando:
-
-- Proceso de onboarding del comercio.
-- Fricción de enrolamiento del cliente final.
-Modelo de monetización (SaaS mensual, cobro por transacción, comisiones).
-
-### 8.3. Pipeline y Scraping de Comercios
-
-Asignado a **Facundo**: Ejecutar scripts de scraping sobre Google Maps y redes sociales para construir una base de datos de 100 a 200 comercios calificados (nombre, rubro, dirección, teléfono de contacto) en las zonas de prueba seleccionadas.
-
-### 8.4. Criterio de Selección Definitivo
-
-Con la información de campo recopilada, el equipo se reunirá con **Nahuel** para calificar numéricamente cada nicho en la matriz de decisión y **declarar formalmente el nicho ganador**. Recién en ese momento comenzará la arquitectura y desarrollo técnico del MVP en agente-1.
+### 9.1. Estado de Hitos y Tareas en Curso
+- **Hito 1: Benchmark Competitivo (COMPLETADO):**
+  * Entregable: `docs/BENCHMARK_COMPETITIVO.md` y presentación interactiva `docs/presentacion_benchmark.html`.
+  * Responsables: Jesús Fleitas & Agente-1.
+- **Hito 2: Scoring de Leads por Nicho (EN CURSO):**
+  * Responsable: Facundo Majda (con soporte del equipo en Córdoba y BA).
+  * Objetivo: Clasificar comercios de las 3 provincias bajo la nomenclatura oficial `CAF`, `PAN`, `HEL`, `BAR`.
+- **Hito 3: Investigación de Sellos vs. Precios y Cuestionario Operativo (EN CURSO):**
+  * Responsable: Ramiro Gonzalez.
+  * Objetivo: Relevar cómo Stamp Me diferencia productos de distinto valor en tarjetas de sellos y validar cuestionario en calle.
+- **Hito 4: Asamblea de Selección Definitiva:**
+  * **Próxima Reunión:** Martes 6 de octubre de 2026 a las 16:00 hs.

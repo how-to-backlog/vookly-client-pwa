@@ -10,8 +10,8 @@
 
 ## 1. 🎯 Visión y Objetivos del Producto
 - **Propósito:** Plataforma agnóstica de fidelización y retención de clientes por puntos y recompensas personalizadas para comercios independientes y cadenas pequeñas.
-- **Público Objetivo:** Comercios de cercanía / locales independientes (1-4 sucursales) y sus clientes habituales en gastronomía, servicios y logística liviana.
-- **Valor Principal:** Eliminar la fricción de cobro en mostrador (identificación en <3 seg, sin app obligatoria para el consumidor) y conectar el abismo post-venta con re-engagement automatizado.
+- **Público Objetivo:** Comercios de cercanía y locales independientes (1-5 sucursales) enfocado en 4 nichos clave: Cafeterías (CAF), Panaderías (PAN), Heladerías (HEL) y Barberías (BAR).
+- **Valor Principal:** Identificación ultrarrápida en caja (<3 seg) vía número de teléfono (sin DNI ni app obligatoria) y re-engagement automático post-venta por WhatsApp.
 
 ---
 
@@ -73,6 +73,20 @@
 - **Etiquetas:** `#benchmark #competencia #investigacion #prioridad #alta`
 - **Tópico / Componente Afectado:** Documentación de Benchmark y decisiones pre-MVP.
 
+### [NOTA-004] Acuerdos de Asamblea: Validación de Benchmark, Reducción de Scope y Definición de Modelo
+- **Fecha:** 2026-10-04
+- **Categoría:** Arquitectura / Negocio
+- **Diagnóstico / Contexto:** El equipo evaluó el benchmark competitivo (Puntos App, Novity, Stamp Me) y resolvió las directrices fundacionales de producto, operativa en mostrador y el alcance inicial antes del desarrollo.
+- **Comportamiento Esperado / Solución:**
+  1. **Identificador Primario:** Sustituir DNI por **número de teléfono** sanitizado con regex (sin 54, sin 9, sin 15, máx 12 dígitos) para habilitar re-engagement directo.
+  2. **Canal Oficial:** **WhatsApp** como vía prioritaria para cumpleaños, reactivación de inactivos y promociones.
+  3. **Hardware en Mostrador:** Descartar POSNET/NFC; optar por teclado numérico físico (~$11-15k ARS) de cara al cliente o digitación en PC de caja.
+  4. **Scope Acotado (4 Nichos):** Cafeterías (`CAF`), Panaderías (`PAN`), Heladerías (`HEL`) y Barberías (`BAR`). Confiterías (`CON`) descartada/absorbida.
+  5. **Nomenclatura Oficial:** Estandarización de categorías de leads (locales `L1`-`L10+`, cobertura `LOC-1`/`LOC-M`, presencia `GMB`/`IG`/`WA`, actividad `A0`-`A3`).
+  6. **Distribución de Tareas:** Facundo (scoring leads), Ramiro (StampMe y sellos vs precios), Jesús & Agente 1 (sincronización documental).
+- **Etiquetas:** `#arquitectura #negocio #scope #nomenclatura #alta`
+- **Tópico / Componente Afectado:** `docs/minuta_reunion_segunda.md`, `docs/FIDELIZAR_RESEARCH_MASTER.md`, `docs/p-fidelizar_master_notes.md`
+
 ---
 
 ## 6. 🏷️ Índice de Tópicos y Relaciones Cruzadas
@@ -82,5 +96,7 @@
 | `#ui-ux` | Diseño visual, interfaz y experiencia | - |
 | `#bug` | Correcciones de fallos o comportamientos anómalos | - |
 | `#idea-futura` | Propuestas y mejoras para próximas fases | - |
-| `#alta` | Tareas o notas de máxima prioridad | [NOTA-001], [NOTA-002], [NOTA-003] |
+| `#alta` | Tareas o notas de máxima prioridad | [NOTA-001], [NOTA-002], [NOTA-003], [NOTA-004] |
+| `#negocio` | Definiciones de modelo de negocio y monetización | [NOTA-004] |
+| `#scope` | Alcance y nichos priorizados del producto | [NOTA-004] |
 | `#competencia` | Análisis y benchmark de plataformas competidoras | [NOTA-003] |
