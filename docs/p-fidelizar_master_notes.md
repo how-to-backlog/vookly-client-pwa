@@ -87,15 +87,31 @@
 - **Etiquetas:** `#arquitectura #negocio #scope #nomenclatura #alta`
 - **Tópico / Componente Afectado:** `docs/minuta_reunion_segunda.md`, `docs/FIDELIZAR_RESEARCH_MASTER.md`, `docs/p-fidelizar_master_notes.md`
 
+### [NOTA-005] Sesión de Ideación Técnica (Jesús & Facu): Blindaje de Tríada Core y Backlog Exploratorio
+- **Fecha:** 2026-10-04 23:30
+- **Categoría:** Arquitectura / Exploración
+- **Diagnóstico / Contexto:** Charla preliminar entre Jesús y Facundo sobre la proyección del MVP, posibles skins visuales por nicho y la interacción en mostrador. Se requiere blindar el alcance para evitar feature creep antes de la validación en calle.
+- **Comportamiento Esperado / Solución:**
+  1. **Tríada Core Blindada (MVP de Corto Plazo):**
+     - Comerciante: seguimiento de clientes y gestión de 2 a 3 promociones.
+     - Cliente: PWA instantánea para consultar promociones activas/próximas a desbloquear.
+     - WhatsApp: canal directo de disparo de promociones al cliente.
+  2. **Exploración / Backlog Futuro (No Vinculante):** Skins inmersivos SVG por nicho, paquetes freemium prediseñados y mini-CRM multi-servicio quedan en estado de exploración sin comprometer código inicial.
+  3. **Pares Prioritarios para Campo:** Barberías (`BAR`) y Cafeterías (`CAF`) seleccionadas para las primeras entrevistas en terreno y prototipado rápido.
+- **Etiquetas:** `#idea-futura #exploracion #ui-ux #mvp-scope`
+- **Tópico / Componente Afectado:** `docs/minuta_charla_facu.md`, `docs/guion_preguntas_terreno.md`
+
 ---
 
 ## 6. 🏷️ Índice de Tópicos y Relaciones Cruzadas
 | Tag | Descripción | Notas Vinculadas |
 | :--- | :--- | :--- |
 | `#arquitectura` | Decisiones estructurales y de sistema | [NOTA-001], [NOTA-002] |
-| `#ui-ux` | Diseño visual, interfaz y experiencia | - |
+| `#ui-ux` | Diseño visual, interfaz y experiencia | [NOTA-005] |
 | `#bug` | Correcciones de fallos o comportamientos anómalos | - |
-| `#idea-futura` | Propuestas y mejoras para próximas fases | - |
+| `#idea-futura` | Propuestas y mejoras para próximas fases | [NOTA-005] |
+| `#exploracion` | Ideas preliminares y debates no vinculantes | [NOTA-005] |
+| `#mvp-scope` | Blindaje de alcance y objetivos de corto plazo | [NOTA-005] |
 | `#alta` | Tareas o notas de máxima prioridad | [NOTA-001], [NOTA-002], [NOTA-003], [NOTA-004] |
 | `#negocio` | Definiciones de modelo de negocio y monetización | [NOTA-004] |
 | `#scope` | Alcance y nichos priorizados del producto | [NOTA-004] |
