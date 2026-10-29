@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "historyId": "68e49058-944a-4d48-a9f7-33aadf56fe36",
+  "currentRevision": "f23e3d66-27c0-4ac3-a171-7526c11f8c09",
+  "pendingChanges": false,
+  "files": {
+    "index.html": {
+      "hash": "3dd7e8d2e6d9f22baf3211c7504b46cff808648d4da541556c131cc32b4848cf",
+      "content": "/home/jesus/.cache/hyperframes/history/68e49058-944a-4d48-a9f7-33aadf56fe36/blobs/3d/3dd7e8d2e6d9f22baf3211c7504b46cff808648d4da541556c131cc32b4848cf"
+    }
+  },
+  "revisions": {
+    "f23e3d66-27c0-4ac3-a171-7526c11f8c09": {
+      "actor": {
+        "kind": "outside",
+        "name": "Outside"
+      },
+      "label": "Changed outside the app",
+      "startedAt": 1793167302481,
+      "endedAt": 1793167302482,
+      "files": {
+        "index.html": {
+          "before": "/home/jesus/.cache/hyperframes/history/68e49058-944a-4d48-a9f7-33aadf56fe36/blobs/71/715378f6aecc15419242367b741ca62fc8851b5f530e8e87a87f4c9d5b74b66d",
+          "after": "/home/jesus/.cache/hyperframes/history/68e49058-944a-4d48-a9f7-33aadf56fe36/blobs/3d/3dd7e8d2e6d9f22baf3211c7504b46cff808648d4da541556c131cc32b4848cf"
+        }
+      }
+    }
+  },
+  "checks": {
+    "latest": {
+      "revision": "f23e3d66-27c0-4ac3-a171-7526c11f8c09",
+      "id": "96be0664-e3b4-425c-8391-5156873d8165"
+    },
+    "revisions": {
+      "f23e3d66-27c0-4ac3-a171-7526c11f8c09": [
+        {
+          "id": "96be0664-e3b4-425c-8391-5156873d8165",
+          "scope": "project",
+          "report": "/home/jesus/projects/p-fidelizar/motion/brag-test/.hyperframes/artifacts/checks/96be0664-e3b4-425c-8391-5156873d8165.json",
+          "metadata": {
+            "ok": true,
+            "browserSkipped": false,
+            "options": {
+              "samples": 9,
+              "atTransitions": false,
+              "maxIssues": 80,
+              "collapseStatic": true,
+              "tolerance": 2,
+              "timeout": 10000,
+              "contrast": true,
+              "strict": false,
+              "snapshots": false,
+              "browserGpuMode": "auto"
+            }
+          },
+          "createdAt": 1793167310879,
+          "contentHash": "7e203067dd25d1cf9c5a3ab416f2eea57c19498ca900ddd5aee2376791fd1b5a",
+          "revision": "f23e3d66-27c0-4ac3-a171-7526c11f8c09",
+          "inputFingerprint": "304eae6d6bf775eda56e6625379303271a0d4ce2a6d608803074fac63a0cdd50",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision"
+        }
+      ]
+    },
+    "unversioned": [
+      {
+        "id": "0f62c7dd-e9d2-4636-a76c-9dd4d8a1bab9",
+        "scope": "project",
+        "report": "/home/jesus/projects/p-fidelizar/motion/brag-test/.hyperframes/artifacts/checks/0f62c7dd-e9d2-4636-a76c-9dd4d8a1bab9.json",
+        "metadata": {
+          "ok": false,
+          "browserSkipped": true,
+          "options": {
+            "samples": 9,
+            "atTransitions": false,
+            "maxIssues": 80,
+            "collapseStatic": true,
+            "tolerance": 2,
+            "timeout": 10000,
+            "contrast": true,
+            "strict": false,
+            "snapshots": false,
+            "browserGpuMode": "auto"
+          }
+        },
+        "createdAt": 1793167283978,
+        "contentHash": "ca1bd584064b828d92bb43921a47de4f6cfb0455f5b7712b5730a1c3939342e5",
+        "revision": null,
+        "inputFingerprint": "9756a259b0d47a5fe56e1e44a7c316a6f4acaf470378e5f2431fb5fff5c68777",
+        "inputScope": "local-project-files",
+        "attribution": "unversioned"
+      }
+    ]
+  },
+  "snapshots": {
+    "latest": null,
+    "revisions": {},
+    "unversioned": []
+  },
+  "renders": {
+    "latest": {
+      "id": "ab40ebf2-390d-487f-8053-ba724b786c22",
+      "completedAt": 1793167359751,
+      "output": "/mnt/c/Users/User/Desktop/BRAG_FIDELIZAR_RAPIDO.mp4",
+      "status": "completed",
+      "revision": "f23e3d66-27c0-4ac3-a171-7526c11f8c09"
+    },
+    "retainedRevisions": [
+      "f23e3d66-27c0-4ac3-a171-7526c11f8c09"
+    ]
+  },
+  "pendingArtifactCleanup": []
+}

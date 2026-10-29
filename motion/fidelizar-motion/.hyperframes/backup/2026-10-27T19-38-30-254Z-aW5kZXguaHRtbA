@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920, height=1080">
+  <title>P-Fidelizar: Huashu Camera Rig 3D Cinematic</title>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #04060a;
+      --card-base: #0f1523;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      
+      --c-f0: #38bdf8;
+      --c-trans: #f59e0b;
+      --c-f1: #10b981;
+      --c-core: #c084fc;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: var(--bg);
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      color: #f8fafc;
+    }
+
+    /* TEMA 061: DARK KEYNOTE (APPLE / SAAS-MOTION-KIT) */
+    :root {
+      --bg: #030508;
+      --card-base: #0c121d;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      
+      --c-f0: #38bdf8;
+      --c-trans: #f59e0b;
+      --c-f1: #10b981;
+      --c-core: #c084fc;
+      --c-spotlight: rgba(255, 255, 255, 0.07);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #030508;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      color: #f8fafc;
+    }
+
+    /* HUASHU CAMERA RIG: VIEWPORT / CAMERA / WORLD */
+    #stage {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: radial-gradient(ellipse 120% 100% at 50% 0%, #0d1626 0%, #030508 75%);
+    }
+
+    /* KEYNOTE SPOTLIGHT CONE DE ARRIBA (TEMA 061) */
+    #keynote-spot {
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1100px;
+      height: 900px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(56, 189, 248, 0.04) 40%, transparent 70%);
+      pointer-events: none;
+      z-index: 2;
+      filter: blur(40px);
+    }
+
+    #camera-rig {
+      position: absolute;
+      inset: 0;
+      perspective: 1200px;
+      perspective-origin: 960px 540px;
+    }
+
+    #world {
+      position: absolute;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 960px 540px;
+      will-change: transform;
+      padding: 30px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* LUZ AMBIENTAL DE FONDO */
+    #ambient-glow {
+      position: absolute;
+      width: 750px;
+      height: 750px;
+      border-radius: 50%;
+      filter: blur(180px);
+      opacity: 0.20;
+      pointer-events: none;
+      z-index: 1;
+      top: 50%;
+      left: 50%;
+      background: var(--c-f0);
+    }
+
+    /* VIEWPORT CANVAS (ESTILO DARK KEYNOTE DE SAAS-MOTION-KIT) */
+    .viewport-canvas {
+      width: 100%;
+      max-width: 1720px;
+      background: rgba(10, 15, 24, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 20px;
+      padding: 24px 36px 32px 36px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      position: relative;
+      z-index: 10;
+      backdrop-filter: blur(28px);
+    }
+
+    .canvas-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+
+    .hud-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #94a3b8;
+    }
+
+    /* GRILLA EXACTA DE 3 COLUMNAS Y CANALES */
+    .phases-grid {
+      display: grid;
+      grid-template-columns: 1fr 140px 1fr 140px 1fr;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .phase-column {
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #0a0e17;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .col-f0 { border-top: 3px solid var(--c-f0); }
+    .col-trans { border-top: 3px solid var(--c-trans); }
+    .col-f1 { border-top: 3px solid var(--c-f1); }
+
+    .phase-head {
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .col-f0 .phase-head { background: rgba(56, 189, 248, 0.12); color: #7dd3fc; }
+    .col-trans .phase-head { background: rgba(245, 158, 11, 0.12); color: #fde68a; }
+    .col-f1 .phase-head { background: rgba(16, 185, 129, 0.12); color: #a7f3d0; }
+
+    .phase-body {
+      padding: 16px 18px 18px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      gap: 12px;
+    }
+
+    /* TARJETAS */
+    /* TARJETAS GLASSCARD DEL ESTILO KALLAWAY (NATE HERK EDIT KIT) */
+    .module-card {
+      background: rgba(16, 22, 34, 0.65);
+      backdrop-filter: blur(20px) saturate(135%);
+      -webkit-backdrop-filter: blur(20px) saturate(135%);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+      position: relative;
+      transform-origin: center center;
+    }
+
+    /* Brillo superior en hairline estilo Kallaway */
+    .module-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 10px; right: 10px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4) 40%, rgba(255,255,255,0.4) 60%, transparent);
+      border-radius: 1px;
+      pointer-events: none;
+    }
+
+    .col-f0 .module-card {
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 18px rgba(56, 189, 248, 0.12);
+    }
+    .col-trans .module-card {
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 18px rgba(245, 158, 11, 0.12);
+    }
+    .col-f1 .module-card {
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 18px rgba(16, 185, 129, 0.12);
+    }
+
+    .core-card {
+      background: rgba(24, 17, 38, 0.8) !important;
+      border: 1px solid rgba(192, 132, 252, 0.6) !important;
+      box-shadow: 0 16px 45px rgba(0,0,0,0.7), 0 0 25px rgba(192, 132, 252, 0.25) !important;
+    }
+
+    .module-head {
+      padding: 8px 14px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.02em;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .col-f0 .module-head { background: rgba(56, 189, 248, 0.18); }
+    .col-trans .module-head { background: rgba(245, 158, 11, 0.18); }
+    .col-f1 .module-head { background: rgba(16, 185, 129, 0.18); }
+    /* TARJETA CORE CON INDICADOR EN TIEMPO REAL (SAAS-MOTION-KIT SURPRISE BEAT) */
+    .core-live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      padding: 4px 8px;
+      background: rgba(192, 132, 252, 0.12);
+      border: 1px solid rgba(192, 132, 252, 0.35);
+      border-radius: 6px;
+      font-size: 8.5px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #e9d5ff;
+      font-weight: 700;
+    }
+
+    .pulse-secure-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #c084fc;
+      box-shadow: 0 0 8px #c084fc;
+      animation: corepulse 1.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes corepulse {
+      from { transform: scale(0.85); opacity: 0.6; }
+      to { transform: scale(1.3); opacity: 1; }
+    }
+
+    .module-body-content {
+      padding: 8px 12px 10px 12px;
+      font-size: 11px;
+      line-height: 1.45;
+      color: #94a3b8;
+    }
+
+    .item-list { list-style: none; }
+    .item-list li {
+      position: relative;
+      padding-left: 12px;
+      margin-bottom: 3px;
+    }
+    .item-list li:last-child { margin-bottom: 0; }
+    .item-list li::before {
+      content: "";
+      position: absolute;
+      left: 1px;
+      top: 5px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+    }
+
+    .col-f0 .item-list li::before { background: var(--c-f0); }
+    .col-trans .item-list li::before { background: var(--c-trans); }
+    .col-f1 .item-list li::before { background: var(--c-f1); }
+    .core-card .item-list li::before { background: var(--c-core); }
+
+    .module-subfooter {
+      margin-top: 6px;
+      padding-top: 4px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    /* MINI-CHART PARAMÉTRICO DE BARRAS (NUTLLWHY MOTION LIBRARY) */
+    .mini-chart-container {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .mini-chart-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #94a3b8;
+      font-weight: 700;
+    }
+
+    .mini-chart-bars {
+      display: flex;
+      align-items: flex-end;
+      height: 48px;
+      gap: 6px;
+      padding: 4px 6px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 6px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .mini-bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      height: 100%;
+      position: relative;
+    }
+
+    .mini-bar-rect {
+      width: 100%;
+      border-radius: 3px 3px 0 0;
+      transform-origin: bottom center;
+      height: 2px;
+      box-shadow: 0 0 10px currentColor;
+    }
+
+    .mini-bar-lbl {
+      font-size: 7.5px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #94a3b8;
+      font-weight: 700;
+      margin-top: 3px;
+    }
+
+    .mini-bar-val {
+      font-size: 8.5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      color: #ffffff;
+      opacity: 0;
+      margin-bottom: 2px;
+    }
+
+    /* CONECTORES VERTICALES */
+    .vertical-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: -2px 0;
+      gap: 1px;
+    }
+
+    .link-tag {
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .col-f0 .link-tag { color: var(--c-f0); }
+    .col-trans .link-tag { color: var(--c-trans); }
+    .col-f1 .link-tag { color: var(--c-f1); }
+
+    .arrow-icon {
+      width: 14px;
+      height: 14px;
+      stroke-width: 2.5;
+      fill: none;
+    }
+
+    /* CANALES TRANSVERSALES */
+    .inter-channel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 0 10px;
+    }
+
+    .channel-line {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .flowing-wire {
+      animation: dashflow 0.8s linear infinite;
+    }
+
+    @keyframes dashflow {
+      to { stroke-dashoffset: -12; }
+    }
+
+    .flow-badge {
+      z-index: 10;
+      background: #0d121c;
+      border-radius: 8px;
+      padding: 8px 12px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+      backdrop-filter: blur(10px);
+      transform-origin: center center;
+    }
+
+    .flow-badge-top {
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      line-height: 1.2;
+    }
+
+    .flow-badge-sub {
+      font-size: 8px;
+      color: #94a3b8;
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    .badge-amber {
+      border: 1px solid rgba(245, 158, 11, 0.9);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
+    }
+    .badge-amber .flow-badge-top { color: var(--c-trans); }
+
+    .badge-emerald {
+      border: 1px solid rgba(16, 185, 129, 0.9);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+    }
+    .badge-emerald .flow-badge-top { color: var(--c-f1); }
+
+    /* CURSOR VIRTUAL DE INTERACCIÓN (PRODUCT-LAUNCH-MOTION DE ABUBAKR CHAN) */
+    #stage-cursor {
+      position: absolute;
+      width: 44px;
+      height: 54px;
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0;
+      filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.75));
+    }
+
+    #cursor-arrow {
+      width: 32px;
+      height: 38px;
+      fill: #ffffff;
+      stroke: #0A0E14;
+      stroke-width: 2.5;
+      stroke-linejoin: round;
+    }
+
+    /* ONDA DE PRESIÓN RIPPLE AL HACER CLIC */
+    #cursor-ripple {
+      position: absolute;
+      left: 3px;
+      top: 3px;
+      width: 40px;
+      height: 40px;
+      margin: -20px 0 0 -20px;
+      border-radius: 50%;
+      border: 2px solid var(--c-f1);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* PILL BADGE DEL CURSOR (AGENT FOLLOWER) */
+    .cursor-pill {
+      position: absolute;
+      left: 28px;
+      top: 24px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #38bdf8, #10b981);
+      color: #030508;
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <main data-hf-id="hf-rfh3" id="stage" data-composition-id="fidelizar_diagram" data-start="0" data-duration="20" data-width="1920" data-height="1080">
+
+    <!-- HUASHU CAMERA RIG: VIRTUAL DIRECTOR -->
+    <div data-hf-id="hf-iu6l" id="camera-rig">
+      <div data-hf-id="hf-j427" id="world">
+
+        <!-- CURSOR ELIMINADO -->
+
+        <div data-hf-id="hf-jqtr" id="ambient-glow"></div>
+
+        <div data-hf-id="hf-oi5f" class="viewport-canvas">
+
+          <!-- CABECERA -->
+          <header data-hf-id="hf-jgvn" id="main-header" class="canvas-header">
+            <h1 data-hf-id="hf-2ua2">Diagrama de P-Fidelizar</h1>
+            <div data-hf-id="hf-cstl" class="hud-badge">
+              <span data-hf-id="hf-bo5k" style="color: #38bdf8;">🍎</span> THEME 061: DARK KEYNOTE • APPLE STYLE
+            </div>
+          </header>
+
+          <!-- GRILLA DE 3 COLUMNAS -->
+          <div data-hf-id="hf-ev2t" class="phases-grid">
+
+            <!-- ========================================== -->
+            <!-- COLUMNA 1: FASE 0 - CAMPO                  -->
+            <!-- ========================================== -->
+            <section data-hf-id="hf-4nu1" id="col-fase0" class="phase-column col-f0">
+              <div data-hf-id="hf-gc7c" class="phase-head">
+                <span data-hf-id="hf-dq3f">⚡ FASE 0: CAMPO</span>
+                <span data-hf-id="hf-21ig" style="font-size: 10px; color: var(--c-f0); font-weight: 700;">RELEVAMIENTO</span>
+              </div>
+
+              <div data-hf-id="hf-pmwm" class="phase-body">
+                <article data-hf-id="hf-m0s5" id="card-f0-1" class="module-card">
+                  <div data-hf-id="hf-c5xk" class="module-head">1. Documento Guía</div>
+                  <div data-hf-id="hf-umhp" class="module-body-content">
+                    <ul data-hf-id="hf-mke2" class="item-list">
+                      <li data-hf-id="hf-cfmi">Preguntas estructuradas por nichos de comercio</li>
+                      <li data-hf-id="hf-v4p0">Pautas de comunicación y sugerencias de venta</li>
+                      <li data-hf-id="hf-bndc">Horarios estratégicos de visita y asistencia</li>
+                    </ul>
+                    <div data-hf-id="hf-bbws" class="module-subfooter">Estandarización metodológica para el equipo</div>
+                  </div>
+                </article>
+
+                <div data-hf-id="hf-rgye" id="arrow-v1" class="vertical-link">
+                  <span data-hf-id="hf-v0vr" class="link-tag">Criterio unificado</span>
+                  <svg data-hf-id="hf-tm90" class="arrow-icon" viewBox="0 0 24 24" stroke="var(--c-f0)">
+                    <path data-hf-id="hf-ba0l" d="M12 2v20m0 0l-5-5m5 5l5-5" />
+                  </svg>
+                </div>
+
+                <article data-hf-id="hf-pyw6" id="card-f0-2" class="module-card">
+                  <div data-hf-id="hf-fu42" class="module-head">2. PWA Mapa Interactivo</div>
+                  <div data-hf-id="hf-w50x" class="module-body-content">
+                    <ul data-hf-id="hf-wndq" class="item-list">
+                      <li data-hf-id="hf-8283">Pines geolocalizados de comercios en el mapa</li>
+                      <li data-hf-id="hf-wbth">Teléfono, encargado, horarios, dirección y notas</li>
+                      <li data-hf-id="hf-9ee6">Edición colaborativa simultánea entre teléfonos</li>
+                    </ul>
+                    <div data-hf-id="hf-4nuz" class="module-subfooter">Herramienta operativa temporal de relevamiento</div>
+                  </div>
+                </article>
+
+                <div data-hf-id="hf-niud" id="arrow-v2" class="vertical-link">
+                  <span data-hf-id="hf-cbrc" class="link-tag">Sincronización en vivo</span>
+                  <svg data-hf-id="hf-3mho" class="arrow-icon" viewBox="0 0 24 24" stroke="var(--c-f0)">
+                    <path data-hf-id="hf-8ko9" d="M12 2v20m0 0l-5-5m5 5l5-5" />
+                  </svg>
+                </div>
+
+                <article data-hf-id="hf-tx07" id="card-f0-3" class="module-card">
+                  <div data-hf-id="hf-cn90" class="module-head">3. BaseRow Cloud</div>
+                  <div data-hf-id="hf-xby0" class="module-body-content">
+                    <ul data-hf-id="hf-x1or" class="item-list">
+                      <li data-hf-id="hf-611m">Reflejo automático entre teléfonos del equipo</li>
+                      <li data-hf-id="hf-sdyq">Repositorio central de respuestas de la encuesta</li>
+                      <li data-hf-id="hf-jw91">Base en la nube (0 MB de infraestructura local)</li>
+                    </ul>
+                    
+                    <!-- GRÁFICO NUTLLWHY MOTION: 4 NICHOS X 10 LOCALES -->
+                    <div data-hf-id="hf-finc" class="mini-chart-container">
+                      <div data-hf-id="hf-yxs8" class="mini-chart-header">
+                        <span data-hf-id="hf-sipu">4 NICHOS RELEVADOS</span>
+                        <span data-hf-id="hf-l6t5" style="color: var(--c-f0);">10 C/U = 40 TOTAL</span>
+                      </div>
+                      <div data-hf-id="hf-p7cx" class="mini-chart-bars">
+                        <div data-hf-id="hf-iul0" class="mini-bar-col">
+                          <span data-hf-id="hf-z308" class="mini-bar-val" id="bval-1">10</span>
+                          <div data-hf-id="hf-n9zf" class="mini-bar-rect" id="bar-f0-1" style="background: var(--c-f0); color: var(--c-f0);"></div>
+                          <span data-hf-id="hf-tnk5" class="mini-bar-lbl">CAFETERIAS
+</span>
+                        </div>
+                        <div data-hf-id="hf-swh8" class="mini-bar-col">
+                          <span data-hf-id="hf-t4f7" class="mini-bar-val" id="bval-2">10</span>
+                          <div data-hf-id="hf-uq26" class="mini-bar-rect" id="bar-f0-2" style="background: #38bdf8; color: #38bdf8;"></div>
+                          <span data-hf-id="hf-27fw" class="mini-bar-lbl">BARBERIAS</span>
+                        </div>
+                        <div data-hf-id="hf-rpk5" class="mini-bar-col">
+                          <span data-hf-id="hf-i1gq" class="mini-bar-val" id="bval-3">10</span>
+                          <div data-hf-id="hf-4l8h" class="mini-bar-rect" id="bar-f0-3" style="background: #7dd3fc; color: #7dd3fc;"></div>
+                          <span data-hf-id="hf-608q" class="mini-bar-lbl">PANADERIAS</span>
+                        </div>
+                        <div data-hf-id="hf-s3v6" class="mini-bar-col">
+                          <span data-hf-id="hf-6yfx" class="mini-bar-val" id="bval-4">10</span>
+                          <div data-hf-id="hf-5zow" class="mini-bar-rect" id="bar-f0-4" style="background: #bae6fd; color: #bae6fd;"></div>
+                          <span data-hf-id="hf-wg81" class="mini-bar-lbl">HELADERIAS
+</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </section>
+
+
+            <!-- ========================================== -->
+            <!-- CANAL 1: FASE 0 -> TRANSICIÓN              -->
+            <!-- ========================================== -->
+            <div data-hf-id="hf-or91" id="channel-1" class="inter-channel">
+              <svg data-hf-id="hf-0ni9" class="channel-line" viewBox="0 0 140 600" preserveAspectRatio="none">
+                <defs data-hf-id="hf-mh0t">
+                  <filter data-hf-id="hf-iavt" id="glow-p1" x="-50%" y="-50%" width="200%" height="200%">
+                    <fegaussianblur data-hf-id="hf-5j4h" in="SourceGraphic" stdDeviation="2.5" result="blur" />
+                    <femerge data-hf-id="hf-zn2o">
+                      <femergenode data-hf-id="hf-t7ws" in="blur" />
+                      <femergenode data-hf-id="hf-cmaw" in="SourceGraphic" />
+                    </femerge>
+                  </filter>
+                </defs>
+
+                <!-- LÍNEA SÓLIDA QUE SE DIBUJA GRADUALMENTE -->
+                <path data-hf-id="hf-0vwk" id="path-trans-1" d="M 0 520 L 70 520 L 70 95 L 140 95" fill="none" stroke="var(--c-trans)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="600" stroke-dashoffset="600" style="opacity: 0;" />
+
+                <!-- LÍNEA PUNTEADA CON CORRIENTE FLUIDA (DASHMOTION) -->
+                <path data-hf-id="hf-aljw" id="wire-trans-1" d="M 0 520 L 70 520 L 70 95 L 140 95" fill="none" stroke="var(--c-trans)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 6" class="flowing-wire" style="opacity: 0;" />
+
+                <polygon data-hf-id="hf-4ebt" id="arrowhead-trans-1" points="130,90 140,95 130,100" fill="var(--c-trans)" style="opacity: 0;" />
+
+                <!-- DOTS VIAJEROS -->
+                <circle data-hf-id="hf-vbvf" id="dot-packet-1a" r="4.5" fill="#fde68a" filter="url(#glow-p1)" style="opacity: 0;">
+                  <animatemotion data-hf-id="hf-6nkx" id="anim-dot-1a" dur="1.6s" repeatCount="indefinite" path="M 0 520 L 70 520 L 70 95 L 140 95" />
+                </circle>
+                <circle data-hf-id="hf-r7ea" id="dot-packet-1b" r="3.5" fill="#f59e0b" filter="url(#glow-p1)" style="opacity: 0;">
+                  <animatemotion data-hf-id="hf-91sh" id="anim-dot-1b" dur="1.6s" begin="0.8s" repeatCount="indefinite" path="M 0 520 L 70 520 L 70 95 L 140 95" />
+                </circle>
+              </svg>
+
+              <div data-hf-id="hf-is7m" id="badge-fin-fase0" class="flow-badge badge-amber">
+                <div data-hf-id="hf-ddim" class="flow-badge-top">FIN FASE 0</div>
+                <div data-hf-id="hf-e7er" class="flow-badge-sub">Datos de Campo</div>
+              </div>
+            </div>
+
+
+            <!-- ========================================== -->
+            <!-- COLUMNA 2: TRANSICIÓN Y FEEDBACK           -->
+            <!-- ========================================== -->
+            <section data-hf-id="hf-q6ew" id="col-trans" class="phase-column col-trans">
+              <div data-hf-id="hf-5kqo" class="phase-head">
+                <span data-hf-id="hf-rtt7">🔄 FASE TRANSICIÓN</span>
+                <span data-hf-id="hf-414a" style="font-size: 10px; color: var(--c-trans); font-weight: 700;">CALIBRACIÓN BETA</span>
+              </div>
+
+              <div data-hf-id="hf-it22" class="phase-body">
+                <article data-hf-id="hf-qgf7" id="card-trans-1" class="module-card">
+                  <div data-hf-id="hf-2kf4" class="module-head">1. Análisis de Respuestas</div>
+                  <div data-hf-id="hf-wxmz" class="module-body-content">
+                    <ul data-hf-id="hf-xfzs" class="item-list">
+                      <li data-hf-id="hf-ydsj">Procesamiento e interpretación de encuestas</li>
+                      <li data-hf-id="hf-0euz">Detección de patrones y objeciones comunes</li>
+                      <li data-hf-id="hf-5yh6">Calibración de la propuesta de valor con datos</li>
+                    </ul>
+                    <div data-hf-id="hf-1qg7" class="module-subfooter">Validación de dolor real sobre los 40 locales</div>
+                  </div>
+                </article>
+
+                <div data-hf-id="hf-mr6k" id="arrow-v3" class="vertical-link">
+                  <span data-hf-id="hf-02wi" class="link-tag">Interés en participar</span>
+                  <svg data-hf-id="hf-djd8" class="arrow-icon" viewBox="0 0 24 24" stroke="var(--c-trans)">
+                    <path data-hf-id="hf-9rlc" d="M12 2v20m0 0l-5-5m5 5l5-5" />
+                  </svg>
+                </div>
+
+                <article data-hf-id="hf-hsjc" id="card-trans-2" class="module-card">
+                  <div data-hf-id="hf-bsbp" class="module-head">2. Filtro de Locales Testers</div>
+                  <div data-hf-id="hf-uy3u" class="module-body-content">
+                    <ul data-hf-id="hf-unul" class="item-list">
+                      <li data-hf-id="hf-dv6s">Selección de comercios para probar el MVP</li>
+                      <li data-hf-id="hf-1sm6">Incorporación de sugerencias y correcciones</li>
+                      <li data-hf-id="hf-0k2i">Ajuste de requerimientos antes de programar</li>
+                    </ul>
+                    <div data-hf-id="hf-hndg" class="module-subfooter">Cohorte inicial de comercios beta</div>
+                  </div>
+                </article>
+
+                <div data-hf-id="hf-a8o3" id="arrow-v4" class="vertical-link">
+                  <span data-hf-id="hf-0267" class="link-tag">Pase a desarrollo</span>
+                  <svg data-hf-id="hf-i3qc" class="arrow-icon" viewBox="0 0 24 24" stroke="var(--c-trans)">
+                    <path data-hf-id="hf-9dab" d="M12 2v20m0 0l-5-5m5 5l5-5" />
+                  </svg>
+                </div>
+
+                <article data-hf-id="hf-ik75" id="card-trans-3" class="module-card">
+                  <div data-hf-id="hf-0wt4" class="module-head">3. Planificación Técnica en Jira</div>
+                  <div data-hf-id="hf-ujst" class="module-body-content">
+                    <ul data-hf-id="hf-v25m" class="item-list">
+                      <li data-hf-id="hf-6ubo">Pedro &amp; Facu estructuran Epics e historias</li>
+                      <li data-hf-id="hf-rvol">Responsables por etapa e hitos claros</li>
+                      <li data-hf-id="hf-bict">Comienzo formal del código para la app del MVP</li>
+                    </ul>
+                    <div data-hf-id="hf-ac4u" class="module-subfooter" style="color: var(--c-f1);">Disparo formal del desarrollo de la Fase 1</div>
+                  </div>
+                </article>
+              </div>
+            </section>
+
+
+            <!-- ========================================== -->
+            <!-- CANAL 2: TRANSICIÓN -> FASE 1              -->
+            <!-- ========================================== -->
+            <div data-hf-id="hf-spd2" id="channel-2" class="inter-channel">
+              <svg data-hf-id="hf-pout" class="channel-line" viewBox="0 0 140 600" preserveAspectRatio="none">
+                <defs data-hf-id="hf-vl9d">
+                  <filter data-hf-id="hf-lwq0" id="glow-p2" x="-50%" y="-50%" width="200%" height="200%">
+                    <fegaussianblur data-hf-id="hf-9bid" in="SourceGraphic" stdDeviation="2.5" result="blur" />
+                    <femerge data-hf-id="hf-4ors">
+                      <femergenode data-hf-id="hf-5i04" in="blur" />
+                      <femergenode data-hf-id="hf-cnhc" in="SourceGraphic" />
+                    </femerge>
+                  </filter>
+                </defs>
+
+                <!-- LÍNEA SÓLIDA QUE SE DIBUJA GRADUALMENTE -->
+                <path data-hf-id="hf-817i" id="path-trans-2" d="M 0 520 L 70 520 L 70 95 L 140 95" fill="none" stroke="var(--c-f1)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="600" stroke-dashoffset="600" style="opacity: 0;" />
+
+                <!-- LÍNEA PUNTEADA CON CORRIENTE FLUIDA (DASHMOTION) -->
+                <path data-hf-id="hf-bty8" id="wire-trans-2" d="M 0 520 L 70 520 L 70 95 L 140 95" fill="none" stroke="var(--c-f1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 6" class="flowing-wire" style="opacity: 0;" />
+
+                <polygon data-hf-id="hf-u2b5" id="arrowhead-trans-2" points="130,90 140,95 130,100" fill="var(--c-f1)" style="opacity: 0;" />
+
+                <!-- DOTS VIAJEROS -->
+                <circle data-hf-id="hf-ktpe" id="dot-packet-2a" r="4.5" fill="#a7f3d0" filter="url(#glow-p2)" style="opacity: 0;">
+                  <animatemotion data-hf-id="hf-2cos" id="anim-dot-2a" dur="1.6s" repeatCount="indefinite" path="M 0 520 L 70 520 L 70 95 L 140 95" />
+                </circle>
+                <circle data-hf-id="hf-aiji" id="dot-packet-2b" r="3.5" fill="#10b981" filter="url(#glow-p2)" style="opacity: 0;">
+                  <animatemotion data-hf-id="hf-v1cg" id="anim-dot-2b" dur="1.6s" begin="0.8s" repeatCount="indefinite" path="M 0 520 L 70 520 L 70 95 L 140 95" />
+                </circle>
+              </svg>
+
+              <div data-hf-id="hf-xz6z" id="badge-inicio-codigo" class="flow-badge badge-emerald">
+                <div data-hf-id="hf-f24e" class="flow-badge-top">INICIO CÓDIGO</div>
+                <div data-hf-id="hf-kozz" class="flow-badge-sub">Desarrollo MVP</div>
+              </div>
+            </div>
+
+
+            <!-- ========================================== -->
+            <!-- COLUMNA 3: FASE 1 - MVP                    -->
+            <!-- ========================================== -->
+            <section data-hf-id="hf-dyjb" id="col-fase1" class="phase-column col-f1">
+              <div data-hf-id="hf-4dtl" class="phase-head">
+                <span data-hf-id="hf-o87g">🚀 FASE 1: PRODUCCIÓN</span>
+                <span data-hf-id="hf-8r11" style="font-size: 10px; color: var(--c-f1); font-weight: 700;">CORE POSTGRESQL</span>
+              </div>
+
+              <div data-hf-id="hf-j7d3" class="phase-body">
+                <article data-hf-id="hf-j3o8" id="card-f1-1" class="module-card">
+                  <div data-hf-id="hf-dvgs" class="module-head">1. Alta del Cliente en el Comercio</div>
+                  <div data-hf-id="hf-vqpw" class="module-body-content">
+                    <ul data-hf-id="hf-vggn" class="item-list">
+                      <li data-hf-id="hf-f3q5">El cliente ingresa su número de teléfono al comprar</li>
+                      <li data-hf-id="hf-qdup">Registro asociado: teléfono, nombre, fecha y horario</li>
+                      <li data-hf-id="hf-ounu">Acumulación de sellos asignada al comercio actual</li>
+                    </ul>
+                    <div data-hf-id="hf-th8p" class="module-subfooter">Punto de inicio del circuito transaccional</div>
+                  </div>
+                </article>
+
+                <div data-hf-id="hf-42ya" id="arrow-v5" class="vertical-link">
+                  <span data-hf-id="hf-u4bx" class="link-tag">Reflejo en mostrador</span>
+                  <svg data-hf-id="hf-nkzv" class="arrow-icon" viewBox="0 0 24 24" stroke="var(--c-f1)">
+                    <path data-hf-id="hf-7dr6" d="M12 2v20m0 0l-5-5m5 5l5-5" />
+                  </svg>
+                </div>
+
+                <article data-hf-id="hf-rrk3" id="card-f1-2" class="module-card">
+                  <div data-hf-id="hf-rbuf" class="module-head">2. Terminal y Pantalla del Comercio</div>
+                  <div data-hf-id="hf-vcev" class="module-body-content">
+                    <ul data-hf-id="hf-vuro" class="item-list">
+                      <li data-hf-id="hf-9ctr">Visualización en la pantalla de la PC del local</li>
+                      <li data-hf-id="hf-nx8u">Influencia en clientes: campañas y promociones</li>
+                      <li data-hf-id="hf-vpbg">Intercambio de productos por sellos acumulados</li>
+                    </ul>
+                    <div data-hf-id="hf-6912" class="module-subfooter">Herramienta comercial activa del negocio</div>
+                  </div>
+                </article>
+
+                <div data-hf-id="hf-04u9" id="arrow-v6" class="vertical-link">
+                  <span data-hf-id="hf-w3rc" class="link-tag">Sincronización segura</span>
+                  <svg data-hf-id="hf-9cv5" class="arrow-icon" viewBox="0 0 24 24" stroke="var(--c-core)">
+                    <path data-hf-id="hf-6zg5" d="M12 2v20m0 0l-5-5m5 5l5-5" />
+                  </svg>
+                </div>
+
+                <article data-hf-id="hf-0awm" id="card-f1-3" class="module-card core-card">
+                  <div data-hf-id="hf-ma3q" class="module-head">3. Base de Datos General (Core de Fidelizar)</div>
+                  <div data-hf-id="hf-zps6" class="module-body-content">
+                    <ul data-hf-id="hf-zfix" class="item-list">
+                      <li data-hf-id="hf-ajp1"><strong data-hf-id="hf-w2vn" style="color: #f3e8ff;">Gestión Multi-Tenant:</strong> datos de cada cliente y local</li>
+                      <li data-hf-id="hf-4jgk">Aislamiento estricto: ningún comercio ve datos ajenos</li>
+                      <li data-hf-id="hf-y5yl">Trazabilidad de sellos, canjes, altas y métricas globales</li>
+                      <li data-hf-id="hf-js1m">Base definitiva que reemplaza la etapa de BaseRow</li>
+                    </ul>
+
+                    <!-- SAAS-MOTION-KIT SURPRISE BEAT: LIVE STATUS INDICATOR -->
+                    <div data-hf-id="hf-wbjg" class="core-live-indicator" id="core-live-pill" style="opacity: 0;">
+                      <div data-hf-id="hf-2zbh" class="pulse-secure-dot"></div>
+                      <span data-hf-id="hf-tydd">RLS SECURITY: ACTIVE • 100% ISOLATED</span>
+                    </div>
+
+                    <div data-hf-id="hf-7plb" class="module-subfooter" style="color: var(--c-core); font-weight: 800; font-size: 9px; letter-spacing: 0.04em;">
+                      GESTIÓN TOTAL CENTRALIZADA POR EL EQUIPO DE FIDELIZAR
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </section>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- GSAP CHOREOGRAPHY + HUASHU CAMERA RIG 3D -->
+  <script>
+    // ========================================================
+    // DESIGN-ENGINEERING AUDIO ENGINE (WebAudio Suave)
+    // ========================================================
+    let audioCtx = null;
+    function getAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      return audioCtx;
+    }
+    window.addEventListener("pointerdown", () => getAudio(), { once: true });
+    window.addEventListener("keydown", () => getAudio(), { once: true });
+
+    function sfxCardLand() {
+      const ctx = getAudio();
+      if (!ctx || ctx.state !== "running") return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(320, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(140, ctx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.08);
+    }
+
+    function sfxFlowStart() {
+      const ctx = getAudio();
+      if (!ctx || ctx.state !== "running") return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(220, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.25);
+      gain.gain.setValueAtTime(0.05, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.25);
+    }
+
+    function sfxArrowArrival() {
+      const ctx = getAudio();
+      if (!ctx || ctx.state !== "running") return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+      gain.gain.setValueAtTime(0.06, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.35);
+    }
+
+    // 4. Acorde profundo y calmo para el Core de Postgres (Volumen 0.05)
+    function sfxCoreClimax() {
+      const ctx = getAudio();
+      if (!ctx || ctx.state !== "running") return;
+      [220, 277.18, 329.63].forEach((freq) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.02, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.7);
+      });
+    }
+
+    // 5. Whoosh cinemático de viento / brisa de aire (Ruido blanco con PRNG determinístico y filtro paso-banda)
+    function sfxWhoosh() {
+      const ctx = getAudio();
+      if (!ctx || ctx.state !== "running") return;
+      
+      const bufferSize = Math.floor(ctx.sampleRate * 0.45); // 450ms de brisa
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      
+      // PRNG Mulberry32 determinístico (cero Math.random para pasar el linter de HyperFrames)
+      let s = 123456789;
+      for (let i = 0; i < bufferSize; i++) {
+        s |= 0; s = s + 0x6D2B79F5 | 0;
+        let t = Math.imul(s ^ s >>> 15, 1 | s);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        data[i] = ((t ^ t >>> 14) >>> 0) / 4294967296 * 2 - 1;
+      }
+
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+
+      // Filtro paso-banda que barre las frecuencias del viento orgánico (80Hz -> 700Hz -> 80Hz)
+      const filter = ctx.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.Q.setValueAtTime(1.6, ctx.currentTime);
+      filter.frequency.setValueAtTime(90, ctx.currentTime);
+      filter.frequency.exponentialRampToValueAtTime(700, ctx.currentTime + 0.2);
+      filter.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.45);
+
+      // Envolvente de volumen muy suave y atenuada (0.05 max)
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.001, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.2);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+
+      noise.connect(filter).connect(gain).connect(ctx.destination);
+      noise.start();
+      noise.stop(ctx.currentTime + 0.45);
+    }
+
+    // ========================================================
+    // HUASHU CAMERA RIG: PROXY CONTROL OBJECT (SEEK-SAFE)
+    // ========================================================
+    const cam = {
+      cx: 960,
+      cy: 540,
+      zoom: 1.0,
+      rotX: 0,
+      rotY: 0,
+      rotZ: 0
+    };
+
+    const worldEl = document.getElementById("world");
+
+    function updateCamera() {
+      // Cinemática 3D por GPU (Transform3D determinístico)
+      worldEl.style.transform = 
+        `translate3d(${960 - cam.cx * cam.zoom}px, ${540 - cam.cy * cam.zoom}px, 0px) ` +
+        `scale3d(${cam.zoom}, ${cam.zoom}, 1) ` +
+        `rotateX(${cam.rotX}deg) rotateY(${cam.rotY}deg) rotateZ(${cam.rotZ}deg)`;
+    }
+
+    window.__timelines = window.__timelines || {};
+    const isStudio = window.location.hash.includes("project") || window !== window.parent;
+    const tl = gsap.timeline({ paused: isStudio });
+
+    // ESTADO INICIAL
+    gsap.set("#main-header", { opacity: 0, y: -25 });
+    gsap.set("#ambient-glow", { xPercent: -50, yPercent: -50, x: -550 });
+    gsap.set(["#col-fase0", "#col-trans", "#col-fase1"], { opacity: 0.05, filter: "brightness(0.3) blur(4px)" });
+    gsap.set([
+      "#card-f0-1", "#arrow-v1", "#card-f0-2", "#arrow-v2", "#card-f0-3",
+      "#card-trans-1", "#arrow-v3", "#card-trans-2", "#arrow-v4", "#card-trans-3",
+      "#card-f1-1", "#arrow-v5", "#card-f1-2", "#arrow-v6", "#card-f1-3"
+    ], { opacity: 0, scale: 0.85, y: 30 });
+    gsap.set(["#badge-fin-fase0", "#badge-inicio-codigo"], { opacity: 0, scale: 0.3 });
+
+    const path1 = document.getElementById("path-trans-1");
+    const len1 = path1.getTotalLength() || 600;
+    path1.style.strokeDasharray = len1;
+    path1.style.strokeDashoffset = len1;
+    gsap.set(["#path-trans-1", "#wire-trans-1", "#arrowhead-trans-1", "#dot-packet-1a", "#dot-packet-1b"], { opacity: 0 });
+
+    const path2 = document.getElementById("path-trans-2");
+    const len2 = path2.getTotalLength() || 600;
+    path2.style.strokeDasharray = len2;
+    path2.style.strokeDashoffset = len2;
+    gsap.set(["#path-trans-2", "#wire-trans-2", "#arrowhead-trans-2", "#dot-packet-2a", "#dot-packet-2b"], { opacity: 0 });
+
+    // APERTURA
+    tl.to("#main-header", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 0.2);
+
+    // ========================================================
+    // HUASHU CAMERA RIG: COREOGRAFÍA CINEMATOGRÁFICA 3D
+    // ========================================================
+    // 0s: Estado inicial en PLANO FRONTAL AL 100% (Ángulo recto, sin rotación)
+    cam.cx = 960;
+    cam.cy = 540;
+    cam.zoom = 1.0;
+    cam.rotX = 0;
+    cam.rotY = 0;
+    cam.rotZ = 0;
+    updateCamera();
+
+    // 1.0s a 3.5s: Transición suave del plano frontal a la PERSPECTIVA 3D ISOMÉTRICA sobre Fase 0
+    tl.to(cam, { 
+      cx: 640, cy: 520, zoom: 1.12, rotX: 12, rotY: -14, rotZ: 2,
+      duration: 2.5, ease: "power2.inOut", onUpdate: updateCamera, onStart: sfxWhoosh
+    }, 1.2);
+
+    // FASE 0: TARJETAS
+    tl.to("#ambient-glow", { x: -450, background: "var(--c-f0)", opacity: 0.22, duration: 1.0 }, 1.0);
+    tl.to("#col-fase0", { opacity: 1, filter: "brightness(1) blur(0px)", duration: 0.5 }, 1.2);
+
+    tl.to("#card-f0-1", { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.5)", onStart: sfxCardLand }, 1.7);
+    tl.to("#card-f0-1", { boxShadow: "0 0 25px rgba(56, 189, 248, 0.4)", duration: 0.25, yoyo: true, repeat: 1 }, 2.0);
+    tl.fromTo("#arrow-v1", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, 2.2);
+
+    tl.to("#card-f0-2", { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.5)", onStart: sfxCardLand }, 2.5);
+    tl.to("#card-f0-2", { boxShadow: "0 0 25px rgba(56, 189, 248, 0.4)", duration: 0.25, yoyo: true, repeat: 1 }, 2.8);
+    tl.fromTo("#arrow-v2", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, 3.0);
+
+    tl.to("#card-f0-3", { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.5)", onStart: sfxCardLand }, 3.3);
+    tl.to("#card-f0-3", { boxShadow: "0 0 25px rgba(245, 158, 11, 0.4)", duration: 0.25, yoyo: true, repeat: 1 }, 3.6);
+
+    // ANIMACIÓN DE BARRAS NUTLLWHY: CRECIMIENTO EVIDENTE (3.6s a 4.6s)
+    tl.fromTo("#bar-f0-1", { height: 2 }, { height: 28, duration: 0.6, ease: "back.out(1.8)" }, 3.6);
+    tl.to("#bval-1", { opacity: 1, duration: 0.25 }, 3.8);
+
+    tl.fromTo("#bar-f0-2", { height: 2 }, { height: 28, duration: 0.6, ease: "back.out(1.8)" }, 3.8);
+    tl.to("#bval-2", { opacity: 1, duration: 0.25 }, 4.0);
+
+    tl.fromTo("#bar-f0-3", { height: 2 }, { height: 28, duration: 0.6, ease: "back.out(1.8)" }, 4.0);
+    tl.to("#bval-3", { opacity: 1, duration: 0.25 }, 4.2);
+
+    tl.fromTo("#bar-f0-4", { height: 2 }, { height: 28, duration: 0.6, ease: "back.out(1.8)" }, 4.2);
+    tl.to("#bval-4", { opacity: 1, duration: 0.25 }, 4.4);
+
+    // ========================================================
+    // 5.0s: NACE LA FLECHA 1 (SE DIBUJA MILÍMETRO A MILÍMETRO)
+    // ========================================================
+    // La cámara rota en 3D y panea hacia el centro siguiendo la flecha 1
+    tl.to(cam, { 
+      cx: 960, cy: 540, zoom: 1.08, rotX: 12, rotY: 0, rotZ: 0,
+      duration: 2.2, ease: "power2.inOut", onUpdate: updateCamera, onStart: sfxWhoosh
+    }, 4.8);
+
+    tl.set("#path-trans-1", { opacity: 1 }, 5.0);
+    tl.fromTo("#path-trans-1", 
+      { strokeDasharray: len1, strokeDashoffset: len1 }, 
+      { strokeDashoffset: 0, duration: 1.4, ease: "none", onStart: sfxFlowStart }, 
+      5.0
+    );
+    
+    tl.set("#arrowhead-trans-1", { opacity: 1 }, 6.4);
+    tl.call(sfxArrowArrival, null, 6.4);
+
+    tl.set("#wire-trans-1", { opacity: 1 }, 6.4);
+    tl.set(["#dot-packet-1a", "#dot-packet-1b"], { opacity: 1 }, 6.4);
+
+    tl.to("#badge-fin-fase0", { opacity: 1, scale: 1.15, duration: 0.45, ease: "back.out(2)" }, 5.6);
+    tl.to("#badge-fin-fase0", { scale: 1.0, duration: 0.2 }, 6.05);
+
+    // ========================================================
+    // 7s - 10.5s: FASE TRANSICIÓN (COLUMNA 2)
+    // ========================================================
+    tl.to("#ambient-glow", { x: 0, background: "var(--c-trans)", opacity: 0.22, duration: 1.0 }, 7.0);
+    tl.to("#col-trans", { opacity: 1, filter: "brightness(1) blur(0px)", duration: 0.5 }, 7.3);
+
+    tl.to("#card-trans-1", { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.5)", onStart: sfxCardLand }, 7.8);
+    tl.to("#card-trans-1", { boxShadow: "0 0 25px rgba(245, 158, 11, 0.4)", duration: 0.25, yoyo: true, repeat: 1 }, 8.1);
+    tl.fromTo("#arrow-v3", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, 8.3);
+
+    tl.to("#card-trans-2", { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.5)", onStart: sfxCardLand }, 8.6);
+    tl.to("#card-trans-2", { boxShadow: "0 0 25px rgba(245, 158, 11, 0.4)", duration: 0.25, yoyo: true, repeat: 1 }, 8.9);
+    tl.fromTo("#arrow-v4", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, 9.1);
+
+    tl.to("#card-trans-3", { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.5)", onStart: sfxCardLand }, 9.4);
+    tl.to("#card-trans-3", { boxShadow: "0 0 25px rgba(16, 185, 129, 0.4)", duration: 0.25, yoyo: true, repeat: 1 }, 9.7);
+
+    // ========================================================
+    // 10.8s: RECIÉN ACÁ NACE LA FLECHA 2 (SE DIBUJA MILÍMETRO A MILÍMETRO)
+    // ========================================================
+    // La cámara viaja en 3D oblicuo hacia la derecha (rotY positivo para ver el lateral)
+    tl.to(cam, { 
+      cx: 1280, cy: 520, zoom: 1.15, rotX: 10, rotY: 15, rotZ: -3, 
+      duration: 2.4, ease: "power2.inOut", onUpdate: updateCamera, onStart: sfxWhoosh
+    }, 10.5);
+
+    tl.set("#path-trans-2", { opacity: 1 }, 10.8);
+    tl.fromTo("#path-trans-2", 
+      { strokeDasharray: len2, strokeDashoffset: len2 }, 
+      { strokeDashoffset: 0, duration: 1.4, ease: "none", onStart: sfxFlowStart }, 
+      10.8
+    );
+    
+    tl.set("#arrowhead-trans-2", { opacity: 1 }, 12.2);
+    tl.call(sfxArrowArrival, null, 12.2);
+
+    tl.set("#wire-trans-2", { opacity: 1 }, 12.2);
+    tl.set(["#dot-packet-2a", "#dot-packet-2b"], { opacity: 1 }, 12.2);
+
+    tl.to("#badge-inicio-codigo", { opacity: 1, scale: 1.15, duration: 0.45, ease: "back.out(2)" }, 11.4);
+    tl.to("#badge-inicio-codigo", { scale: 1.0, duration: 0.2 }, 11.85);
+
+    // ========================================================
+    // 12.5s - 16s: FASE 1 (MVP EN PRODUCCIÓN)
+    // ========================================================
+    tl.to("#ambient-glow", { x: 450, background: "var(--c-core)", opacity: 0.28, duration: 1.0 }, 12.6);
+    tl.to("#col-fase1", { opacity: 1, filter: "brightness(1) blur(0px)", duration: 0.5 }, 12.9);
+
+    tl.to("#card-f1-1", { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.5)", onStart: sfxCardLand }, 13.4);
+    tl.to("#card-f1-1", { boxShadow: "0 0 25px rgba(16, 185, 129, 0.4)", duration: 0.25, yoyo: true, repeat: 1 }, 13.7);
+    tl.fromTo("#arrow-v5", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, 13.9);
+
+    tl.to("#card-f1-2", { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.5)", onStart: sfxCardLand }, 14.2);
+    tl.to("#card-f1-2", { boxShadow: "0 0 25px rgba(16, 185, 129, 0.4)", duration: 0.25, yoyo: true, repeat: 1 }, 14.5);
+    tl.fromTo("#arrow-v6", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, 14.7);
+
+    // Tarjeta 3 (Core PostgreSQL): MANTIENE EL MISMO ENCUADRE DE LA COLUMNA (SIN ZOOM EXCESIVO)
+    tl.to("#card-f1-3", { opacity: 1, scale: 1, y: 0, duration: 0.7, ease: "back.out(1.8)", onStart: sfxCoreClimax }, 15.0);
+    tl.to("#card-f1-3", { 
+      boxShadow: "0 0 45px rgba(192, 132, 252, 0.6)", 
+      borderColor: "#c084fc",
+      duration: 0.5, 
+      yoyo: true, 
+      repeat: 3 
+    }, 15.5);
+
+    // SAAS-MOTION-KIT SURPRISE BEAT: En el segundo 15.4 brota la pastilla de aislamiento Multi-Tenant
+    tl.to("#core-live-pill", { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.5)" }, 15.4);
+
+    // 谢幕 (Pull-Out Final): Sale de la perspectiva 3D y REGRESA AL ÁNGULO RECTO FRONTAL AL 100%
+    tl.to(cam, { 
+      cx: 960, cy: 540, zoom: 1.0, rotX: 0, rotY: 0, rotZ: 0,
+      duration: 2.0, ease: "power2.inOut", onUpdate: updateCamera, onStart: sfxWhoosh
+    }, 17.0);
+
+    window.__timelines["fidelizar_diagram"] = tl;
+  </script>
+</body>
+</html>

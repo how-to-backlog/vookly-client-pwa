@@ -18,3 +18,14 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
+
+@keyframes rippleExpandBlack {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(350);
+    opacity: 1;
+  }
+}

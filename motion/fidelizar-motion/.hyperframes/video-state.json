@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "historyId": "258f72d0-d450-442d-a174-c3496f990943",
+  "currentRevision": "023487b7-ae4c-45b9-947d-de249c3c13db",
+  "pendingChanges": false,
+  "files": {
+    "index.html": {
+      "hash": "247bd1f629924da962cbc00fd579ffe79a980e96cd95deb2d54602eadf756cf8",
+      "content": "/home/jesus/.cache/hyperframes/history/258f72d0-d450-442d-a174-c3496f990943/blobs/24/247bd1f629924da962cbc00fd579ffe79a980e96cd95deb2d54602eadf756cf8"
+    }
+  },
+  "revisions": {
+    "6aba71ba-e050-4874-834f-94d755874c0e": {
+      "actor": {
+        "kind": "person",
+        "name": "You"
+      },
+      "targets": [
+        {
+          "file": "index.html",
+          "id": "main-header",
+          "hfId": "hf-jgvn",
+          "selector": "#main-header"
+        }
+      ],
+      "label": "Edit text",
+      "startedAt": 1793129910987,
+      "endedAt": 1793129910987,
+      "files": {
+        "index.html": {
+          "before": "/home/jesus/.cache/hyperframes/history/258f72d0-d450-442d-a174-c3496f990943/blobs/24/247bd1f629924da962cbc00fd579ffe79a980e96cd95deb2d54602eadf756cf8",
+          "after": "/home/jesus/.cache/hyperframes/history/258f72d0-d450-442d-a174-c3496f990943/blobs/b2/b231f1d1cdfd41c3ebaab6ce7e2540b999e0887c9351efb22a6ff3a638d9966d"
+        }
+      }
+    },
+    "023487b7-ae4c-45b9-947d-de249c3c13db": {
+      "actor": {
+        "kind": "person",
+        "name": "You"
+      },
+      "targets": [
+        {
+          "file": "index.html",
+          "id": "main-header",
+          "hfId": "hf-jgvn",
+          "selector": "#main-header"
+        }
+      ],
+      "label": "Edit text",
+      "startedAt": 1793129943775,
+      "endedAt": 1793129943775,
+      "files": {
+        "index.html": {
+          "before": "/home/jesus/.cache/hyperframes/history/258f72d0-d450-442d-a174-c3496f990943/blobs/b2/b231f1d1cdfd41c3ebaab6ce7e2540b999e0887c9351efb22a6ff3a638d9966d",
+          "after": "/home/jesus/.cache/hyperframes/history/258f72d0-d450-442d-a174-c3496f990943/blobs/24/247bd1f629924da962cbc00fd579ffe79a980e96cd95deb2d54602eadf756cf8"
+        }
+      }
+    }
+  },
+  "checks": {
+    "latest": null,
+    "revisions": {},
+    "unversioned": []
+  },
+  "snapshots": {
+    "latest": null,
+    "revisions": {},
+    "unversioned": []
+  }
+}

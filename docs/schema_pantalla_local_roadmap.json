@@ -1,0 +1,104 @@
+{
+  "$schema": "https://diagramdesign.dev/schema/er-v1.json",
+  "title": "Modelo de Datos Desacoplado: Pantalla 2 Local & Roadmap Vookly",
+  "domain": "pwa_cliente_local_roadmap",
+  "description": "Especificación formal de entidades, variables y estado derivado para la franja horizontal fija y el motor del roadmap",
+  "entities": [
+    {
+      "name": "ComercioPerfil",
+      "tableName": "comercios",
+      "description": "Datos de identidad, geolocalización y presentación visual del local",
+      "fields": [
+        { "name": "id", "type": "VARCHAR(64)", "isPrimaryKey": true, "description": "Identificador o slug único (ej: cafeteria-1)" },
+        { "name": "nombre_fantasia", "type": "VARCHAR(120)", "isNullable": false, "description": "Nombre visible en tarjeta y footer (ej: The Coffee House)" },
+        { "name": "rubro", "type": "VARCHAR(60)", "isNullable": false, "description": "Rubro comercial (ej: Cafetería de Especialidad)" },
+        { "name": "direccion_calle", "type": "VARCHAR(150)", "isNullable": false, "description": "Dirección física (ej: Av. San Martín 450, Córdoba)" },
+        { "name": "ubicacion_lat", "type": "DECIMAL(9,6)", "isNullable": true, "description": "Latitud para GPS/Maps" },
+        { "name": "ubicacion_lng", "type": "DECIMAL(9,6)", "isNullable": true, "description": "Longitud para GPS/Maps" },
+        { "name": "url_maps", "type": "VARCHAR(255)", "isNullable": true, "description": "Enlace directo para el botón de ubicación del footer" },
+        { "name": "card_bg_image", "type": "VARCHAR(255)", "isNullable": false, "description": "Ruta al asset visual 3D (/images/cards/cafeteria/card-bg.jpg)" }
+      ]
+    },
+    {
+      "name": "ReglaRoadmapComercio",
+      "tableName": "reglas_roadmap_comercio",
+      "description": "Configuración de gamificación y recorrido de sellos definido por el comercio",
+      "fields": [
+        { "name": "id", "type": "VARCHAR(64)", "isPrimaryKey": true },
+        { "name": "comercio_id", "type": "VARCHAR(64)", "isForeignKey": true, "references": "comercios.id" },
+        { "name": "horizonte_sellos_visible", "type": "INT", "defaultValue": "30", "description": "Largo total del camino que el cliente puede scrollear" },
+        { "name": "intervalo_hitos", "type": "INT", "defaultValue": "6", "description": "Cadencia estándar de premios (cada N sellos)" }
+      ]
+    },
+    {
+      "name": "HitoPremio",
+      "tableName": "hitos_premios",
+      "description": "Nodos especiales del roadmap que otorgan recompensas intermedias o finales",
+      "fields": [
+        { "name": "id", "type": "VARCHAR(64)", "isPrimaryKey": true },
+        { "name": "comercio_id", "type": "VARCHAR(64)", "isForeignKey": true, "references": "comercios.id" },
+        { "name": "sello_objetivo", "type": "INT", "isNullable": false, "description": "Posición ordinal del nodo que premia (ej: 6, 12, 18, 24, 30)" },
+        { "name": "titulo_premio", "type": "VARCHAR(120)", "isNullable": false, "description": "Nombre de la recompensa (ej: Café Clásico Gratis, Tostado Especial)" },
+        { "name": "icono_nodo", "type": "VARCHAR(30)", "defaultValue": "gift", "description": "Identificador de ícono para el cofre (cup, gift, trophy, crown)" },
+        { "name": "es_premio_mayor", "type": "BOOLEAN", "defaultValue": "false" }
+      ]
+    },
+    {
+      "name": "BilleteraClienteLocal",
+      "tableName": "billeteras_cliente_local",
+      "description": "Estado transaccional actual del cliente en este comercio específico",
+      "fields": [
+        { "name": "id", "type": "VARCHAR(64)", "isPrimaryKey": true },
+        { "name": "cliente_id", "type": "VARCHAR(64)", "isForeignKey": true, "references": "clientes.id" },
+        { "name": "comercio_id", "type": "VARCHAR(64)", "isForeignKey": true, "references": "comercios.id" },
+        { "name": "sellos_actuales", "type": "INT", "defaultValue": "0", "description": "Conteo total acumulado (ej: 15)" },
+        { "name": "ultimo_sello_en", "type": "TIMESTAMPTZ", "defaultValue": "NOW()" }
+      ]
+    }
+  ],
+  "derivedUIContracts": {
+    "LocalFooterSummaryContract": {
+      "description": "Variables inyectadas exclusivamente en la franja inferior horizontal fija",
+      "schema": {
+        "nombreComercio": "string",
+        "direccion": "string",
+        "tieneBotonUbicacion": "boolean",
+        "urlUbicacion": "string?",
+        "sellosActuales": "number",
+        "sellosParaProximoPremio": "number",
+        "tituloProximoPremio": "string",
+        "leyendaMotivacional": "string"
+      },
+      "ejemploMock": {
+        "nombreComercio": "The Coffee House",
+        "direccion": "Av. San Martín 450, Córdoba",
+        "tieneBotonUbicacion": true,
+        "urlUbicacion": "https://maps.google.com/?q=-31.4201,-64.1888",
+        "sellosActuales": 15,
+        "sellosParaProximoPremio": 3,
+        "tituloProximoPremio": "Tostado Especial",
+        "leyendaMotivacional": "A 3 sellos de tu próximo premio"
+      }
+    },
+    "RoadmapNodeContract": {
+      "description": "Variables que consume cada nodo atómico dentro de la lista scrolleable del camino",
+      "schema": {
+        "numeroSello": "number",
+        "esPremio": "boolean",
+        "tituloPremio": "string?",
+        "icono": "string?",
+        "estado": "'completed' | 'current' | 'locked'"
+      },
+      "reglaDeDerivacion": {
+        "completed": "numeroSello < sellosActuales",
+        "current": "numeroSello === sellosActuales",
+        "locked": "numeroSello > sellosActuales"
+      }
+    }
+  },
+  "relationships": [
+    { "from": "reglas_roadmap_comercio.comercio_id", "to": "comercios.id", "type": "one_to_one" },
+    { "from": "hitos_premios.comercio_id", "to": "comercios.id", "type": "one_to_many" },
+    { "from": "billeteras_cliente_local.comercio_id", "to": "comercios.id", "type": "many_to_one" }
+  ]
+}

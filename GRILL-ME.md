@@ -1,124 +1,69 @@
 # Grill Me Results
 
-Generated: 2026-10-06T02:19:47.520Z
+Generated: 2026-10-17T22:46:28.800Z
 
 ## Plan
 
-Te voy a pasar una minuta de una mini reunión que tuve con Facu, uno de los desarrolladores del equipo de este proyecto, donde debatimos un poco cómo ir viendo en el futuro la aplicación. Agregalo como información, pero no lo agregues como una ley todo lo que hablamos, porque obviamente estamos en una etapa previa y todas las cosas pueden ir cambiando. Puedes preguntarme que scopes pueden ser más importantes que otros Pero básicamente yo creo que nos tenemos que centrar en tres objetivos específicos en el corto plazo Y son los siguientes Uno Que los comerciantes tengan un seguimiento de sus clientes y ofrecer unas cuantas promociones. Dos, del lado del cliente, que pueda ver de forma simple y rápida sus promos activas o próximas a desbloquearse para aplicarlas en su próxima visita al local. Y por último, tres, la conexión con WhatsApp para que el comercio pueda mandarle promociones por ahí al cliente. esos serían los tres objetivos directos por ahora para no tener que pesar en muchas features que se nos vayan del scope y la minuta es la siguiente # Scope y Producto
-
-- Producto central: sistema de fidelización por puntos para comercios (barberías, panaderías, cafeterías, heladerías)
-- Arquitectura multi-tenant: cada cliente consume el mismo backend, con frontend propio si lo necesita
-- MVP enfocado en 2 features core:
-  - Comerciante crea 2-3 promociones
-  - Cliente las ve en la PWA
-- Empezar con 2 nichos (barbería + panadería o cafetería), luego escalar a los otros 2
-- Modelo de expansión: igual que Metropolitano, una línea primero, luego se replica
-
-# Mini CRM y Lógica de Puntos
-
-- Cada servicio cobrado = registro automático de puntos para el cliente
-- Identificador de cliente: número de teléfono (único, no se repite)
-- Datos mínimos: ID (teléfono), servicios recibidos, fecha de cumpleaños
-- Lógica configurable: el comerciante combina servicio + beneficio (ej. 3er corte en el mes → descuento en el 4to)
-- Caso de uso validado: barbero ofrece café gratis o descuento en cumpleaños → ya generó conversión real
-- El CRM es pasivo: registrar el trabajo que el barbero ya hace igual
-
-# Modelo de Negocio y Alcance
-
-- Nivel gratuito: paquetes de promociones predefinidos
-- Plan Pro: descuentos y promociones ilimitadas y personalizadas
-- Gamificación y fidelización como vectores de valor diferencial a explotar
-- Cuidado con el scope: WhatsApp + CRM completo puede volverse muy complejo
-  - Definir bien qué se incluye antes de comprometerse
-- Integración no intrusiva: barberos no tienen sistema, heladerías sí (cajera con PC)
-  - Adaptar el onboarding según el perfil del comerciante
-
-# UI y Diseño por Nicho
-
-- 4 skins: 1 landing genérica + 1 por nicho (barbería, panadería, cafetería, heladería)
-- Diferenciación visual: iconografía SVG + paleta de colores por nicho (panadería = marrón/naranja, etc.)
-- Referencia de diseño: librería de Uruguay (“sentías el olor a cuero”) como benchmark de identidad visual inmersiva
-- PDF compartido en la llamada como punto de partida para el diseño
-- Empezar con 2 skins para salir más rápido
-
-# Próximos Pasos
-
-- Reunión mañana: ver locales potenciales como primeros clientes
-- Pendiente post-reunión:
-  - Relevamiento de datos: definir qué preguntas hacerle a los comerciantes para validar la app
-  - Diseño tentativo para mostrar en celu durante las entrevistas
-  - Decidir los 2 nichos iniciales definitivos
-- Rami investiga la lógica de sellos y carga de visitas
-- Ser estrictos con versionado y ramas desde el inicio (lección aprendida de la app de transporte)
-
-# Próximas Acciones
-
-- **Preparar diseño tentativo para mostrar en entrevistas**
-- **Definir preguntas del relevamiento de datos**
-- **Confirmar horario de reunión grupal (¿4:30?)** (JP)
-
----
-
-Chat with meeting transcript: https://notes.granola.ai/t/5324a388-e050-4ac6-9a39-23663261df07
+Puedes revisar la estructura de tabla que tenemos en una hoja específica, la cual contiene cuatro planillas que vamos a utilizar en nuestras salidas al territorio Para indagar sobre el estado actual de los nichos a los cuales vamos a atacar En términos de predisposición a utilizar esta herramienta que estamos desarrollando Para ver qué correcciones podemos hacerles a dichas cuatro fichas. Ahora, la idea es la siguiente. Cada ficha va a ser rellenada con las respuestas a las cinco preguntas que cada nicho tiene. En las columnas correspondientes a cada local de cada nicho La idea es que posterior a plasmar todas las respuestas de manera cruda, al finalizar este relevamiento de datos, vamos a curar las cuatro fichas para acomodar las respuestas o reformular las respuestas o darles un orden coherente, de tal manera de sacar o hacer inferencias de dichas respuestas, ya sea a través de gráficos, tablas o cualquier otra herramienta que nos ayude a entender de una manera visual o más ordenada el conjunto de las respuestas para luego sacar conclusiones de dichas respuestas ordenadas y curadas de tal forma de terminar la fase 0 con esa información y empezar la fase 1 que ya va a ser relacionada a la conformación del MVP cuyo contenido va a responder a los puntos de dolor obtenidos en la fase 0 durante las entrevistas en donde se respondieron todas las preguntas. ¿Me explico? No quiero que toques la tabla ni las cuatro fichas. Centrate en la hoja en donde están las cuatro fichas. Específicamente en las columnas de cada uno de los locales. Mínimo necesito 10 columnas que van a representar a 10 locales en cada uno de los cuatro nichos. Y lo que yo quiero que me respondas por acá Cómo podríamos editar dichas fichas para que queden más acorde a la idea que tenemos en términos de su utilización Desde ya te adelanto que hacer promedios y puntajes no creo que lo tengamos en cuenta Al menos por ahora, si es que no encontramos una mejor forma de interpretar los datos.
 
 ## Shared Understanding
 
-Acuerdos de la reunión preliminar Jesús-Facu: blindaje de la Tríada Core de Jesús (Comerciante, Cliente PWA, WhatsApp), elección de Barberías + Cafeterías como nichos punta de lanza, archivo exploratorio no vinculante de ideas de Facu y elaboración del Guion de Relevamiento de Campo para mañana.
+Diseño consensuado para la optimización de las 4 fichas de campo en FICHAS_INVESTIGACION: 10 locales por nicho, eliminación de promedios/puntajes, unificación a 5 preguntas por nicho y postergación de la curaduría analítica a una hoja posterior.
 
 ## Questions and Answers
 
-### 1. ¿Cómo articulamos los 3 objetivos concretos que planteaste frente a las ideas de diseño y CRM que hablaron con Facu? (Recomendación: Blindar tus 3 objetivos como el Core MVP estricto y catalogar lo de Facu como ideas exploratorias a madurar).
+### 1. Para estructurar las 10 columnas por nicho que necesitás para las salidas de campo, ¿cómo organizamos los datos de cada local? (Recomendación: Incluir filas de metadatos en cabecera para distinguir localidad y si te atendió el dueño o un empleado).
 
-**Recommended answer:** Blindar la Tríada de Jesús como Core MVP y archivar el resto como Exploración (Recomendada)
+**Recommended answer:** 10 Columnas de Locales con Metadatos en Cabecera (Recomendada)
 
-**User answer:** Blindar la Tríada de Jesús como Core MVP y archivar el resto como Exploración (Recomendada)
-
-**Status:** resolved
-
-**Notes:** Los 3 objetivos de Jesús blindados como el Core MVP: 1) Seguimiento y promos del comerciante, 2) Visor ágil de promos en PWA para cliente, 3) Conexión con WhatsApp. El resto de ideas de Facu quedan en backlog exploratorio.
-
-### 2. Facu planteó arrancar con 2 nichos iniciales (Barbería + otro). ¿Con qué combinación encaramos el relevamiento y el primer diseño para celular? (Recomendación: Barberías + Cafeterías, ya que representan los dos extremos operativos ideales).
-
-**Recommended answer:** Barberías + Cafeterías (Recomendada)
-
-**User answer:** Barberías + Cafeterías (Recomendada)
+**User answer:** 10 Columnas simples con solo el Nombre del Local
 
 **Status:** resolved
 
-**Notes:** Pares prioritarios para entrevistas iniciales y diseño móvil tentativo: Barberías (BAR) y Cafeterías (CAF).
+**Notes:** Cada ficha tendrá exactamente 10 columnas simples dedicadas a los 10 locales de ese nicho (ej. Local 1 a Local 10 o nombres específicos).
 
-### 3. Para la reunión de mañana con potenciales locales y con el equipo, ¿cuál es el entregable más urgente que debemos construir hoy? (Recomendación: Guion de preguntas de campo para no ir con las manos vacías a entrevistar).
+### 2. Dado que descartaron promedios y puntajes numéricos, ¿cómo limpiamos las columnas de la derecha de cada ficha? (Recomendación: Eliminar 'Promedio' y '(1-5)' para no condicionar la carga cruda de las entrevistas).
 
-**Recommended answer:** Guion de Preguntas de Relevamiento Operativo en Terreno (Recomendada)
+**Recommended answer:** Eliminar Promedios y Puntuaciones (1-5) (Recomendada)
 
-**User answer:** Guion de Preguntas de Relevamiento Operativo en Terreno (Recomendada)
-
-**Status:** resolved
-
-**Notes:** Entregable prioritario inmediato para campo: Guion de preguntas de relevamiento operativo (Hito 0.2).
-
-### 4. ¿Cómo integramos la minuta de la charla con Facu en la documentación para respetar tu directiva de que 'no sea ley'? (Recomendación: Minuta exploratoria claramente rotulada como no vinculante).
-
-**Recommended answer:** Archivar como Minuta Exploratoria No Vinculante (Recomendada)
-
-**User answer:** Archivar como Minuta Exploratoria No Vinculante (Recomendada)
+**User answer:** Eliminar Promedios y Puntuaciones (1-5) (Recomendada)
 
 **Status:** resolved
 
-**Notes:** docs/minuta_charla_facu.md archivada con rótulo de borrador exploratorio no vinculante, y nota en p-fidelizar_master_notes.md como #idea-futura.
+**Notes:** Se eliminan las referencias a puntuación (1-5), las columnas de 'Promedio' y 'Oportunidad', ya que no se usarán cálculos matemáticos arbitrarios en la captura cruda. Se conserva 'Notas y Citas Clave'.
+
+### 3. En el Sheet, Heladería y Cafetería tienen 5 preguntas pero Panadería y Barbería tienen 6. ¿Unificamos a 5 preguntas fijas para todos los nichos? (Recomendación: Unificar a 5 para que el relevamiento sea perfectamente simétrico y comparable).
+
+**Recommended answer:** Unificar todas a exactamente 5 preguntas (2 GEN + 3 Nicho) (Recomendada)
+
+**User answer:** Unificar todas a exactamente 5 preguntas (2 GEN + 3 Nicho) (Recomendada)
+
+**Status:** resolved
+
+**Notes:** Todas las fichas se unifican a 5 preguntas exactas (2 Generales + 3 de Nicho), ajustando Panadería y Barbería a 3 de nicho para lograr simetría total.
+
+### 4. Para preparar la curaduría posterior que mencionaste (ordenar respuestas para sacar inferencias visuales y gráficos sin promedios), ¿dónde prefieren consolidar el conteo? (Recomendación: Bloque de frecuencias al pie de cada ficha para tener el dato crudo y su resumen en la misma pantalla).
+
+**Recommended answer:** Bloque inferior de Normalización y Conteo de Frecuencias (Recomendada)
+
+**User answer:** Hacer la curaduría en una hoja separada post-campo
+
+**Status:** resolved
+
+**Notes:** La hoja de FICHAS_INVESTIGACION se mantiene 100% enfocada en captura en crudo sin mezclar agregaciones. La curaduría, conteos de frecuencias y gráficos se trabajarán en una hoja separada al concluir el trabajo de campo.
 
 ## Agreed Decisions
 
-- Tríada Core de Corto Plazo de Jesús blindada como MVP indiscutible: 1) Comerciante sigue clientes y ofrece promociones, 2) Cliente visualiza en PWA simple y rápida sus promos activas/próximas para canjear en mostrador, 3) Conexión con WhatsApp para envío directo de promociones.
-- Las ideas accesorias de Facu (skins inmersivos SVG, paquetes predefinidos freemium, mini-CRM multi-servicio) se archivan como ideas exploratorias y backlog futuro para evitar feature creep.
-- Foco inicial de validación y diseño en terreno: Barberías (BAR) y Cafeterías (CAF).
-- Entregable prioritario para las reuniones y visitas de campo de mañana: Guion estructurado de Preguntas de Relevamiento Operativo en Terreno (Hito 0.2).
-- Tratamiento documental: Crear docs/minuta_charla_facu.md rotulado como documento exploratorio no vinculante y registrar [NOTA-005] en docs/p-fidelizar_master_notes.md bajo #idea-futura.
+- Estructura de FICHAS_INVESTIGACION dedicada a captura cruda: 10 columnas por nicho (Local 1 a Local 10) con nombres simples de local, sin sobrecarga de metadatos en cabecera.
+- Eliminación de columnas analíticas prematuras: se descartan las columnas 'Promedio', 'Oportunidad' y la etiqueta de puntaje '(1-5)'. Se preserva únicamente la columna 'Notas y Citas Clave' al final.
+- Unificación simétrica de preguntas: exactamente 5 preguntas por nicho (2 Generales transversales + 3 Específicas de nicho), recortando la 4ta pregunta de Panadería y Barbería.
+- Aislamiento de la curaduría: la hoja de fichas se conserva limpia para la toma de datos en calle; la curaduría categórica, tablas de distribución y gráficos se construirán en una nueva hoja específica una vez finalizado el relevamiento.
+- Restricción operativa confirmada: NO editar el Google Sheet de forma autónoma hasta que el usuario dé la orden explícita.
 
 ## Open Risks
 
-- Riesgo de dispersión si se intentan construir skins visuales complejos antes de validar la fricción del mostrador y el canal de WhatsApp.
+- Riesgo de pérdida de contexto cualitativo si las notas de campo no registran la objeción real del comerciante más allá de la respuesta cruda.
 
 ## Next Decision Needed
 
-Ejecutar la creación de docs/minuta_charla_facu.md, asentar [NOTA-005] en docs/p-fidelizar_master_notes.md, y redactar el Guion de Preguntas de Relevamiento Operativo en Terreno para Barberías y Cafeterías (docs/guion_preguntas_terreno.md).
+Presentar a Jesús la propuesta exacta de diseño visual y disposición de celdas para que él y el equipo la evalúen o autoricen su aplicación en la hoja FICHAS_INVESTIGACION.
