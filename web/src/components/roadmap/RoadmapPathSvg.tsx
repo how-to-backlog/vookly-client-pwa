@@ -50,6 +50,17 @@ export function RoadmapPathSvg({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
+      {/* 0. Silueta PNG de la ciudad: fija en la base absoluta del SVG */}
+      <image
+        href="/images/roadmap/city-skyline.png"
+        x={-width * 0.02}
+        y={height - 135}
+        width={width * 1.04}
+        height="135"
+        preserveAspectRatio="none"
+        className="pointer-events-none"
+      />
+
       {/* 1. Extensión hacia el horizonte (fade-out y niebla) */}
       {horizon && <RoadmapHorizon horizon={horizon} />}
 

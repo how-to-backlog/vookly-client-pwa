@@ -13,10 +13,10 @@ export interface RoadmapOriginBadgeProps {
  * anclado directamente a la base de la curva S (nodo stampIndex === 0).
  */
 export function RoadmapOriginBadge({ point, className = '' }: RoadmapOriginBadgeProps) {
-  const badgeWidth = 64;
-  const badgeHeight = 22;
+  const badgeWidth = 74;
+  const badgeHeight = 24;
   const badgeX = point.x - badgeWidth / 2;
-  const badgeY = point.y + 12; // Justo debajo del punto de anclaje base
+  const badgeY = point.y + 16; // Ubicado limpiamente debajo del punto ancla 0, 100% visible por encima de los techos
 
   return (
     <g className={`roadmap-origin-badge select-none ${className}`}>
@@ -45,14 +45,14 @@ export function RoadmapOriginBadge({ point, className = '' }: RoadmapOriginBadge
       <rect
         x={badgeX}
         y={badgeY}
-        width={badgeWidth + 10}
-        height={badgeHeight + 2}
-        rx={(badgeHeight + 2) / 2}
+        width={badgeWidth}
+        height={badgeHeight}
+        rx={badgeHeight / 2}
         fill="#18181B"
         className="drop-shadow-sm"
       />
       <text
-        x={point.x + 5}
+        x={point.x}
         y={badgeY + 16}
         textAnchor="middle"
         className="text-[11px] font-bold tracking-widest fill-white uppercase"

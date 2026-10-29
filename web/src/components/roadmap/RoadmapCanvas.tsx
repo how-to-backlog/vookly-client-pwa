@@ -50,10 +50,10 @@ export function RoadmapCanvas({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full flex-1 overflow-y-auto overflow-x-hidden py-10 px-4 flex justify-center no-scrollbar ${className}`}
+      className={`relative w-full flex-1 overflow-y-auto overflow-x-hidden pt-10 pb-0 px-0 flex justify-center no-scrollbar ${className}`}
       style={{ scrollBehavior: 'smooth' }}
     >
-      <div className="w-full max-w-[360px] relative">
+      <div className="w-full relative pb-0">
         <RoadmapPathSvg
           width={geometry.width}
           height={geometry.height}

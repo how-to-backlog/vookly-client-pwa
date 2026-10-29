@@ -89,7 +89,7 @@ export function calculateRoadmapGeometry(
   const X_CENTER = 180;
 
   const TOP_PADDING = 160; // Espacio superior extendido para el horizonte con niebla
-  const BOTTOM_PADDING = 90;
+  const BOTTOM_PADDING = 115; // Bajamos la curva S a 115 para calzarla justo sobre los techos
   const BASE_SEGMENT_HEIGHT = 60; // Altura mínima base en px
   const PIXELS_PER_STAMP = 44; // ~44px de recorrido vertical por cada sello del tramo
 
