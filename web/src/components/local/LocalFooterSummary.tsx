@@ -25,7 +25,7 @@ export const LocalFooterSummary: React.FC<LocalFooterSummaryProps> = ({
         {/* Columna Izquierda: Identidad y Ubicación */}
         <div className="flex flex-col min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <h2 className="text-base font-bold text-neutral-900 tracking-tight truncate">
+            <h2 className="text-[17px] font-extrabold text-neutral-900 tracking-tight truncate">
               {businessName}
             </h2>
             {locationUrl && (
@@ -52,19 +52,19 @@ export const LocalFooterSummary: React.FC<LocalFooterSummaryProps> = ({
               </a>
             )}
           </div>
-          <p className="text-xs text-neutral-500 truncate mt-0.5">
+          <p className="text-[13px] text-neutral-500 truncate mt-0.5 font-medium">
             {address}
           </p>
         </div>
 
         {/* Columna Derecha: Sellos Actuales y Motivación */}
         <div className="flex flex-col items-end flex-shrink-0">
-          <div className="flex items-baseline gap-1 bg-neutral-950 text-white px-3 py-1 rounded-full shadow-sm">
-            <span className="text-sm font-black tracking-tight">{currentStamps}</span>
-            <span className="text-[11px] font-medium text-neutral-300">Sellos</span>
+          <div className="flex items-baseline gap-1 bg-neutral-950 text-white px-3.5 py-1.5 rounded-full shadow-sm">
+            <span className="text-[15px] font-black tracking-tight">{currentStamps}</span>
+            <span className="text-[12px] font-semibold text-neutral-300">Sellos</span>
           </div>
 
-          <p className="text-[11px] font-semibold text-neutral-500 mt-1 tracking-tight">
+          <p className="text-[12px] font-bold text-neutral-600 mt-1 tracking-tight">
             {stampsToNextReward > 0
               ? `A ${stampsToNextReward} sellos del premio`
               : '¡Premio listo para canjear!'}

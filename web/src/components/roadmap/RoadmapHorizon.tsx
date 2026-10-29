@@ -13,10 +13,10 @@ export interface RoadmapHorizonProps {
  * y badge píldora sutil que anuncia "Próximamente más premios".
  */
 export function RoadmapHorizon({ horizon, className = '' }: RoadmapHorizonProps) {
-  const badgeWidth = 168;
-  const badgeHeight = 24;
+  const badgeWidth = 190;
+  const badgeHeight = 28;
   const badgeX = horizon.endPoint.x - badgeWidth / 2;
-  const badgeY = horizon.endPoint.y - 12;
+  const badgeY = horizon.endPoint.y - 14;
 
   return (
     <g className={`roadmap-horizon select-none ${className}`}>
@@ -71,9 +71,9 @@ export function RoadmapHorizon({ horizon, className = '' }: RoadmapHorizonProps)
         />
         <text
           x={horizon.endPoint.x}
-          y={badgeY + 15}
+          y={badgeY + 18}
           textAnchor="middle"
-          className="text-[10px] font-medium fill-zinc-400 tracking-tight"
+          className="text-[12px] font-semibold fill-zinc-500 tracking-tight"
         >
           Próximamente más premios
         </text>

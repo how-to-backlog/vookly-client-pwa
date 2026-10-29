@@ -102,22 +102,22 @@ export function RoadmapNodeItem({ node, canvasWidth = 360 }: RoadmapNodeItemProp
           {/* Badge del número de sello del premio */}
           <text
             x={textX}
-            y={node.point.y - 7}
+            y={node.point.y - 12}
             textAnchor={textAnchor}
-            className="text-[9px] font-bold fill-zinc-400 uppercase tracking-widest"
+            className="text-[15px] font-extrabold fill-zinc-500 uppercase tracking-wider"
           >
             Sello {node.stampIndex}
           </text>
 
-          {/* Título del premio */}
+          {/* Título del premio (duplicado a ~22px con tracking nítido) */}
           <text
             x={textX}
-            y={node.point.y + 9}
+            y={node.point.y + 16}
             textAnchor={textAnchor}
-            className={`text-[12px] ${
+            className={`text-[22px] ${
               node.isMajorReward
-                ? 'font-bold fill-zinc-950'
-                : 'font-semibold fill-zinc-800'
+                ? 'font-black fill-zinc-950 tracking-tight'
+                : 'font-bold fill-zinc-900 tracking-tight'
             }`}
           >
             {node.rewardTitle || `Premio ${node.stampIndex}`}
@@ -127,41 +127,56 @@ export function RoadmapNodeItem({ node, canvasWidth = 360 }: RoadmapNodeItemProp
     );
   }
 
-  // Sello regular intermedio:
-  // - Conseguido: círculo exterior #71717A con centro relleno #71717A
-  // - No conseguido: círculo vacío fill="#FFFFFF" con borde tenue #D4D4D8 (sin círculo interior)
+  // Sello regular intermedio (Opción A: Número adentro del nodo estilo Candy Crush / Duolingo)
+  // Radio 15px (diámetro 30px) para alojar cómodamente los números al doble de tamaño
+  const regularRadius = 15;
+
   if (node.isCompleted) {
     return (
-      <g key={`stamp-${node.stampIndex}`}>
+      <g key={`stamp-${node.stampIndex}`} className="select-none">
+        {/* Fondo circular sólido oscuro */}
         <circle
           cx={node.point.x}
           cy={node.point.y}
-          r="6"
-          fill="#FFFFFF"
-          stroke="#71717A"
+          r={regularRadius}
+          fill="#18181B"
+          stroke="#FFFFFF"
           strokeWidth="2"
         />
-        <circle
-          cx={node.point.x}
-          cy={node.point.y}
-          r="2.5"
-          fill="#71717A"
-        />
+        {/* Número del sello duplicado de tamaño (~16px) en blanco nítido */}
+        <text
+          x={node.point.x}
+          y={node.point.y + 5.5}
+          textAnchor="middle"
+          className="text-[16px] font-black fill-white tracking-tight"
+        >
+          {node.stampIndex}
+        </text>
       </g>
     );
   }
 
   // Nodo bloqueado / por conseguir
   return (
-    <g key={`stamp-${node.stampIndex}`}>
+    <g key={`stamp-${node.stampIndex}`} className="select-none">
+      {/* Fondo circular blanco con borde tenue */}
       <circle
         cx={node.point.x}
         cy={node.point.y}
-        r="5.5"
+        r={regularRadius}
         fill="#FFFFFF"
         stroke="#D4D4D8"
-        strokeWidth="1.75"
+        strokeWidth="2"
       />
+      {/* Número del sello duplicado de tamaño (~16px) en gris suave */}
+      <text
+        x={node.point.x}
+        y={node.point.y + 5.5}
+        textAnchor="middle"
+        className="text-[16px] font-bold fill-zinc-400 tracking-tight"
+      >
+        {node.stampIndex}
+      </text>
     </g>
   );
 }

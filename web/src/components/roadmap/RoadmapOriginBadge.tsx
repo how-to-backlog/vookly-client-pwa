@@ -45,17 +45,17 @@ export function RoadmapOriginBadge({ point, className = '' }: RoadmapOriginBadge
       <rect
         x={badgeX}
         y={badgeY}
-        width={badgeWidth}
-        height={badgeHeight}
-        rx={badgeHeight / 2}
+        width={badgeWidth + 10}
+        height={badgeHeight + 2}
+        rx={(badgeHeight + 2) / 2}
         fill="#18181B"
         className="drop-shadow-sm"
       />
       <text
-        x={point.x}
-        y={badgeY + 14.5}
+        x={point.x + 5}
+        y={badgeY + 16}
         textAnchor="middle"
-        className="text-[9px] font-bold tracking-widest fill-white uppercase"
+        className="text-[11px] font-bold tracking-widest fill-white uppercase"
         style={{ letterSpacing: '0.12em' }}
       >
         INICIO

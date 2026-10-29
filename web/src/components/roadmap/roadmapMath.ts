@@ -88,22 +88,33 @@ export function calculateRoadmapGeometry(
   const X_RIGHT = 284;
   const X_CENTER = 180;
 
-  const TOP_PADDING = 140; // Espacio superior extendido para el horizonte con niebla
-  const BOTTOM_PADDING = 80;
-  const SEGMENT_HEIGHT = 180; // Altura en px por cada tramo entre hitos
+  const TOP_PADDING = 160; // Espacio superior extendido para el horizonte con niebla
+  const BOTTOM_PADDING = 90;
+  const BASE_SEGMENT_HEIGHT = 60; // Altura mínima base en px
+  const PIXELS_PER_STAMP = 44; // ~44px de recorrido vertical por cada sello del tramo
 
   // Ordenamos hitos de menor a mayor umbral
   const sortedMilestones = [...rules.rewardMilestones].sort(
     (a, b) => a.stampThreshold - b.stampThreshold
   );
 
-  const totalSegments = sortedMilestones.length;
-  const totalHeight = TOP_PADDING + totalSegments * SEGMENT_HEIGHT + BOTTOM_PADDING;
+  // Calcular alturas dinámicas por tramo según la cantidad de sellos que contiene
+  let previousStamp = 0;
+  let accumulatedHeight = BOTTOM_PADDING;
+
+  const segmentHeights: number[] = [];
+  sortedMilestones.forEach((m) => {
+    const stampsInSegment = m.stampThreshold - previousStamp;
+    // Un tramo de 6 sellos pasa de 180px a ~324px: el doble de aire y holgura
+    const segHeight = Math.max(180, BASE_SEGMENT_HEIGHT + stampsInSegment * PIXELS_PER_STAMP);
+    segmentHeights.push(segHeight);
+    accumulatedHeight += segHeight;
+    previousStamp = m.stampThreshold;
+  });
+
+  const totalHeight = TOP_PADDING + accumulatedHeight;
 
   // Anclas de hitos: comenzamos desde el inicio (sello 0)
-  // Definimos los puntos ancla de cada hito
-  // El roadmap se dibuja de abajo hacia arriba:
-  // Base (sello 0) abajo de todo, cima (último hito) arriba.
   const milestoneAnchors: Array<{
     stamp: number;
     point: Point2D;
@@ -119,17 +130,17 @@ export function calculateRoadmapGeometry(
     isReward: false
   });
 
-  // Iterar sobre los hitos y alternar TODOS izquierda/derecha para que incluso
-  // el último hito esté en una curva lateral y su texto se oriente hacia el centro
-  // sin cortar la curva que asciende hacia el horizonte.
+  // Iterar y colocar cada hito de premio acumulando su altura dinámica hacia arriba
+  let currentY = totalHeight - BOTTOM_PADDING;
   sortedMilestones.forEach((m, idx) => {
+    const segH = segmentHeights[idx];
+    currentY -= segH;
+
     const x = idx % 2 === 0 ? X_LEFT : X_RIGHT;
-    // y decrece hacia arriba
-    const y = totalHeight - BOTTOM_PADDING - (idx + 1) * SEGMENT_HEIGHT;
 
     milestoneAnchors.push({
       stamp: m.stampThreshold,
-      point: { x, y },
+      point: { x, y: currentY },
       isReward: true,
       rewardTitle: m.rewardTitle,
       isMajorReward: m.isMajorReward || idx === sortedMilestones.length - 1
