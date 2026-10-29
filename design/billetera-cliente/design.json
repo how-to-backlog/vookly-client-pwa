@@ -1,0 +1,14 @@
+{
+  "slug": "billetera-cliente",
+  "title": "Billetera Cliente PWA",
+  "created": "2026-10-27T23:00:00.000Z",
+  "artboards": [
+    {
+      "file": "01-wallet.html",
+      "title": "Billetera de Tarjetas",
+      "tradeoff": "Lienzo limpio para construcción modular paso a paso",
+      "width": 430,
+      "height": 932
+    }
+  ]
+}

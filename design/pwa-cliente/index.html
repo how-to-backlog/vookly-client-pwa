@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-neutral-950 text-neutral-100 antialiased">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Fideliz-Ar · Billetera</title>
+  <!-- Tailwind Play CDN para prototipado rápido y reactivo -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              gold: '#D4AF37',
+              dark: '#0A0A0A'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Reset móvil estricto */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: #09090b;
+      color: #fafafa;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body class="h-full w-full flex justify-center bg-black">
+  <!-- Contenedor Shell Móvil (Max-w-md centrado para F12) -->
+  <main id="app-shell" class="w-full max-w-md h-full min-h-screen bg-neutral-950 flex flex-col relative shadow-2xl border-x border-neutral-900/50">
+    <!-- LIENZO EN BLANCO: Esperando instrucciones de Jesús -->
+  </main>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Fideliz-Ar · Billetera</title>
+  <style>
+    :root {
+      --bg-canvas: #09090b;
+      --bg-surface: #18181b;
+      --border-subtle: #27272a;
+      --text-main: #fafafa;
+      --text-muted: #a1a1aa;
+      --accent-gold: #eab308;
+      --font-stack: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+      background-color: #000000;
+      color: var(--text-main);
+      font-family: var(--font-stack);
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      overflow-x: hidden;
+    }
+
+    /* Shell móvil autocontenido centrado para F12 */
+    #app-shell {
+      width: 100%;
+      max-width: 430px;
+      min-height: 100vh;
+      background-color: var(--bg-canvas);
+      border-left: 1px solid var(--border-subtle);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <!-- Contenedor Shell Móvil (100% LIMPIO) -->
+  <main id="app-shell">
+    <!-- LIENZO EN BLANCO: Esperando especificación exacta de la Top Bar -->
+  </main>
+</body>
+</html>

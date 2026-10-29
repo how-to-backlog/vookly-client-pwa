@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fideliz-Ar | Arquitectura del MVP y Dinámica de Mostrador</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070709;
+      --bg-surface: #0f1013;
+      --bg-surface-elevated: #15171c;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(245, 158, 11, 0.4);
+      
+      --accent-gold: #f59e0b;
+      --accent-amber: #d97706;
+      --accent-emerald: #10b981;
+      --accent-cyan: #0ea5e9;
+      --accent-purple: #8b5cf6;
+      
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+
+      --glow-gold: rgba(245, 158, 11, 0.14);
+      --glow-emerald: rgba(16, 185, 129, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Lighting */
+    .ambient-glow-1 {
+      position: fixed;
+      top: -150px;
+      left: 10%;
+      width: 650px;
+      height: 650px;
+      background: radial-gradient(circle, var(--glow-gold) 0%, transparent 70%);
+      filter: blur(140px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .ambient-glow-2 {
+      position: fixed;
+      bottom: -150px;
+      right: 10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--glow-emerald) 0%, transparent 70%);
+      filter: blur(140px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Header Bar */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 40px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(15, 16, 19, 0.7);
+      backdrop-filter: blur(20px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      background: linear-gradient(135deg, var(--accent-gold), var(--accent-amber));
+      color: #000;
+      font-weight: 800;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .logo-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -0.5px;
+    }
+
+    .slide-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: var(--text-muted);
+      background: var(--bg-surface-elevated);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* Main Container */
+    .slider-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.99);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Card Components */
+    .slide-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      padding: 44px 48px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .badge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      background: rgba(245, 158, 11, 0.12);
+      color: var(--accent-gold);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .badge-tag.emerald {
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--accent-emerald);
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+
+    .badge-tag.cyan {
+      background: rgba(14, 165, 233, 0.12);
+      color: var(--accent-cyan);
+      border-color: rgba(14, 165, 233, 0.25);
+    }
+
+    .slide-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      background: linear-gradient(180deg, #ffffff 20%, #a1a1aa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 32px;
+      max-width: 800px;
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .sub-card {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.2s ease;
+    }
+
+    .sub-card:hover {
+      border-color: var(--border-focus);
+      transform: translateY(-2px);
+    }
+
+    .sub-card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sub-card-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .sub-card-desc strong {
+      color: #fff;
+    }
+
+    /* Code / Terminal Box */
+    .terminal-box {
+      background: #090a0d;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #10b981;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    .terminal-box.warning {
+      color: #f59e0b;
+      border-color: rgba(245, 158, 11, 0.25);
+    }
+
+    /* Flow Steps */
+    .step-pill {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    /* Footer Navigation */
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      border-top: 1px solid var(--border-subtle);
+      background: rgba(15, 16, 19, 0.7);
+      backdrop-filter: blur(20px);
+    }
+
+    .progress-bar {
+      display: flex;
+      gap: 8px;
+    }
+
+    .progress-dot {
+      width: 32px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.12);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .progress-dot.active {
+      background: var(--accent-gold);
+      width: 48px;
+    }
+
+    .btn-nav {
+      background: var(--bg-surface-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      padding: 10px 22px;
+      border-radius: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-nav:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-nav:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-gold), var(--accent-amber));
+      color: #000;
+      border: none;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      filter: brightness(1.1);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ambient-glow-1"></div>
+  <div class="ambient-glow-2"></div>
+
+  <header>
+    <div class="logo-container">
+      <div class="logo-badge">FIDELIZ-AR</div>
+      <div class="logo-title">Arquitectura Funcional & User Journeys (MVP)</div>
+    </div>
+    <div class="slide-counter" id="slideCounter">01 / 07</div>
+  </header>
+
+  <div class="slider-wrapper">
+
+    <!-- SLIDE 1: PORTADA -->
+    <div class="slide active">
+      <div class="slide-card">
+        <div class="badge-tag">Especificación Técnica Interna</div>
+        <h1 class="slide-title">User Journeys y Dinámica de Mostrador</h1>
+        <p class="slide-subtitle">
+          Diseño integral de la experiencia en caja y del cliente final. Una arquitectura pensada para operar en <strong>menos de 3 segundos</strong>, eliminar fricciones y garantizar la integridad de los datos.
+        </p>
+
+        <div class="grid-3" style="margin-top: 36px;">
+          <div class="sub-card">
+            <div class="sub-card-title">📱 Cliente (PWA)</div>
+            <div class="sub-card-desc">Acceso pasivo por WhatsApp. Cero descargas de tiendas y 100% solo lectura.</div>
+          </div>
+          <div class="sub-card">
+            <div class="sub-card-title">⌨️ Caja (Numpad USB)</div>
+            <div class="sub-card-desc">Hardware de bajo costo ($10k) apoyado en mostrador. Cero pantallas secundarias.</div>
+          </div>
+          <div class="sub-card">
+            <div class="sub-card-title">🛡️ Guardarraíles</div>
+            <div class="sub-card-desc">Cooldown de 3h, cero carga manual arbitraria y botón de Deshacer por 30 minutos.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: DOS FRENTES DESACOPLADOS -->
+    <div class="slide">
+      <div class="slide-card">
+        <div class="badge-tag cyan">Arquitectura de Interfaces</div>
+        <h2 class="slide-title">Dos Frentes Radicalmente Desacoplados</h2>
+        <p class="slide-subtitle">
+          Separación estricta entre la billetera pasiva del cliente y la terminal de caja del negocio.
+        </p>
+
+        <div class="grid-2">
+          <div class="sub-card" style="border-left: 4px solid var(--accent-cyan);">
+            <div class="sub-card-title">1. PWA del Cliente (Billetera Pasiva)</div>
+            <ul style="list-style: none; margin-top: 14px; font-size: 14px; color: var(--text-secondary); line-height: 1.8;">
+              <li>🔗 <strong>Entrada directa:</strong> Link único por WhatsApp (<code>fideliz.ar/c/[token]</code>).</li>
+              <li>⚡ <strong>Cero Barreras:</strong> No requiere usuario, contraseña ni descargar 50 MB de stores.</li>
+              <li>👁️ <strong>Solo Lectura:</strong> Muestra tarjeta gráfica de 6 sellos y voucher activo. El cliente no puede sumarse sellos.</li>
+            </ul>
+          </div>
+
+          <div class="sub-card" style="border-left: 4px solid var(--accent-gold);">
+            <div class="sub-card-title">2. WebApp del Comercio (Sistema Unificado)</div>
+            <ul style="list-style: none; margin-top: 14px; font-size: 14px; color: var(--text-secondary); line-height: 1.8;">
+              <li>🔑 <strong>Login único:</strong> 1 usuario y clave por local (sin gestión pesada de roles en V1).</li>
+              <li>🖥️ <strong>Aterrizaje en Mostrador:</strong> Abre directamente en "Modo Caja" para no perder tiempo en fila.</li>
+              <li>📊 <strong>Panel secundario:</strong> Pestaña de gestión fuera de hora pico (base de teléfonos y campañas).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: HARDWARE Y PITCH DE CAJA -->
+    <div class="slide">
+      <div class="slide-card">
+        <div class="badge-tag">El Mostrador de Café</div>
+        <h2 class="slide-title">Cero Hardware Extra: La PC + Numpad USB</h2>
+        <p class="slide-subtitle">
+          Aprovechamos la computadora existente en caja agregando un teclado numérico físico orientado al cliente.
+        </p>
+
+        <div class="grid-2">
+          <div class="sub-card">
+            <div class="sub-card-title">Hardware en Caja</div>
+            <p class="sub-card-desc">
+              • <strong>La PC existente:</strong> Corre la WebApp en el navegador.<br>
+              • <strong>Numpad USB ($10k ARS):</strong> Apoyado sobre el mostrador mirando al cliente.<br>
+              • <strong>Sin tablets ni pantallas giratorias:</strong> Cero costo de inversión para el dueño.
+            </p>
+          </div>
+
+          <div class="sub-card">
+            <div class="sub-card-title">El Pitch Mecánico de la Cajera</div>
+            <p class="sub-card-desc" style="font-style: italic; font-size: 15px; color: #fff;">
+              "¿Sumás sellos para el café gratis? Podés ingresar tu número en el tecladito."
+            </p>
+            <div class="terminal-box">
+              > Cliente tipea su celular y presiona Intro.<br>
+              > La cajera valida el feedback en su monitor.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: BIFURCACIÓN EN TIEMPO REAL -->
+    <div class="slide">
+      <div class="slide-card">
+        <div class="badge-tag emerald">Lógica de Mostrador</div>
+        <h2 class="slide-title">Bifurcación en Tiempo Real: Habitual vs. Nuevo</h2>
+        <p class="slide-subtitle">
+          El sistema responde al instante según la existencia previa del número en la base de datos.
+        </p>
+
+        <div class="grid-2">
+          <div class="sub-card">
+            <span class="step-pill">80% DE LOS CASOS</span>
+            <div class="sub-card-title">Cliente Habitual (&lt;3 seg)</div>
+            <div class="sub-card-desc">
+              El número existe. Salta confirmación verde instantánea con su nombre y progreso.
+            </div>
+            <div class="terminal-box">
+              ✅ ¡Sello sumado a Martín! (4 / 6)<br>
+              Cero clicks de la cajera. Reseteo automático en 2s.
+            </div>
+          </div>
+
+          <div class="sub-card">
+            <span class="step-pill">ONBOARDING ASISTIDO</span>
+            <div class="sub-card-title">Cliente Nuevo (5 seg)</div>
+            <div class="sub-card-desc">
+              Número nuevo. Pop-up automático con foco listo. Cajera pregunta: <em>"¿Tu nombre?"</em> y da Enter.
+            </div>
+            <div class="terminal-box warning">
+              ⭐ Registrado: Lucas + 351... + 1° Sello.<br>
+              Dispara WhatsApp de bienvenida con link PWA.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: PREVENCIÓN DE FRAUDE -->
+    <div class="slide">
+      <div class="slide-card">
+        <div class="badge-tag">Seguridad & Margen</div>
+        <h2 class="slide-title">Reglas de Integridad y Cero Carga Manual</h2>
+        <p class="slide-subtitle">
+          El software actúa como guardarraíl matemático para evitar el fraude interno y proteger la caja del dueño.
+        </p>
+
+        <div class="grid-3">
+          <div class="sub-card">
+            <div class="sub-card-title">⏱️ Cooldown de 3 Horas</div>
+            <div class="sub-card-desc">
+              Solo 1 sello cada 3 horas por número. Bloquea fraudes de cargas dobles pero permite consumo de mañana y tarde.
+            </div>
+          </div>
+
+          <div class="sub-card">
+            <div class="sub-card-title">🚫 Cero Carga Manual</div>
+            <div class="sub-card-desc">
+              No hay campos para inventar sellos desde paneles. Se elimina el favoritismo de empleados ("sweethearting").
+            </div>
+          </div>
+
+          <div class="sub-card">
+            <div class="sub-card-title">⎌ Undo de 30 Minutos</div>
+            <div class="sub-card-desc">
+              Botón discreto en caja para revertir un sello en ventas canceladas. A los 30 min se congela en la base de datos.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: MECÁNICA DE CANJE Y $0 -->
+    <div class="slide">
+      <div class="slide-card">
+        <div class="badge-tag emerald">Retención & Contabilidad</div>
+        <h2 class="slide-title">Mecánica de Canje "Next-Visit" y Cobro $0</h2>
+        <p class="slide-subtitle">
+          Garantizamos el retorno del cliente y resolvemos el tratamiento fiscal del producto gratis.
+        </p>
+
+        <div class="grid-2">
+          <div class="sub-card">
+            <div class="sub-card-title">Canje en Visita Posterior (Visita 7)</div>
+            <p class="sub-card-desc">
+              • El 6° sello desbloquea el voucher válido por <strong>15 días</strong>.<br>
+              • <strong>Llave por teléfono:</strong> En la visita 7, solo pone su número en el Numpad y la cajera valida en pantalla.<br>
+              • <strong>Regla canónica:</strong> La visita de canje ($0) <strong>NO suma sellos</strong>. El nuevo ciclo arranca en la próxima compra paga.
+            </p>
+          </div>
+
+          <div class="sub-card">
+            <div class="sub-card-title">Asiento Contable del $0 en el Comercio</div>
+            <p class="sub-card-desc">
+              • <strong>Sistemas POS (Fudo / Maxirest):</strong> Carga con <em>Descuento 100% Promoción</em>. Descuenta stock sin devengar IVA.<br>
+              • <strong>Comercios Tradicionales:</strong> Cortesía de la casa directa con conciliación en el reporte de Fideliz-Ar.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: POLÍTICA WHATSAPP -->
+    <div class="slide">
+      <div class="slide-card">
+        <div class="badge-tag">Canal WhatsApp</div>
+        <h2 class="slide-title">Política Estricta de Cero Spam</h2>
+        <p class="slide-subtitle">
+          WhatsApp es un canal íntimo: cuidamos la relación y evitamos bloqueos de Meta con solo 2 mensajes por ciclo.
+        </p>
+
+        <div class="grid-3">
+          <div class="sub-card" style="border-top: 3px solid var(--accent-gold);">
+            <div class="sub-card-title">Mensaje 1: Bienvenida</div>
+            <div class="sub-card-desc">
+              <strong>En el 1° sello:</strong> Envía saludo por nombre, confirmación del beneficio y link permanente a su tarjeta PWA.
+            </div>
+          </div>
+
+          <div class="sub-card" style="border-top: 3px solid var(--accent-emerald);">
+            <div class="sub-card-title">Mensaje 2: Premio Ganado</div>
+            <div class="sub-card-desc">
+              <strong>En el 6° sello:</strong> Felicitaciones, confirmación de su café gratis para la próxima visita y vencimiento a 15 días.
+            </div>
+          </div>
+
+          <div class="sub-card" style="border-top: 3px solid var(--accent-purple);">
+            <div class="sub-card-title">Mensaje 3: Rescate</div>
+            <div class="sub-card-desc">
+              <strong>Condicional (+25 días inactivo):</strong> Mensaje empático de reactivación. Si el cliente sigue yendo, jamás se envía.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="progress-bar">
+      <div class="progress-dot active" onclick="goToSlide(0)"></div>
+      <div class="progress-dot" onclick="goToSlide(1)"></div>
+      <div class="progress-dot" onclick="goToSlide(2)"></div>
+      <div class="progress-dot" onclick="goToSlide(3)"></div>
+      <div class="progress-dot" onclick="goToSlide(4)"></div>
+      <div class="progress-dot" onclick="goToSlide(5)"></div>
+      <div class="progress-dot" onclick="goToSlide(6)"></div>
+    </div>
+    <div style="display: flex; gap: 12px;">
+      <button class="btn-nav" id="btnPrev" onclick="prevSlide()" disabled>← Anterior</button>
+      <button class="btn-nav btn-primary" id="btnNext" onclick="nextSlide()">Siguiente →</button>
+    </div>
+  </footer>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.progress-dot');
+    const counter = document.getElementById('slideCounter');
+
+    function updateSlide() {
+      slides.forEach((s, idx) => {
+        s.classList.toggle('active', idx === currentSlide);
+      });
+      dots.forEach((d, idx) => {
+        d.classList.toggle('active', idx === currentSlide);
+      });
+
+      const currentNum = String(currentSlide + 1).padStart(2, '0');
+      const totalNum = String(slides.length).padStart(2, '0');
+      counter.innerText = `${currentNum} / ${totalNum}`;
+
+      document.getElementById('btnPrev').disabled = (currentSlide === 0);
+      document.getElementById('btnNext').innerText = (currentSlide === slides.length - 1) ? 'Finalizar' : 'Siguiente →';
+    }
+
+    function nextSlide() {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function goToSlide(idx) {
+      currentSlide = idx;
+      updateSlide();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+  </script>
+</body>
+</html>

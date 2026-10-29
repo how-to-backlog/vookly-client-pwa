@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fideliz-Ar | Preguntas de Campo (Generales y Nicho)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070708;
+      --bg-surface: #101012;
+      --bg-surface-elevated: #16161a;
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-focus: rgba(245, 158, 11, 0.35);
+      
+      --accent-gold: #f59e0b;
+      --accent-amber: #d97706;
+      --accent-copper: #ea580c;
+      --general-cyan: #0ea5e9;
+      --nicho-gold: #f59e0b;
+      
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+
+      --glow-gold: rgba(245, 158, 11, 0.12);
+      --glow-cyan: rgba(14, 165, 233, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Lighting Background */
+    .ambient-glow-1 {
+      position: fixed;
+      top: -150px;
+      left: 15%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--glow-gold) 0%, transparent 70%);
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .ambient-glow-2 {
+      position: fixed;
+      bottom: -150px;
+      right: 15%;
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, var(--glow-cyan) 0%, transparent 70%);
+      filter: blur(130px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Header Bar */
+    header {
+      padding: 18px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(11, 11, 13, 0.85);
+      backdrop-filter: blur(20px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--accent-gold), var(--accent-copper));
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #000;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 17px;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+    }
+
+    .brand-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #fff;
+    }
+
+    .slide-progress {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .progress-dot {
+      width: 20px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .progress-dot.active {
+      background: var(--accent-gold);
+      width: 36px;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+    }
+
+    .slide-counter {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    /* Deck Viewport */
+    .deck-container {
+      flex: 1;
+      display: flex;
+      max-width: 1360px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 44px 48px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .slide.active {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Typography & Headers */
+    .slide-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .slide-tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      align-self: flex-start;
+      margin-bottom: 2px;
+    }
+
+    .tag-general {
+      color: var(--general-cyan);
+      background: rgba(14, 165, 233, 0.1);
+      border: 1px solid rgba(14, 165, 233, 0.25);
+    }
+
+    .tag-nicho {
+      color: var(--nicho-gold);
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .slide-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.8px;
+      color: #fff;
+      line-height: 1.25;
+    }
+
+    .slide-subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+      max-width: 900px;
+      line-height: 1.5;
+    }
+
+    /* Cover Hero Slide */
+    .cover-hero {
+      text-align: center;
+      max-width: 900px;
+      margin: 70px auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .cover-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 54px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      background: linear-gradient(135deg, #ffffff 50%, #f59e0b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .cover-desc {
+      font-size: 18px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Two Columns Cards */
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 26px 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      background: var(--bg-surface-elevated);
+    }
+
+    .card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: -0.2px;
+    }
+
+    .card-content {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-content strong {
+      color: #fff;
+    }
+
+    /* Minimalist Data Table */
+    .data-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 13px;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 0.8px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .data-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      vertical-align: middle;
+      line-height: 1.4;
+      color: var(--text-secondary);
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge-fit {
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .badge-partial {
+      background: rgba(245, 158, 11, 0.12);
+      color: var(--warning);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .badge-nofit {
+      background: rgba(239, 68, 68, 0.12);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+
+    /* Question Banner (Ultra Sleek) */
+    .question-banner {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(234, 88, 12, 0.03));
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      box-shadow: 0 0 30px rgba(245, 158, 11, 0.08);
+      border-radius: 18px;
+      padding: 32px 38px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .question-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+    }
+
+    .question-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: #fff;
+      letter-spacing: -0.4px;
+    }
+
+    .two-step-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .step-line {
+      display: flex;
+      gap: 14px;
+      align-items: baseline;
+      font-size: 19px;
+      line-height: 1.35;
+    }
+
+    .step-num {
+      background: var(--accent-gold);
+      color: #000;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 2px 7px;
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+
+    /* Justification Cards */
+    .justification-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 24px 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .justification-card h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .justification-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .justification-card li {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .justification-card li strong {
+      color: #fff;
+    }
+
+    .justification-card li::before {
+      content: "→";
+      color: var(--accent-gold);
+      font-weight: 800;
+    }
+
+    /* Footer Controls */
+    footer {
+      padding: 18px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-subtle);
+      background: rgba(11, 11, 13, 0.95);
+      backdrop-filter: blur(20px);
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+    }
+
+    .footer-info {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .btn-nav {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 9px 20px;
+      border-radius: 9px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav:hover {
+      background: var(--bg-surface-elevated);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-gold), var(--accent-copper));
+      color: #000;
+      border: none;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.95;
+      color: #000;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+    }
+
+    kbd {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    /* SVG icon wrapper */
+    .icon-inline {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ambient-glow-1"></div>
+  <div class="ambient-glow-2"></div>
+
+  <header>
+    <div class="brand">
+      <div class="brand-logo">F</div>
+      <div class="brand-name">Fideliz-Ar</div>
+    </div>
+    <div class="slide-progress" id="progressDots">
+      <div class="progress-dot active" onclick="goToSlide(0)"></div>
+      <div class="progress-dot" onclick="goToSlide(1)"></div>
+      <div class="progress-dot" onclick="goToSlide(2)"></div>
+      <div class="progress-dot" onclick="goToSlide(3)"></div>
+      <div class="progress-dot" onclick="goToSlide(4)"></div>
+      <div class="progress-dot" onclick="goToSlide(5)"></div>
+      <div class="progress-dot" onclick="goToSlide(6)"></div>
+      <div class="progress-dot" onclick="goToSlide(7)"></div>
+      <div class="progress-dot" onclick="goToSlide(8)"></div>
+      <div class="progress-dot" onclick="goToSlide(9)"></div>
+      <div class="progress-dot" onclick="goToSlide(10)"></div>
+      <div class="progress-dot" onclick="goToSlide(11)"></div>
+    </div>
+    <div class="slide-counter" id="slideCounter">01 / 12</div>
+  </header>
+
+  <div class="deck-container">
+
+    <!-- SLIDE 0: PORTADA -->
+    <div class="slide active">
+      <div class="cover-hero">
+        <span class="slide-tag tag-nicho">Batería de Validación de Campo</span>
+        <h1 class="cover-title">Propuesta de Preguntas de Campo</h1>
+        <p class="cover-desc">
+          Estructura de Customer Discovery con rigor metodológico: primero las <strong>Preguntas Generales</strong> transversales de negocio y luego las <strong>Preguntas de Nicho</strong> específicas para Cafeterías.
+        </p>
+        <p style="font-size: 14px; color: var(--text-muted); max-width: 750px;">
+          Cada pregunta está diseñada bajo la premisa de <em>The Mom Test</em>: indagar sobre hechos y costos pasados, habilitar respuestas medibles matemáticamente y definir decisiones directas de arquitectura y viabilidad para Fideliz-Ar.
+        </p>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- PREGUNTA GENERAL 1: STACK & COSTO DIGITAL -->
+    <!-- ======================================================== -->
+
+    <!-- SLIDE 1: GENERAL 1 - PLANTEO Y MATRIZ -->
+    <div class="slide">
+      <div class="slide-header">
+        <span class="slide-tag tag-general">Pregunta General 1 · Planteo</span>
+        <h2 class="slide-title">Stack de Software y Presupuesto Digital</h2>
+        <p class="slide-subtitle">Descubrir si el comercio ya paga tecnología mensual o si opera en la informalidad analógica.</p>
+      </div>
+
+      <div class="grid-2col">
+        <div class="card" style="border-top: 3px solid var(--general-cyan);">
+          <h3>
+            <svg class="icon-inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Enfoque y Decisión de Producto
+          </h3>
+          <div class="card-content">
+            <p><strong>Enfoque:</strong> Saber si usan software POS pago (Fudo, Maxirest) o cuaderno/Excel a costo $0.</p>
+            <p><strong>Decisión Fideliz-Ar:</strong> Si ya pagan $30k–$50k/mes, nuestro precio de <strong>$20k–$35k ARS</strong> es natural. Si pagan $0, exigirá plan de entrada o prueba gratis.</p>
+          </div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid var(--general-cyan);">
+          <h3>
+            <svg class="icon-inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+            Matriz de Respuestas
+          </h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Respuesta</th>
+                <th>Diagnóstico</th>
+                <th>Impacto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>"Pagamos abono mensual en POS"</strong></td>
+                <td><span class="badge-status badge-fit">Presupuesto Validado</span></td>
+                <td>ICP óptimo. Modelo SaaS natural sin objeción de cuota.</td>
+              </tr>
+              <tr>
+                <td><strong>"Software viejo instalado / Excel"</strong></td>
+                <td><span class="badge-status badge-partial">Sin Abono Recurrente</span></td>
+                <td>Objeción a cuotas. Argumento: "Se paga solo con 2 clientes".</td>
+              </tr>
+              <tr>
+                <td><strong>"Cuaderno y terminal de cobro"</strong></td>
+                <td><span class="badge-status badge-nofit">Analógico ($0)</span></td>
+                <td>Alta fricción. Requiere solución liviana 100% en celular.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: GENERAL 1 - FORMULACIÓN & POR QUÉ -->
+    <div class="slide">
+      <div class="slide-header">
+        <span class="slide-tag tag-general">Pregunta General 1 · Formulación</span>
+        <h2 class="slide-title">Formulación Elegida & Justificación</h2>
+      </div>
+
+      <div class="question-banner">
+        <span class="question-tag">Pregunta a Formular en el Local:</span>
+        <div class="question-text">
+          "Para manejar la caja, las ventas o los clientes, ¿usan algún software comercial en la computadora o se manejan con Excel y papel? ¿Tienen algún costo mensual en herramientas digitales hoy?"
+        </div>
+      </div>
+
+      <div class="justification-card">
+        <h4>¿Por qué esta formulación?</h4>
+        <ul>
+          <li><strong>Cero fricción:</strong> Pregunta sobre su rutina cotidiana antes de indagar en números de plata.</li>
+          <li><strong>Dato doble en un solo tiro:</strong> Revela el nombre del sistema utilizado y si tienen presupuesto activo asignado.</li>
+          <li><strong>Hechos vs. opiniones:</strong> Pregunta qué gasta hoy en el mundo real, no si <em>"pagaría por una app"</em>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- PREGUNTA GENERAL 2: CANAL DIRECTO DE ACTIVACIÓN -->
+    <!-- ======================================================== -->
+
+    <!-- SLIDE 3: GENERAL 2 - PLANTEO Y MATRIZ -->
+    <div class="slide">
+      <div class="slide-header">
+        <span class="slide-tag tag-general">Pregunta General 2 · Planteo</span>
+        <h2 class="slide-title">Capacidad de Disparo Directo y Base de Clientes</h2>
+        <p class="slide-subtitle">Comprobar si el comercio tiene un canal propio para generar demanda o si depende de la suerte y el algoritmo.</p>
+      </div>
+
+      <div class="grid-2col">
+        <div class="card" style="border-top: 3px solid var(--general-cyan);">
+          <h3>
+            <svg class="icon-inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            Enfoque y Decisión de Producto
+          </h3>
+          <div class="card-content">
+            <p><strong>Enfoque:</strong> Medir si pueden avisarle una promo a sus mejores clientes en un día muerto, o si solo suben historias a Instagram.</p>
+            <p><strong>Decisión Fideliz-Ar:</strong> Valida el módulo de <strong>Campañas por WhatsApp</strong> frente al &lt;5% de alcance orgánico de Instagram.</p>
+          </div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid var(--general-cyan);">
+          <h3>
+            <svg class="icon-inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+            Matriz de Respuestas
+          </h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Respuesta</th>
+                <th>Diagnóstico</th>
+                <th>Impacto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>"No, dependemos de subir historias"</strong></td>
+                <td><span class="badge-status badge-nofit">Cero Activo Propio</span></td>
+                <td>Discurso: "Con Fideliz-Ar tenés a tus 50 mejores clientes en el celular".</td>
+              </tr>
+              <tr>
+                <td><strong>"Tengo algunos y les escribo a mano"</strong></td>
+                <td><span class="badge-status badge-partial">Canal Manual</span></td>
+                <td>Canal validado. Fideliz-Ar le automatiza el envío en 1 clic.</td>
+              </tr>
+              <tr>
+                <td><strong>"Tenemos lista de difusión / mails"</strong></td>
+                <td><span class="badge-status badge-fit">Base Existente</span></td>
+                <td>Se demuestra que el WhatsApp de Fideliz-Ar tiene 4x más apertura.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: GENERAL 2 - FORMULACIÓN & POR QUÉ -->
+    <div class="slide">
+      <div class="slide-header">
+        <span class="slide-tag tag-general">Pregunta General 2 · Formulación</span>
+        <h2 class="slide-title">Formulación Elegida & Justificación</h2>
+      </div>
+
+      <div class="question-banner">
+        <span class="question-tag">Pregunta a Formular en el Local:</span>
+        <div class="question-text">
+          "Si hoy quisieras avisarles a tus mejores 50 clientes que tenés una promo especial para que vengan esta tarde, ¿tenés alguna forma de mandarles ese mensaje directamente al celular?"
+        </div>
+      </div>
+
+      <div class="justification-card">
+        <h4>¿Por qué esta formulación?</h4>
+        <ul>
+          <li><strong>Escenario tangible:</strong> "Tus mejores 50 clientes" es plata real para la tarde, no una abstracción.</li>
+          <li><strong>Evidencia la ceguera:</strong> El 95% de los comerciantes reconoce de inmediato que no tiene forma de hablarles.</li>
+          <li><strong>Posicionamiento:</strong> Fideliz-Ar deja de verse como "puntos" y se percibe como <strong>canal de ventas directas</strong>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- PREGUNTA DE NICHO 1: FLUJO DE COBRO & SALÓN -->
+    <!-- ======================================================== -->
+
+    <!-- SLIDE 5: NICHO 1 - PLANTEO Y MATRIZ -->
+    <div class="slide">
+      <div class="slide-header">
+        <span class="slide-tag tag-nicho">Pregunta Nicho 1 · Planteo</span>
+        <h2 class="slide-title">Flujo de Cobro y Viabilidad Operativa en Salón</h2>
+        <p class="slide-subtitle">Filtro de calificación: saber si el cliente pasa por caja o si el cobro exclusivo en mesa expulsa al MVP.</p>
+      </div>
+
+      <div class="grid-2col">
+        <div class="card" style="border-top: 3px solid var(--nicho-gold);">
+          <h3>
+            <svg class="icon-inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            Enfoque y Decisión de Producto
+          </h3>
+          <div class="card-content">
+            <p><strong>Enfoque:</strong> Mapear si el cliente de mesa va al mostrador a pagar o si el mozo cobra 100% en mesa con posnet.</p>
+            <p><strong>Decisión Fideliz-Ar:</strong> Si cobran en caja: <strong>Fit directo</strong> con teclado (&lt;3s). Si es 100% mesa con posnet: <strong>No-Fit v1</strong> (evita integrar hardware bancario).</p>
+          </div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid var(--nicho-gold);">
+          <h3>
+            <svg class="icon-inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+            Matriz de Respuestas
+          </h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Respuesta</th>
+                <th>Ponderación</th>
+                <th>Impacto en MVP</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>"El 60%+ va a pagar a la caja"</strong></td>
+                <td><span class="badge-status badge-fit">Fit Alto</span></td>
+                <td>Teclado físico autónomo en mostrador sin tocar a los mozos.</td>
+              </tr>
+              <tr>
+                <td><strong>"Mitad y mitad"</strong></td>
+                <td><span class="badge-status badge-partial">Fit Parcial</span></td>
+                <td>Se captura barra y paso por caja; resto sin registrar en v1.</td>
+              </tr>
+              <tr>
+                <td><strong>"80%+ paga al mozo en mesa"</strong></td>
+                <td><span class="badge-status badge-nofit">NO-FIT v1</span></td>
+                <td><strong>No venderle v1.</strong> Sin integración en posnet fracasa. Queda para v2.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: NICHO 1 - FORMULACIÓN & POR QUÉ -->
+    <div class="slide">
+      <div class="slide-header">
+        <span class="slide-tag tag-nicho">Pregunta Nicho 1 · Formulación</span>
+        <h2 class="slide-title">Formulación Elegida & Justificación</h2>
+      </div>
+
+      <div class="question-banner">
+        <span class="question-tag">Pregunta a Formular en el Local:</span>
+        <div class="question-text">
+          "De las mesas que tenés todos los días, ¿qué porcentaje de la gente se levanta a pagar en la caja y a cuántos les cobra el mozo en la mesa?"
+        </div>
+      </div>
+
+      <div class="justification-card">
+        <h4>¿Por qué esta formulación?</h4>
+        <ul>
+          <li><strong>Dato matemático directo:</strong> Da un porcentaje concreto para tabular en planilla en 5 segundos.</li>
+          <li><strong>Cero suposiciones de diseño:</strong> No inventa "QRs mágicos"; mide el flujo físico real del cliente.</li>
+          <li><strong>Filtro comercial:</strong> Clasifica de inmediato si el local es candidato para el piloto o no.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- PREGUNTA DE NICHO 2: RETENCIÓN & CONTACTABILIDAD -->
+    <!-- ======================================================== -->
+
+    <!-- SLIDE 7: NICHO 2 - PLANTEO Y MATRIZ -->
+    <div class="slide">
+      <div class="slide-header">
+        <span class="slide-tag tag-nicho">Pregunta Nicho 2 · Planteo</span>
+        <h2 class="slide-title">Retención Orgánica vs. Contactabilidad de Clientes</h2>
+        <p class="slide-subtitle">Medir la brecha entre los clientes que vuelven solos y los que el local tiene forma de recuperar.</p>
+      </div>
+
+      <div class="grid-2col">
+        <div class="card" style="border-top: 3px solid var(--nicho-gold);">
+          <h3>
+            <svg class="icon-inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            Enfoque y Decisión de Producto
+          </h3>
+          <div class="card-content">
+            <p><strong>Enfoque:</strong> Medir la tasa de conversión a habitués frente a la cantidad de contactos registrados.</p>
+            <p><strong>Decisión Fideliz-Ar:</strong> Si la contactabilidad es 0%, ratifica la <strong>captura en mostrador + alerta automática por WhatsApp a los 21-25 días</strong>.</p>
+          </div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid var(--nicho-gold);">
+          <h3>
+            <svg class="icon-inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+            Matriz de Respuestas
+          </h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Retención / Contacto</th>
+                <th>Diagnóstico</th>
+                <th>Impacto en Fideliz-Ar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Baja (&lt;30%) / Cero contacto (0%)</strong></td>
+                <td><span class="badge-status badge-nofit">Fuga Crítica</span></td>
+                <td>Caso ideal: Pierde el 70% de clientes. Fideliz-Ar arma base y rescata.</td>
+              </tr>
+              <tr>
+                <td><strong>Media (30-50%) / Cero contacto (0%)</strong></td>
+                <td><span class="badge-status badge-partial">Habitués en Riesgo</span></td>
+                <td>Buen producto pero a ciegas si el cliente no vuelve. Fideliz-Ar blinda cartera.</td>
+              </tr>
+              <tr>
+                <td><strong>Cualquier nivel / Contacto Alto (>20%)</strong></td>
+                <td><span class="badge-status badge-fit">Gestión Manual</span></td>
+                <td>Anota a mano. Fideliz-Ar se vende como el reemplazo automático sin trabajo.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: NICHO 2 - FORMULACIÓN & POR QUÉ -->
+    <div class="slide">
+      <div class="slide-header">
+        <span class="slide-tag tag-nicho">Pregunta Nicho 2 · Formulación</span>
+        <h2 class="slide-title">Formulación Elegida & Justificación</h2>
+      </div>
+
+      <div class="question-banner">
+        <span class="question-tag">Secuencia en Dos Tiempos a Formular:</span>
+        <div class="two-step-box">
+          <div class="step-line">
+            <span class="step-num">Paso 1</span>
+            <div class="question-text" style="font-size: 20px;">
+              "De cada 10 personas que te entran por primera vez, ¿cuántas calculás que se terminan convirtiendo en clientes habituales que vuelven todas las semanas?"
+            </div>
+          </div>
+          <div class="step-line">
+            <span class="step-num">Paso 2</span>
+            <div class="question-text" style="font-size: 20px;">
+              "¿Y de esos clientes habituales, de qué porcentaje tenés el teléfono o alguna forma de contactarlos si dejan de venir?"
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="justification-card">
+        <h4>¿Por qué esta formulación?</h4>
+        <ul>
+          <li><strong>Autodiagnóstico en vivo:</strong> El dueño dice <em>"3 vuelven"</em> y <em>"teléfono de ninguno"</em>; él solo reconoce su ceguera.</li>
+          <li><strong>Dos métricas científicas:</strong> Registra <code>% Retención Orgánica</code> y <code>% Contactabilidad</code> en planilla.</li>
+          <li><strong>Dinámica ágil:</strong> Charla de 15 segundos sin sensación de encuesta burocrática.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- PREGUNTA DE NICHO 3: ECONOMÍA DE RECOMPENSA -->
+    <!-- ======================================================== -->
+
+    <!-- SLIDE 9: NICHO 3 - PLANTEO Y MATRIZ -->
+    <div class="slide">
+      <div class="slide-header">
+        <span class="slide-tag tag-nicho">Pregunta Nicho 3 · Planteo</span>
+        <h2 class="slide-title">Economía de Recompensa: Grano vs. Descuento</h2>
+        <p class="slide-subtitle">Descubrir la percepción de costo real y calibrar la regla de 5 sellos = 1 café en la Calculadora de Fideliz-Ar.</p>
+      </div>
+
+      <div class="grid-2col">
+        <div class="card" style="border-top: 3px solid var(--nicho-gold);">
+          <h3>
+            <svg class="icon-inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Enfoque y Decisión de Producto
+          </h3>
+          <div class="card-content">
+            <p><strong>Enfoque:</strong> Validar si el dueño entiende el costo marginal: regalar 1 espresso cuesta solo <strong>~$1.200 de grano</strong> vs. un 15% off que quema $3.000+ de margen en efectivo.</p>
+            <p><strong>Decisión Fideliz-Ar:</strong> Calibra la regla default de <strong>5 sellos = 1 café gratis</strong> (~5% del ticket acumulado) y el argumento comercial del onboarding.</p>
+          </div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid var(--nicho-gold);">
+          <h3>
+            <svg class="icon-inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+            Matriz de Respuestas
+          </h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Respuesta</th>
+                <th>Ponderación</th>
+                <th>Configuración en Fideliz-Ar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>"Mil veces el café, el grano no mueve la aguja"</strong></td>
+                <td><span class="badge-status badge-fit">Fit Natural</span></td>
+                <td>Plantilla default: 5 sellos = 1 café gratis (~5% de facturación).</td>
+              </tr>
+              <tr>
+                <td><strong>"Prefiero el 15% de descuento directo"</strong></td>
+                <td><span class="badge-status badge-partial">Fuga de Margen</span></td>
+                <td>La Calculadora de Sellos le demuestra la pérdida en pesos vs. grano.</td>
+              </tr>
+              <tr>
+                <td><strong>"No me gusta regalar nada"</strong></td>
+                <td><span class="badge-status badge-nofit">Resistencia</span></td>
+                <td>Argumento: adquirir un cliente nuevo cuesta 5x más que retener con $1.200.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: NICHO 3 - FORMULACIÓN & POR QUÉ -->
+    <div class="slide">
+      <div class="slide-header">
+        <span class="slide-tag tag-nicho">Pregunta Nicho 3 · Formulación</span>
+        <h2 class="slide-title">Formulación Elegida & Justificación</h2>
+      </div>
+
+      <div class="question-banner">
+        <span class="question-tag">Pregunta a Formular en el Local:</span>
+        <div class="question-text">
+          "Para hacer volver a un cliente que ya te compró varias veces, ¿qué te rinde más regalar: un café de la casa (que a vos te cuesta ~$1.200 de grano) o hacerle un 15% de descuento directo en el ticket?"
+        </div>
+      </div>
+
+      <div class="justification-card">
+        <h4>¿Por qué esta formulación?</h4>
+        <ul>
+          <li><strong>Pone el costo real sobre la mesa:</strong> Al citar los ~$1.200 de materia prima, piensa en costo marginal y no en precio de carta ($4.500).</li>
+          <li><strong>Desarma el descuento tóxico:</strong> Compara regalar un pocillo físico vs. regalar plata viva en cada compra.</li>
+          <li><strong>Valida el modelo de sellos:</strong> Confirma si adoptará la tarjeta de sellos con convicción matemática.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SLIDE 11: CONCLUSIÓN & IMPACTO ESTRATÉGICO -->
+    <!-- ======================================================== -->
+    <div class="slide">
+      <div class="slide-header">
+        <span class="slide-tag">Estrategia para el Proyecto</span>
+        <h2 class="slide-title">Consecuencias e Impacto Estratégico para Fideliz-Ar</h2>
+        <p class="slide-subtitle">Lo que ganamos como equipo al validar estas 5 respuestas antes de escribir una sola línea de código.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+        <div class="card" style="border-top: 3px solid var(--accent-gold); padding: 22px;">
+          <h3>
+            <svg class="icon-inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            1. Blindaje del Alcance MVP
+          </h3>
+          <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
+            Locales con cobro 100% en mesa quedan fuera de V1. Ahorra meses de integraciones de posnet bancario y nos enfoca en locales con flujo en caja.
+          </p>
+        </div>
+
+        <div class="card" style="border-top: 3px solid var(--general-cyan); padding: 22px;">
+          <h3>
+            <svg class="icon-inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            2. Validación Empírica del Pricing
+          </h3>
+          <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
+            Sabremos si nuestro abono de $20k–$35k ARS compite con lo que ya pagan por Fudo o si enfrentamos resistencia analógica ($0).
+          </p>
+        </div>
+
+        <div class="card" style="border-top: 3px solid var(--nicho-gold); padding: 22px;">
+          <h3>
+            <svg class="icon-inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            3. Calibración de la Calculadora
+          </h3>
+          <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
+            Confirma la regla del 5% del ticket (5 sellos = 1 café). Convierte la calculadora en un argumento comercial pedagógico en pesos.
+          </p>
+        </div>
+
+        <div class="card" style="border-top: 3px solid var(--success); padding: 22px;">
+          <h3>
+            <svg class="icon-inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            4. El Moat Real de WhatsApp
+          </h3>
+          <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
+            Prueba que el 90%+ tiene 0% de contacto con sus clientes. Posiciona a Fideliz-Ar como máquina de ventas directas que se paga sola.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="footer-info">
+      Navegá con las teclas <kbd>←</kbd> y <kbd>→</kbd> o los botones laterales
+    </div>
+    <div style="display: flex; gap: 12px;">
+      <button class="btn-nav" id="btnPrev" onclick="prevSlide()">← Anterior</button>
+      <button class="btn-nav btn-primary" id="btnNext" onclick="nextSlide()">Siguiente →</button>
+    </div>
+  </footer>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.progress-dot');
+    const counter = document.getElementById('slideCounter');
+
+    function updateSlide() {
+      slides.forEach((s, idx) => {
+        s.classList.toggle('active', idx === currentSlide);
+      });
+      dots.forEach((d, idx) => {
+        d.classList.toggle('active', idx === currentSlide);
+      });
+
+      const currentNum = String(currentSlide + 1).padStart(2, '0');
+      const totalNum = String(slides.length).padStart(2, '0');
+      counter.innerText = `${currentNum} / ${totalNum}`;
+
+      document.getElementById('btnPrev').disabled = (currentSlide === 0);
+      document.getElementById('btnNext').innerText = (currentSlide === slides.length - 1) ? 'Finalizar' : 'Siguiente →';
+    }
+
+    function nextSlide() {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function goToSlide(idx) {
+      currentSlide = idx;
+      updateSlide();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+
+    updateSlide();
+  </script>
+</body>
+</html>
