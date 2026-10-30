@@ -15,6 +15,9 @@ export const LocalFooterSummary: React.FC<LocalFooterSummaryProps> = ({
   stampsToNextReward = 3,
   nextRewardTitle,
   locationUrl,
+  cooldownRemainingMinutes,
+  readyVoucher,
+  onClaimReward,
   className = ''
 }) => {
   return (
@@ -57,18 +60,44 @@ export const LocalFooterSummary: React.FC<LocalFooterSummaryProps> = ({
           </p>
         </div>
 
-        {/* Columna Derecha: Sellos Actuales y Motivación */}
-        <div className="flex flex-col items-end flex-shrink-0">
-          <div className="flex items-baseline gap-1 bg-neutral-950 text-white px-3.5 py-1.5 rounded-full shadow-sm">
-            <span className="text-[15px] font-black tracking-tight">{currentStamps}</span>
-            <span className="text-[12px] font-semibold text-neutral-300">Sellos</span>
+        {/* Columna Derecha: Sellos Actuales y Zona de Notificaciones Dinámica */}
+        <div className="flex flex-col items-end flex-shrink-0 gap-1.5">
+          {/* Badge métrico de sellos (permanente) */}
+          <div className="h-8 inline-flex items-center gap-1.5 bg-neutral-950 text-white px-3.5 rounded-full shadow-sm">
+            <span className="text-[13px] font-black tracking-tight">{currentStamps}</span>
+            <span className="text-[13px] font-semibold text-neutral-300">Sellos</span>
           </div>
 
-          <p className="text-[12px] font-bold text-neutral-600 mt-1 tracking-tight">
-            {stampsToNextReward > 0
-              ? `A ${stampsToNextReward} de ${nextRewardTitle || 'premio'}`
-              : '¡Premio listo para canjear!'}
-          </p>
+          {/* Zona de Notificaciones Dinámica (Misma altura h-8 y texto 13px) */}
+          <div className="flex items-center justify-end min-h-[32px]">
+            {/* ESTADO ACCIÓN: Hay voucher listo para reclamar (Misma altura h-8, texto 13px, blanco con borde negro) */}
+            {readyVoucher ? (
+              <button
+                type="button"
+                onClick={onClaimReward}
+                className="h-8 inline-flex items-center gap-1.5 px-3.5 rounded-full bg-white border border-neutral-950 text-neutral-950 text-[13px] font-bold tracking-tight shadow-2xs hover:bg-neutral-50 active:scale-95 transition-all select-none"
+                aria-label={`Reclamar premio: ${readyVoucher.rewardTitle}`}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-neutral-950" />
+                <span>Reclamar {readyVoucher.rewardTitle}</span>
+              </button>
+            ) : cooldownRemainingMinutes && cooldownRemainingMinutes > 0 ? (
+              /* ESTADO COOLDOWN: En enfriamiento tras compra reciente */
+              <p className="text-[12px] font-bold text-neutral-600 tracking-tight">
+                Disponible en {Math.floor(cooldownRemainingMinutes / 60)}:{String(cooldownRemainingMinutes % 60).padStart(2, '0')} hs
+              </p>
+            ) : stampsToNextReward > 0 ? (
+              /* ESTADO MOTIVACIÓN: Cuenta regresiva al próximo hito */
+              <p className="text-[12px] font-bold text-neutral-600 tracking-tight">
+                A {stampsToNextReward} de {nextRewardTitle || 'premio'}
+              </p>
+            ) : (
+              /* ESTADO META MÁXIMA */
+              <p className="text-[12px] font-bold text-neutral-950 tracking-tight">
+                Camino completado
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </footer>

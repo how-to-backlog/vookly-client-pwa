@@ -339,6 +339,38 @@
 - **Etiquetas:** `#ui-ux #frontend #roadmap #arquitectura #lego #alta`
 - **Tópico / Componente Afectado:** `web/src/components/roadmap/*`, `web/src/app/local/[id]/*`, `docs/roadmap_curve_logic.md`.
 
+### [NOTA-017] Interacción Táctil Completa, Matriz de 7 Estados, Bottom Sheet Nativo y Protocolo Antifraude de Canje en Pantalla 2
+- **Fecha:** 2026-10-30 03:00
+- **Categoría:** Arquitectura / Frontend / UI-UX / Seguridad
+- **Diagnóstico / Contexto:** Cierre del ciclo interactivo de la Pantalla 2 (`/local/[id]`) de Vookly. Se resolvió la experiencia háptica táctil de los nodos en mobile, la sincronización bidireccional con la barra inferior y el flujo seguro de canje de vouchers en mostrador, previniendo suplantaciones de identidad y colisiones de scroll.
+- **Comportamiento Esperado / Solución:**
+  1. **Matriz de 7 Estados Interactivos (`loyalty.ts` & `loyaltyRules.ts`):**
+     - Sello regular completado previo.
+     - Posición actual del cliente ("Estás acá").
+     - Sello regular futuro bloqueado (con cuenta regresiva de sellos restantes).
+     - Premio desbloqueado pero en cooldown activo (3h desde la última compra).
+     - Premio listo para canjear (voucher activo con ventana de 15 días de vigencia).
+     - Premio histórico ya canjeado y consumido.
+     - Premio futuro bloqueado con umbral de beneficios.
+  2. **Ergonomía Táctil y Antirrebote en SVG (`RoadmapNodeItem.tsx` & `RoadmapCanvas.tsx`):**
+     - Target táctil accesible mínimo de 48x48px (Apple/Android A11y) con hit area invisible `r=24`.
+     - Micro-interacción a 60 FPS (`active:scale-95 duration-150`) con pivote `transformOrigin` calibrado en `cx cy` para evitar oscilaciones de órbita.
+     - Discriminación táctil con umbral de 8px: diferencia deslizamiento de scroll de un tap deliberado.
+     - Auto-centrado vertical suave (`scrollTo({ behavior: 'smooth' })`) al seleccionar un nodo.
+     - Halo pulsante discontinuo de foco sobre el nodo activo en el lienzo.
+  3. **Lámina Deslizable a 60 FPS (`BottomSheetNodeDetail.tsx`):**
+     - Cero dependencias pesadas: transiciones CSS por GPU nativas.
+     - Backdrop con desenfoque (`bg-black/40 backdrop-blur-xs`) y bloqueo de scroll en el `body`.
+     - Gesto táctil *drag to dismiss* con umbral de 80px hacia abajo.
+  4. **Protocolo Antifraude de Canje y Regla de Upselling (`NodeDetailContent.tsx`):**
+     - Advertencia preventiva de abrir el código únicamente frente a la caja.
+     - Ficha de canje activa con **token numérico de 4 dígitos** (ej: `4892`), barra de progreso animada y temporizador regresivo de 15 minutos. Si expira, el código se oculta sin destruir el voucher.
+     - Leyenda explicativa de upselling: *"Importante: Este producto no suma un nuevo sello, pero si comprás algo más en el acto, ¡sí suma!"*.
+  5. **Sincronización con Footer (`LocalFooterSummary.tsx`):**
+     - Zona de notificaciones con dimensiones unificadas (`h-8`, texto `13px` y `px-3.5`) que transmuta entre cuenta regresiva de cooldown y botón sobrio de reclamo (`• Reclamar Tostado Especial`), abriendo el mismo Bottom Sheet.
+- **Etiquetas:** `#frontend #ui-ux #interactividad #bottom-sheet #antifraude #vookly #alta`
+- **Tópico / Componente Afectado:** `web/src/components/local/*`, `web/src/components/roadmap/*`, `web/src/lib/loyaltyRules.ts`, `docs/roadmap_spec_and_redemption_engine.md`.
+
 ---
 
 ## 6. 🏷️ Índice de Tópicos y Relaciones Cruzadas

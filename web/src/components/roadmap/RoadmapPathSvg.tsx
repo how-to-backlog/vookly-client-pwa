@@ -20,6 +20,8 @@ export interface RoadmapPathSvgProps {
   currentPoint?: Point2D;
   originPoint?: Point2D;
   horizon?: RoadmapHorizonExtension;
+  selectedNodeIndex?: number | null;
+  onSelectNode?: (node: RoadmapNodePoint) => void;
   className?: string;
 }
 
@@ -42,6 +44,8 @@ export function RoadmapPathSvg({
   currentPoint,
   originPoint,
   horizon,
+  selectedNodeIndex,
+  onSelectNode,
   className = ''
 }: RoadmapPathSvgProps) {
   return (
@@ -102,6 +106,8 @@ export function RoadmapPathSvg({
           key={`node-${node.stampIndex}`}
           node={node}
           canvasWidth={width}
+          isSelected={selectedNodeIndex === node.stampIndex}
+          onSelect={onSelectNode}
         />
       ))}
 

@@ -65,7 +65,7 @@ export function RoadmapHorizon({ horizon, className = '' }: RoadmapHorizonProps)
           textAnchor="middle"
           className="text-[12px] font-semibold fill-zinc-200 tracking-tight"
         >
-          Próximamente más premios
+          ¡Próximamente más premios!
         </text>
       </g>
     </g>

@@ -6,6 +6,8 @@ import { RoadmapNodePoint } from '@/types/loyalty';
 export interface RoadmapNodeItemProps {
   node: RoadmapNodePoint;
   canvasWidth?: number;
+  isSelected?: boolean;
+  onSelect?: (node: RoadmapNodePoint) => void;
 }
 
 /**
@@ -19,11 +21,43 @@ export interface RoadmapNodeItemProps {
  *    - Si node.point.x < width / 2: texto a la derecha (x = node.point.x + radius + 14, textAnchor="start").
  *    - Si node.point.x >= width / 2: texto a la izquierda (x = node.point.x - radius - 14, textAnchor="end").
  */
-export function RoadmapNodeItem({ node, canvasWidth = 360 }: RoadmapNodeItemProps) {
+export function RoadmapNodeItem({
+  node,
+  canvasWidth = 360,
+  isSelected = false,
+  onSelect
+}: RoadmapNodeItemProps) {
   // Nodo base de inicio se maneja en RoadmapOriginBadge
   if (node.stampIndex === 0) return null;
 
   const midX = canvasWidth / 2;
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onSelect?.(node);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onSelect?.(node);
+    }
+  };
+
+  const ariaLabel =
+    node.interactiveState === 'reward_ready'
+      ? `Premio del Sello ${node.stampIndex}: ${node.rewardTitle || 'Premio'}, listo para reclamar`
+      : node.interactiveState === 'reward_cooldown'
+      ? `Premio del Sello ${node.stampIndex}: ${node.rewardTitle || 'Premio'}, disponible en ${node.cooldownRemainingMinutes || 180} minutos`
+      : node.interactiveState === 'reward_redeemed'
+      ? `Premio del Sello ${node.stampIndex}: ${node.rewardTitle || 'Premio'}, ya canjeado`
+      : node.isReward
+      ? `Premio del Sello ${node.stampIndex}: ${node.rewardTitle || 'Premio'}, pendiente`
+      : node.interactiveState === 'current_position'
+      ? `Sello ${node.stampIndex}, tu posición actual`
+      : node.isCompleted
+      ? `Sello ${node.stampIndex} completado`
+      : `Sello ${node.stampIndex} pendiente`;
 
   if (node.isReward) {
     // Todos los premios estandarizados al mismo tamaño exacto (radio 28 / interior 20)
@@ -37,7 +71,41 @@ export function RoadmapNodeItem({ node, canvasWidth = 360 }: RoadmapNodeItemProp
     const textAnchor = isLeftSide ? 'start' : 'end';
 
     return (
-      <g key={`reward-${node.stampIndex}`} className="transition-transform select-none">
+      <g
+        key={`reward-${node.stampIndex}`}
+        role="button"
+        tabIndex={0}
+        aria-label={ariaLabel}
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
+        className="cursor-pointer select-none transition-transform duration-150 ease-out active:scale-95 origin-center outline-none focus-visible:opacity-80"
+        style={{
+          transformOrigin: `${node.point.x}px ${node.point.y}px`
+        }}
+      >
+        {/* Hit area táctil expandida (mínimo 56px de radio / 112px de diámetro) que cubre círculo y aproximación de texto */}
+        <circle
+          cx={node.point.x}
+          cy={node.point.y}
+          r={radius + 8}
+          fill="transparent"
+          pointerEvents="all"
+        />
+
+        {/* Halo de selección si el nodo está activo */}
+        {isSelected && (
+          <circle
+            cx={node.point.x}
+            cy={node.point.y}
+            r={radius + 6}
+            fill="none"
+            stroke="#18181B"
+            strokeWidth="3"
+            strokeDasharray="4 4"
+            className="animate-pulse"
+          />
+        )}
+
         {/* Sombra de apoyo */}
         <circle
           cx={node.point.x}
@@ -120,52 +188,64 @@ export function RoadmapNodeItem({ node, canvasWidth = 360 }: RoadmapNodeItemProp
   }
 
   // Sello regular intermedio (Opción A: Número adentro del nodo estilo Candy Crush / Duolingo)
-  // Radio 15px (diámetro 30px) para alojar cómodamente los números al doble de tamaño
+  // Radio visual de 15px (diámetro 30px)
   const regularRadius = 15;
+  const accessibleHitRadius = 24; // Expansión táctil a 48x48px (Apple / Android A11y)
 
-  if (node.isCompleted) {
-    return (
-      <g key={`stamp-${node.stampIndex}`} className="select-none">
-        {/* Fondo circular sólido oscuro */}
+  return (
+    <g
+      key={`stamp-${node.stampIndex}`}
+      role="button"
+      tabIndex={0}
+      aria-label={ariaLabel}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      className="cursor-pointer select-none transition-transform duration-150 ease-out active:scale-90 origin-center outline-none focus-visible:opacity-80"
+      style={{
+        transformOrigin: `${node.point.x}px ${node.point.y}px`
+      }}
+    >
+      {/* Hit area invisible para garantizar target táctil de al menos 48x48px */}
+      <circle
+        cx={node.point.x}
+        cy={node.point.y}
+        r={accessibleHitRadius}
+        fill="transparent"
+        pointerEvents="all"
+      />
+
+      {/* Halo de selección si el nodo regular está activo */}
+      {isSelected && (
         <circle
           cx={node.point.x}
           cy={node.point.y}
-          r={regularRadius}
-          fill="#18181B"
-          stroke="#FFFFFF"
-          strokeWidth="2"
+          r={regularRadius + 5}
+          fill="none"
+          stroke="#18181B"
+          strokeWidth="2.5"
+          strokeDasharray="3 3"
+          className="animate-pulse"
         />
-        {/* Número del sello duplicado de tamaño (~16px) en blanco nítido */}
-        <text
-          x={node.point.x}
-          y={node.point.y + 5.5}
-          textAnchor="middle"
-          className="text-[16px] font-black fill-white tracking-tight"
-        >
-          {node.stampIndex}
-        </text>
-      </g>
-    );
-  }
+      )}
 
-  // Nodo bloqueado / por conseguir
-  return (
-    <g key={`stamp-${node.stampIndex}`} className="select-none">
-      {/* Fondo circular blanco con borde tenue */}
+      {/* Fondo circular según completado o pendiente */}
       <circle
         cx={node.point.x}
         cy={node.point.y}
         r={regularRadius}
-        fill="#FFFFFF"
-        stroke="#D4D4D8"
+        fill={node.isCompleted ? '#18181B' : '#FFFFFF'}
+        stroke={node.isCompleted ? '#FFFFFF' : '#D4D4D8'}
         strokeWidth="2"
       />
-      {/* Número del sello duplicado de tamaño (~16px) en gris suave */}
+
+      {/* Número del sello duplicado de tamaño (~16px) */}
       <text
         x={node.point.x}
         y={node.point.y + 5.5}
         textAnchor="middle"
-        className="text-[16px] font-bold fill-zinc-400 tracking-tight"
+        className={`text-[16px] tracking-tight ${
+          node.isCompleted ? 'font-black fill-white' : 'font-bold fill-zinc-400'
+        }`}
       >
         {node.stampIndex}
       </text>
