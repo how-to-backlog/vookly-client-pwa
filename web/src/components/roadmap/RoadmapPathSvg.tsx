@@ -9,6 +9,7 @@ import {
 import { RoadmapHorizon } from './RoadmapHorizon';
 import { RoadmapNodeItem } from './RoadmapNodeItem';
 import { RoadmapOriginBadge } from './RoadmapOriginBadge';
+import { RoadmapAtmosphereSvg } from './RoadmapAtmosphereSvg';
 
 export interface RoadmapPathSvgProps {
   width: number;
@@ -50,6 +51,9 @@ export function RoadmapPathSvg({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
+      {/* -1. Atmósfera vertical continua (Espacio, estrellas, partículas, nubes transparentes) */}
+      <RoadmapAtmosphereSvg width={width} height={height} />
+
       {/* 0. Silueta PNG de la ciudad: fija en la base absoluta del SVG */}
       <image
         href="/images/roadmap/city-skyline.png"

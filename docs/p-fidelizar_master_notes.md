@@ -316,6 +316,29 @@
 - **Etiquetas:** `#branding #naming #producto #vookly #alta`
 - **Tópico / Componente Afectado:** Identidad de marca, `docs/p-fidelizar_master_notes.md`, presentaciones y materiales comerciales.
 
+### [NOTA-016] Especificación e Implementación de Pantalla 2 (Roadmap Gamificado Vookly)
+- **Fecha:** 2026-10-29 21:00
+- **Categoría:** Arquitectura / UI-UX / Frontend
+- **Diagnóstico / Contexto:** Construcción modular en Next.js App Router (`web/`) de la pantalla `/local/[id]` de Vookly, garantizando desacoplamiento total de datos mock y renderizado del camino de progreso gamificado vertical estilo Duolingo/Candy Crush.
+- **Comportamiento Esperado / Solución:**
+  1. **Top Bar Minimalista (`LocalTopBar.tsx`):** Fondo blanco translúcido (`bg-white/60 backdrop-blur-md`) con botón de retorno y flecha negra (`text-black`).
+  2. **Franja Horizontal Fija Inferior (`LocalFooterSummary.tsx`):** Barra fija en la base con fondo blanco puro y sombra suave. Muestra nombre del local, dirección, enlace Maps, pastilla de sellos acumulados y texto motivacional a próximo premio.
+  3. **Motor Matemático Puro (`roadmapMath.ts` & `docs/roadmap_curve_logic.md`):**
+     - Geometría de curvas Bézier cúbicas alternando en zigzag (X=76 izquierda, X=284 derecha).
+     - Altura vertical dinámica por segmento (`BASE_SEGMENT_HEIGHT = 60 + stampsInSegment * 44px`) para evitar amontonamiento de sellos.
+     - Subdivisión exacta de De Casteljau para corte del trazo en el sello actual (`completedPathD` sólido y `futurePathD` punteado con `strokeDasharray="8 8"`).
+     - Orientación centrípeta de etiquetas de premio (siempre orientadas hacia el centro del canvas).
+  4. **Nodos Lego y Visuales:**
+     - Nodos comunes numerados de 30px (`r=15`) con tipografía `16px font-black` (negro/blanco si completado, blanco/gris si bloqueado).
+     - Nodos de premios agrandados (`r=28` y `r=32`) listos para recibir imagen de producto, con títulos duplicados de tamaño.
+     - Extensión al horizonte superior (`RoadmapHorizon.tsx`) con niebla radial y badge *"Próximamente más premios"*.
+  5. **Base Urbana y Calibración:**
+     - Silueta PNG 2D de la ciudad (`city-skyline.png`, 45 KB) apoyada al ras en la base absoluta del camino sin desbordes ni márgenes blancos (`width * 1.04`).
+     - Badge de `INICIO` flotando prolijamente por encima de los techos y calibrado milimétricamente en `BOTTOM_PADDING = 115` para máxima cercanía visual sin colisiones.
+  6. **Ciclo de Ramas Git:** `etapa-1`, `etapa-2` y `etapa-3` mergeadas formalmente en `main`; apertura de rama limpia `etapa-4`.
+- **Etiquetas:** `#ui-ux #frontend #roadmap #arquitectura #lego #alta`
+- **Tópico / Componente Afectado:** `web/src/components/roadmap/*`, `web/src/app/local/[id]/*`, `docs/roadmap_curve_logic.md`.
+
 ---
 
 ## 6. 🏷️ Índice de Tópicos y Relaciones Cruzadas

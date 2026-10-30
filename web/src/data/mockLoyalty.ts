@@ -18,11 +18,11 @@ export const MOCK_RULES_CAFETERIA: BusinessLoyaltyRules = {
   businessId: 'cafeteria',
   totalRoadmapStamps: 30,
   rewardMilestones: [
-    { stampThreshold: 6, rewardTitle: 'Café Clásico', icon: 'cup' },
-    { stampThreshold: 12, rewardTitle: 'Café + Medialuna', icon: 'gift' },
-    { stampThreshold: 18, rewardTitle: 'Tostado Especial', icon: 'gift' },
-    { stampThreshold: 24, rewardTitle: 'Brunch Completo', icon: 'trophy' },
-    { stampThreshold: 30, rewardTitle: 'Voucher $15.000', icon: 'crown', isMajorReward: true }
+    { stampThreshold: 5, rewardTitle: 'Café Clásico', icon: 'cup' },
+    { stampThreshold: 10, rewardTitle: 'Café + Medialuna', icon: 'gift' },
+    { stampThreshold: 15, rewardTitle: 'Tostado Especial', icon: 'gift' },
+    { stampThreshold: 20, rewardTitle: 'Brunch Completo', icon: 'trophy' },
+    { stampThreshold: 25, rewardTitle: 'Voucher $15.000', icon: 'crown', isMajorReward: true }
   ]
 };
 

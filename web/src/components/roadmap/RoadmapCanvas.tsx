@@ -50,7 +50,7 @@ export function RoadmapCanvas({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full flex-1 overflow-y-auto overflow-x-hidden pt-10 pb-0 px-0 flex justify-center no-scrollbar ${className}`}
+      className={`relative w-full flex-1 overflow-y-auto overflow-x-hidden pt-0 pb-0 px-0 flex justify-center no-scrollbar ${className}`}
       style={{ scrollBehavior: 'smooth' }}
     >
       <div className="w-full relative pb-0">

@@ -88,7 +88,7 @@ export function calculateRoadmapGeometry(
   const X_RIGHT = 284;
   const X_CENTER = 180;
 
-  const TOP_PADDING = 160; // Espacio superior extendido para el horizonte con niebla
+  const TOP_PADDING = 150; // Aire superior extendido para una proyección vertical elegante del horizonte
   const BOTTOM_PADDING = 115; // Bajamos la curva S a 115 para calzarla justo sobre los techos
   const BASE_SEGMENT_HEIGHT = 60; // Altura mínima base en px
   const PIXELS_PER_STAMP = 44; // ~44px de recorrido vertical por cada sello del tramo
@@ -266,11 +266,11 @@ export function calculateRoadmapGeometry(
   });
 
   // 5. Extensión de la curva hacia el horizonte:
-  // Desde el último ancla (último hito) se curva suavemente hacia el centro superior X_CENTER
+  // Desde el último ancla (último hito) se curva verticalmente hacia el centro superior X_CENTER
   const lastAnchor = milestoneAnchors[milestoneAnchors.length - 1];
   const horizonEndPoint = {
     x: X_CENTER,
-    y: Math.max(30, lastAnchor.point.y - 140)
+    y: Math.max(35, lastAnchor.point.y - 120) // 120px de proyección ascendente despegada del sello 30
   };
   const horizonDeltaY = lastAnchor.point.y - horizonEndPoint.y;
   const hp1 = { x: lastAnchor.point.x, y: lastAnchor.point.y - 0.5 * horizonDeltaY };

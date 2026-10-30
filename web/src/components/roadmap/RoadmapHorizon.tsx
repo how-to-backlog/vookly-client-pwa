@@ -46,15 +46,6 @@ export function RoadmapHorizon({ horizon, className = '' }: RoadmapHorizonProps)
         strokeLinecap="round"
       />
 
-      {/* 2. Bruma / Niebla blanca suave de fondo */}
-      <ellipse
-        cx={horizon.endPoint.x}
-        cy={horizon.endPoint.y}
-        rx="95"
-        ry="36"
-        fill="url(#horizonMistGlow)"
-      />
-
       {/* 3. Badge píldora sutil "Próximamente más premios" */}
       <g className="transition-opacity hover:opacity-100">
         <rect
@@ -63,17 +54,16 @@ export function RoadmapHorizon({ horizon, className = '' }: RoadmapHorizonProps)
           width={badgeWidth}
           height={badgeHeight}
           rx={badgeHeight / 2}
-          fill="#FFFFFF"
-          stroke="#E4E4E7"
+          fill="#18181B"
+          stroke="#3F3F46"
           strokeWidth="1"
-          strokeDasharray="4 3"
           className="drop-shadow-xs"
         />
         <text
           x={horizon.endPoint.x}
           y={badgeY + 18}
           textAnchor="middle"
-          className="text-[12px] font-semibold fill-zinc-500 tracking-tight"
+          className="text-[12px] font-semibold fill-zinc-200 tracking-tight"
         >
           Próximamente más premios
         </text>

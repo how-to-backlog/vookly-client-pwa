@@ -15,7 +15,8 @@ interface LocalPageProps {
 }
 
 async function LocalContent({ params }: LocalPageProps) {
-  const { id } = await params;
+  // Consumimos params de forma segura para Next.js 16 (disponible para consultas dinámicas futuras)
+  await params;
 
   // En el futuro, acá se consulta la API/DB por el ID del comercio y del cliente.
   // Por ahora alimentamos el bloque Lego con el modelo formal desacoplado.

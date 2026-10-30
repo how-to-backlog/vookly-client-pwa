@@ -23,35 +23,27 @@ export const LocalTopBar: React.FC<LocalTopBarProps> = ({ onBack }) => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/60 backdrop-blur-md">
-      <div className="w-full max-w-md mx-auto px-4 h-14 flex items-center justify-between">
-        {/* Flecha Volver de Color Negro */}
-        <button
-          type="button"
-          onClick={handleBack}
-          aria-label="Volver a la billetera"
-          className="p-2 -ml-2 text-black hover:text-neutral-700 active:scale-95 transition-all"
+    <div className="absolute top-4 left-4 z-50 pointer-events-auto">
+      {/* Botón flotante aislado: flecha negra dentro de círculo blanco */}
+      <button
+        type="button"
+        onClick={handleBack}
+        aria-label="Volver a la billetera"
+        className="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-black hover:bg-neutral-100 active:scale-90 transition-all border border-black/5"
+      >
+        <svg
+          className="w-5 h-5 -ml-0.5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          viewBox="0 0 24 24"
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            viewBox="0 0 24 24"
-          >
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-        </button>
-
-        {/* Centro limpio sin título */}
-        <div className="flex-1" />
-
-        {/* Espaciador de simetría */}
-        <div className="w-6" />
-      </div>
-    </header>
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+      </button>
+    </div>
   );
 };
 

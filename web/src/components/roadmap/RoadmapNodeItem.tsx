@@ -26,8 +26,9 @@ export function RoadmapNodeItem({ node, canvasWidth = 360 }: RoadmapNodeItemProp
   const midX = canvasWidth / 2;
 
   if (node.isReward) {
-    const radius = node.isMajorReward ? 32 : 28;
-    const innerRadius = node.isMajorReward ? 24 : 20;
+    // Todos los premios estandarizados al mismo tamaño exacto (radio 28 / interior 20)
+    const radius = 28;
+    const innerRadius = 20;
     const isLeftSide = node.point.x < midX;
 
     const textX = isLeftSide
@@ -72,30 +73,17 @@ export function RoadmapNodeItem({ node, canvasWidth = 360 }: RoadmapNodeItemProp
           strokeWidth="1"
         />
 
-        {/* Indicador / Icono temporal del regalo si está completado o pendiente */}
-        {node.isMajorReward ? (
-          <text
-            x={node.point.x}
-            y={node.point.y + 5}
-            textAnchor="middle"
-            className={`text-[15px] font-bold ${
-              node.isCompleted ? 'fill-amber-300' : 'fill-zinc-400'
-            }`}
-          >
-            ★
-          </text>
-        ) : (
-          <text
-            x={node.point.x}
-            y={node.point.y + 4}
-            textAnchor="middle"
-            className={`text-[12px] font-semibold ${
-              node.isCompleted ? 'fill-zinc-800' : 'fill-zinc-400'
-            }`}
-          >
-            🎁
-          </text>
-        )}
+        {/* Indicador / Icono de estrella unificado para todos los sellos de premio */}
+        <text
+          x={node.point.x}
+          y={node.point.y + 5}
+          textAnchor="middle"
+          className={`text-[15px] font-bold ${
+            node.isCompleted ? 'fill-amber-300' : 'fill-zinc-400'
+          }`}
+        >
+          ★
+        </text>
 
         {/* Etiqueta de texto orientada matemáticamente hacia el interior/centro */}
         <g>
@@ -104,7 +92,9 @@ export function RoadmapNodeItem({ node, canvasWidth = 360 }: RoadmapNodeItemProp
             x={textX}
             y={node.point.y - 12}
             textAnchor={textAnchor}
-            className="text-[15px] font-extrabold fill-zinc-500 uppercase tracking-wider"
+            className={`text-[15px] font-extrabold uppercase tracking-wider ${
+              node.point.y < 500 ? 'fill-zinc-300' : 'fill-zinc-500'
+            }`}
           >
             Sello {node.stampIndex}
           </text>
@@ -114,10 +104,12 @@ export function RoadmapNodeItem({ node, canvasWidth = 360 }: RoadmapNodeItemProp
             x={textX}
             y={node.point.y + 16}
             textAnchor={textAnchor}
-            className={`text-[22px] ${
-              node.isMajorReward
-                ? 'font-black fill-zinc-950 tracking-tight'
-                : 'font-bold fill-zinc-900 tracking-tight'
+            className={`text-[22px] tracking-tight ${
+              node.point.y < 500
+                ? 'font-black fill-white'
+                : node.isMajorReward
+                ? 'font-black fill-zinc-950'
+                : 'font-bold fill-zinc-900'
             }`}
           >
             {node.rewardTitle || `Premio ${node.stampIndex}`}

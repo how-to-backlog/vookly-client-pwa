@@ -66,7 +66,7 @@ export const LocalFooterSummary: React.FC<LocalFooterSummaryProps> = ({
 
           <p className="text-[12px] font-bold text-neutral-600 mt-1 tracking-tight">
             {stampsToNextReward > 0
-              ? `A ${stampsToNextReward} sellos del premio`
+              ? `A ${stampsToNextReward} de ${nextRewardTitle || 'premio'}`
               : '¡Premio listo para canjear!'}
           </p>
         </div>
