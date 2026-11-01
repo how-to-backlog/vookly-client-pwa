@@ -61,7 +61,7 @@ export const LocalFooterSummary: React.FC<LocalFooterSummaryProps> = ({
         </div>
 
         {/* Columna Derecha: Sellos Actuales y Zona de Notificaciones Dinámica */}
-        <div className="flex flex-col items-end flex-shrink-0 gap-1.5">
+        <div className="flex flex-col items-end flex-shrink-0 gap-1.5 max-w-[55%]">
           {/* Badge métrico de sellos (permanente) */}
           <div className="h-8 inline-flex items-center gap-1.5 bg-neutral-950 text-white px-3.5 rounded-full shadow-sm">
             <span className="text-[13px] font-black tracking-tight">{currentStamps}</span>
@@ -69,26 +69,26 @@ export const LocalFooterSummary: React.FC<LocalFooterSummaryProps> = ({
           </div>
 
           {/* Zona de Notificaciones Dinámica (Misma altura h-8 y texto 13px) */}
-          <div className="flex items-center justify-end min-h-[32px]">
-            {/* ESTADO ACCIÓN: Hay voucher listo para reclamar (Misma altura h-8, texto 13px, blanco con borde negro) */}
+          <div className="flex items-center justify-end min-h-[32px] w-full">
+            {/* ESTADO ACCIÓN: Hay voucher listo para reclamar (Misma altura h-8, texto 13px, blanco con borde negro, ancho acotado y truncate) */}
             {readyVoucher ? (
               <button
                 type="button"
                 onClick={onClaimReward}
-                className="h-8 inline-flex items-center gap-1.5 px-3.5 rounded-full bg-white border border-neutral-950 text-neutral-950 text-[13px] font-bold tracking-tight shadow-2xs hover:bg-neutral-50 active:scale-95 transition-all select-none"
+                className="h-8 inline-flex items-center gap-1.5 px-3 rounded-full bg-white border border-neutral-950 text-neutral-950 text-[12.5px] font-bold tracking-tight shadow-2xs hover:bg-neutral-50 active:scale-95 transition-all select-none max-w-full"
                 aria-label={`Reclamar premio: ${readyVoucher.rewardTitle}`}
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-neutral-950" />
-                <span>Reclamar {readyVoucher.rewardTitle}</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-neutral-950 flex-shrink-0" />
+                <span className="truncate">Reclamar {readyVoucher.rewardTitle}</span>
               </button>
             ) : cooldownRemainingMinutes && cooldownRemainingMinutes > 0 ? (
               /* ESTADO COOLDOWN: En enfriamiento tras compra reciente */
-              <p className="text-[12px] font-bold text-neutral-600 tracking-tight">
+              <p className="text-[12px] font-bold text-neutral-600 tracking-tight truncate">
                 Disponible en {Math.floor(cooldownRemainingMinutes / 60)}:{String(cooldownRemainingMinutes % 60).padStart(2, '0')} hs
               </p>
             ) : stampsToNextReward > 0 ? (
               /* ESTADO MOTIVACIÓN: Cuenta regresiva al próximo hito */
-              <p className="text-[12px] font-bold text-neutral-600 tracking-tight">
+              <p className="text-[12px] font-bold text-neutral-600 tracking-tight truncate">
                 A {stampsToNextReward} de {nextRewardTitle || 'premio'}
               </p>
             ) : (

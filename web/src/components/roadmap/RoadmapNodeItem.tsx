@@ -65,10 +65,13 @@ export function RoadmapNodeItem({
     const innerRadius = 20;
     const isLeftSide = node.point.x < midX;
 
-    const textX = isLeftSide
-      ? node.point.x + radius + 14
-      : node.point.x - radius - 14;
-    const textAnchor = isLeftSide ? 'start' : 'end';
+    const rawTitle = node.rewardTitle || `Premio ${node.stampIndex}`;
+
+    // Ancho útil disponible para el bloque de texto (desde el nodo hasta el borde seguro de la pantalla)
+    // El lienzo tiene width=360.
+    const textWidth = isLeftSide ? 360 - (node.point.x + radius + 14) - 12 : (node.point.x - radius - 14) - 12;
+    const foreignX = isLeftSide ? node.point.x + radius + 14 : 12;
+    const textAlign = isLeftSide ? 'text-left' : 'text-right';
 
     return (
       <g
@@ -153,36 +156,39 @@ export function RoadmapNodeItem({
           ★
         </text>
 
-        {/* Etiqueta de texto orientada matemáticamente hacia el interior/centro */}
-        <g>
-          {/* Badge del número de sello del premio */}
-          <text
-            x={textX}
-            y={node.point.y - 12}
-            textAnchor={textAnchor}
-            className={`text-[15px] font-extrabold uppercase tracking-wider ${
-              node.point.y < 500 ? 'fill-zinc-300' : 'fill-zinc-500'
-            }`}
-          >
-            Sello {node.stampIndex}
-          </text>
+        {/* Etiqueta HTML fluida vía foreignObject para auto-wrap real y truncado inteligente sin desbordes */}
+        <foreignObject
+          x={foreignX}
+          y={node.point.y - 36}
+          width={textWidth}
+          height={76}
+          className="overflow-visible pointer-events-none"
+        >
+          <div className={`flex flex-col justify-center h-full ${textAlign} pointer-events-none pr-1 pl-1`}>
+            {/* Badge de Sello */}
+            <span
+              className={`text-[11.5px] font-extrabold uppercase tracking-wider leading-none mb-1 ${
+                node.point.y < 350 ? 'text-zinc-300' : 'text-zinc-500'
+              }`}
+            >
+              Sello {node.stampIndex}
+            </span>
 
-          {/* Título del premio (duplicado a ~22px con tracking nítido) */}
-          <text
-            x={textX}
-            y={node.point.y + 16}
-            textAnchor={textAnchor}
-            className={`text-[22px] tracking-tight ${
-              node.point.y < 500
-                ? 'font-black fill-white'
-                : node.isMajorReward
-                ? 'font-black fill-zinc-950'
-                : 'font-bold fill-zinc-900'
-            }`}
-          >
-            {node.rewardTitle || `Premio ${node.stampIndex}`}
-          </text>
-        </g>
+            {/* Título de Producto con auto-wrap natural de hasta 2 líneas */}
+            <p
+              className={`text-[15px] sm:text-[16px] font-black tracking-tight leading-[1.15] line-clamp-2 ${
+                node.point.y < 350
+                  ? 'text-white'
+                  : 'text-neutral-950'
+              }`}
+              style={{
+                textShadow: node.point.y < 350 ? '0 1px 3px rgba(0,0,0,0.6)' : 'none'
+              }}
+            >
+              {rawTitle}
+            </p>
+          </div>
+        </foreignObject>
       </g>
     );
   }

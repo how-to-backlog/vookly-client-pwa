@@ -43,7 +43,7 @@
 - [x] [DEV] **T21: App de Mapa de Locales de Relevamiento (PWA/APK + Baserow)** (Asignado: Nahuel) <!-- finalizado 2026-10-27: demo presentada en vivo con éxito; pendientes menores de UX: exportar a CSV, estados de visita y ruteo óptimo -->
 - [x] [DOCS] **T24: Guía de Entrevistas de Campo Completa (Paso a paso, preguntas, objeciones y notas post-visita)** (Asignado: Equipo) <!-- finalizado 2026-10-27: consenso unánime sobre dinámica de campo (registro post-visita, pitch de caja y propuesta de early adopter) -->
 - [x] [HANDOFF] **T25: Entrega y Difusión de Especificación Funcional MD a Facundo y Equipo** (Asignado: Jesús) <!-- finalizado 2026-10-25: archivos enviados por WhatsApp y asimilados -->
-- [ ] [FIELD] **T15: Salida al Campo: Relevamiento de ~40 Locales (CBA, Formosa, CABA/BA)** (Asignado: Equipo) <!-- en curso: semana en marcha; Nahuel y Ramiro en terreno, Jesús coordina con Pedro en CBA, Facundo confirma horarios -->
+- [x] [FIELD] **T15: Salida al Campo: Relevamiento de ~40 Locales (CBA, Formosa, CABA/BA)** (Asignado: Equipo) <!-- en curso: 5 locales relevados en CBA por Jesús y Pedro el 31/10-01/11 (ver GRILL-ME.md y NOTA-018); restan 5 en CBA y 10 por nicho en Formosa/BA -->
 - [ ] [DOCS] **T27: Revisión de Bases del Programa de Early Adopters (Drive)** (Asignado: Jesús / Equipo) <!-- documento de derechos y responsabilidades de comercios beta testers en revisión -->
 - [ ] [COORDINATION] **T28: Asamblea de Feedback de Campo y Consolidación de Datos (Fin de semana)** (Asignado: Equipo)
 
@@ -371,6 +371,30 @@
 - **Etiquetas:** `#frontend #ui-ux #interactividad #bottom-sheet #antifraude #vookly #alta`
 - **Tópico / Componente Afectado:** `web/src/components/local/*`, `web/src/components/roadmap/*`, `web/src/lib/loyaltyRules.ts`, `docs/roadmap_spec_and_redemption_engine.md`.
 
+### [NOTA-018] Validación de Campo Real (5 Locales), Calibración de ICP, Preferencia de Canje y Necesidad de Maqueta Interactiva
+- **Fecha:** 2026-11-01 04:00
+- **Categoría:** Negocio / Validación / Producto / Estrategia
+- **Diagnóstico / Contexto:** Salida a campo presencial de Jesús y Pedro relevando 5 comercios reales (cafeterías y afines) para contrastar las hipótesis del producto. Se identificaron patrones contundentes sobre sistemas existentes, percepción del dolor y barreras de venta.
+- **Hallazgos Clave y Decisiones:**
+  1. **Perfil de Cliente Ideal (ICP):**
+     - Locales gastronómicos independientes y de pequeña escala (1 a 3 sucursales).
+     - Las grandes cadenas ya cuentan con sistemas de fidelización in-house o consideran resuelta la retención porque el 80% de su público es habitual cautivo; no sienten urgencia de contratar un producto externo.
+  2. **Invisibilidad del Dolor de Fuga de Clientes:**
+     - Los comerciantes independientes no cuentan con base de datos de contacto de sus clientes y **no son conscientes de que pierden dinero** por la inactividad de clientes que no vuelven, hasta que se les formula la pregunta explícita.
+     - La captura del teléfono y la reactivación automática representan el verdadero valor a educar y vender al dueño.
+  3. **Validación de la Propuesta de Valor (Producto Gratis vs. Descuento):**
+     - Coincidencia unánime: tanto comerciantes como sus clientes prefieren cambiar sellos/puntos por **productos tangibles gratuitos** antes que por descuentos de dinero. Valida el diseño del Roadmap vertical de productos frente a billeteras de cashback.
+  4. **Competencia Detectada:**
+     - Coexisten tarjetas analógicas de cartón/sellos de goma, desarrollos propios de cadenas y plataformas como Toki (Tuki con K).
+  5. **Estrategia Comercial de Cierre:**
+     - Los empleados en mostrador no tienen facultad de decisión para sumarse a un MVP piloto.
+     - Se debe coordinar una reunión presencial breve (10 minutos) directamente con dueños o gerentes, llevando una **demo interactiva en mano** en el celular para tangibilizar el concepto y lograr el convencimiento.
+  6. **Líneas Estratégicas Pendientes:**
+     - Presentación diplomática de la PWA construida al equipo de desarrollo sin generar fricciones de gobernanza en Jira / Fase 0.
+     - Definición de reglas de negocio ante cambios dinámicos de premios/sellos por parte del comerciante en pleno trayecto del cliente.
+- **Etiquetas:** `#negocio #validacion #campo #icp #estrategia #alta`
+- **Tópico / Componente Afectado:** `GRILL-ME.md`, `docs/p-fidelizar_master_notes.md`.
+
 ---
 
 ## 6. 🏷️ Índice de Tópicos y Relaciones Cruzadas
@@ -387,6 +411,40 @@
 | `#scope` | Alcance y nichos priorizados del producto | [NOTA-004], [NOTA-007], [NOTA-008] |
 | `#competencia` | Análisis y benchmark de plataformas competidoras | [NOTA-003], [NOTA-006] |
 | `#precios` | Esquemas tarifarios y planes de mercado en ARS | [NOTA-006] |
+| `#in-flight-rules` | Integridad de reglas ante cambios de sellos y premios en vuelo | [NOTA-019] |
+
+### [NOTA-020] Estabilización Geométrica en Mapas Cortos, Auto-Wrap Tipográfico en SVG y Cierre de Etapa 5 a Main
+- **Fecha:** 2026-11-01 02:00
+- **Categoría:** Arquitectura / Frontend / Geometría / UI-UX
+- **Diagnóstico / Contexto:** Calibración final de la Pantalla 2 (`/local/[id]`) ante configuraciones extremas del Simulador Demo (de 1 a 5 premios, y de 1 a 30 sellos). Se corrigieron huecos blancos inferiores, textos cortados de productos y colisiones táctiles.
+- **Solución y Mejoras Implementadas:**
+  1. **Altura Mínima Garantizada (`MIN_SCREEN_HEIGHT = 780` en `roadmapMath.ts`):**
+     - En mapas cortos (ej: 1 premio con 2 sellos), el SVG medía menos de 450px y se despegaba de la base. Con `MIN_SCREEN_HEIGHT = 780` el fondo cósmico cubre toda la pantalla del móvil, la silueta urbana apoya siempre al ras sobre el pie y la pastilla *"¡Próximamente más premios!"* se proyecta fija en la cima (`y: 35`).
+     - Despeje inferior exacto con `pb-[88px]` en el contenedor `main` para que la barra horizontal fija nunca tape los techos ni el botón `INICIO`.
+  2. **Auto-Wrap Tipográfico con `<foreignObject>` (`RoadmapNodeItem.tsx`):**
+     - Se reemplazó el `<text>` rígido de SVG por `<foreignObject>` con flexbox HTML y `line-clamp-2`, permitiendo que títulos largos de combos gastronómicos fluyan naturalmente en 2 renglones sin desbordar el viewport de 360px.
+     - Contraste dinámico: texto blanco con sombra en la zona cósmica alta ($Y < 350$) y texto negro puro (`text-neutral-950`) en la zona media y baja para máxima legibilidad.
+  3. **Corrección de Tap en `currentPoint` (`RoadmapPathSvg.tsx`):**
+     - Se agregó `pointer-events-none` al indicador de corte actual para evitar que intercepte los clics dirigidos al nodo interactivo subyacente.
+  4. **Ciclo Git y Ramas:**
+     - `etapa-5` mergeada limpiamente con fast-forward en `main` (commit `ad0459e`).
+     - Creación y apertura de rama limpia **`etapa-6`** para el Simulador Demo (`T59`).
+- **Etiquetas:** `#frontend #geometria #roadmap #svg #etapa-6 #alta`
+- **Tópico / Componente Afectado:** `web/src/components/roadmap/*`, `web/src/app/local/[id]/page.tsx`, `docs/local_demo_simulator_spec.md`.
+
+---
+- **Fecha:** 2026-11-01 05:00
+- **Categoría:** Arquitectura / Negocio / Backend / Gamificación
+- **Diagnóstico / Contexto:** Definición de reglas de negocio y modelo de base de datos para resolver el dilema de comerciantes que modifican umbrales de sellos o productos mientras los clientes ya tienen progreso acumulado en la PWA.
+- **Solución y Reglas de Negocio:**
+  1. **Si aumentan los sellos (ej: de 6 a 8):** Rige la protección del tramo en vuelo. A los clientes que ya están en ese tramo se les respeta el umbral original mediante el campo `premio_asegurado` (`in_flight_milestone`).
+  2. **Si bajan los sellos (ej: de 6 a 4):** Rige el principio de favorabilidad automática. Si el cliente ya tenía 4 o más sellos, el premio se desbloquea en el acto (`reward_ready`).
+  3. **Ciclo del Interruptor:** Al canjear en caja, `premio_asegurado` pasa a `null`. Con el primer sello que sume en el siguiente tramo, se vincula automáticamente a la versión oficial vigente del local.
+  4. **Inmutabilidad del Pasado:** Los premios históricos ya canjeados permanecen intocables en la base de datos como asiento contable.
+- **Etiquetas:** `#arquitectura #negocio #in-flight-rules #gamificacion #backend #alta`
+- **Tópico / Componente Afectado:** `docs/reglas_cambio_dinamico_premios_y_sellos.md`.
+
+---
 | `#mecanica-sellos` | Reglas matemáticas, cálculo de ROI y umbrales de sellos | [NOTA-007] |
 | `#reunion` | Minutas y resoluciones oficiales de asamblea de equipo | [NOTA-004], [NOTA-007] |
 | `#metodologia` | Metodología de validación, filtros de preguntas y secuencia | [NOTA-008] |

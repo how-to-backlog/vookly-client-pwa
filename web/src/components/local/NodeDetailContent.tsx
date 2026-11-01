@@ -232,11 +232,11 @@ export function NodeDetailContent({
             </div>
           ) : null}
 
-          {/* ARQUETIPO 4: Premio listo para reclamar (o en cooldown) - alineado en la misma fila con el botón */}
+          {/* ARQUETIPO 4: Premio listo para reclamar (o en cooldown) - título completo sin truncar */}
           {selection.interactiveState === 'reward_ready' || selection.interactiveState === 'reward_cooldown' ? (
             <div className="flex items-center justify-between gap-3">
-              <div className="flex flex-col gap-1 min-w-0">
-                <span className="text-[15.5px] font-black text-neutral-900 tracking-tight truncate">
+              <div className="flex flex-col gap-1 min-w-0 flex-1">
+                <span className="text-[15.5px] font-black text-neutral-900 tracking-tight leading-snug break-words">
                   {selection.rewardTitle}
                 </span>
 
@@ -251,7 +251,7 @@ export function NodeDetailContent({
                 )}
               </div>
 
-              {/* Botón Reclamar premio en la zona derecha alineado al centro de la burbuja */}
+              {/* Botón Reclamar premio en la zona derecha */}
               {selection.interactiveState === 'reward_ready' && (
                 <button
                   type="button"

@@ -6,14 +6,22 @@ import { LocalFooterSummary } from '@/components/local/LocalFooterSummary';
 import { BottomSheetNodeDetail } from '@/components/local/BottomSheetNodeDetail';
 import { NodeDetailContent } from '@/components/local/NodeDetailContent';
 import { RoadmapCanvas } from '@/components/roadmap/RoadmapCanvas';
+import { LocalDemoSimulatorModal } from '@/components/local/LocalDemoSimulatorModal';
 import {
   getBusinessSync,
   getBusinessLoyaltyRulesSync,
   getCustomerWalletSync,
   claimVoucherToken
 } from '@/services/loyaltyRepository';
+import {
+  loadDemoSimulatorConfig,
+  saveDemoSimulatorConfig,
+  clearDemoSimulatorConfig,
+  applyDemoConfigToEntities
+} from '@/services/demoSimulatorStorage';
 import { calculateCooldown } from '@/lib/loyaltyRules';
 import {
+  DemoSimulatorConfig,
   InteractiveNodeSelection
 } from '@/types/loyalty';
 
@@ -33,11 +41,33 @@ function LocalContent({ params }: LocalPageProps) {
 
   // Datos inmediatos sincrónicos del repositorio (sin parpadeos de carga en SSR/Cliente)
   const business = getBusinessSync(businessId);
-  const rules = getBusinessLoyaltyRulesSync(businessId);
+  const baseRules = getBusinessLoyaltyRulesSync(businessId);
   const initialWallet = getCustomerWalletSync(customerId, businessId);
 
   // Estado mutable de la billetera (para persistir canjes en memoria)
   const [wallet, setWallet] = useState(initialWallet);
+
+  // Estado del simulador demo inicializado desde localStorage si está en cliente
+  const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
+  const [simulatorConfig, setSimulatorConfig] = useState<DemoSimulatorConfig>(() => {
+    if (business && baseRules && initialWallet) {
+      return loadDemoSimulatorConfig(businessId, business.name, baseRules, initialWallet);
+    }
+    return {
+      businessName: 'Coffee Shop',
+      tiers: [{ id: 'tier-1', stampsFromPrevious: 5, rewardTitle: 'Premio Especial' }],
+      simulatedCurrentStamps: 1
+    };
+  });
+
+  // Derivamos dinámicamente las reglas y la billetera en función de la configuración del simulador
+  const activeEntities = (business && baseRules && wallet)
+    ? applyDemoConfigToEntities(simulatorConfig, baseRules, wallet)
+    : { rules: baseRules, wallet };
+
+  const effectiveRules = activeEntities.rules;
+  const effectiveWallet = activeEntities.wallet;
+  const effectiveBusinessName = simulatorConfig.businessName || business?.name || 'Coffee Shop';
 
   // Estado reactivo del nodo seleccionado por tap en el Roadmap
   const [selectedNode, setSelectedNode] = useState<InteractiveNodeSelection | null>(null);
@@ -48,7 +78,7 @@ function LocalContent({ params }: LocalPageProps) {
   // Estado para desplegar el modal de info desde el botón de la cabecera
   const [showInfoModal, setShowInfoModal] = useState(false);
 
-  if (!business || !rules || !wallet) {
+  if (!business || !effectiveRules || !effectiveWallet) {
     return (
       <div className="w-full max-w-md h-screen flex flex-col items-center justify-center bg-white text-neutral-500 px-6 text-center">
         <h2 className="text-[18px] font-black text-neutral-900">Comercio no encontrado</h2>
@@ -58,30 +88,30 @@ function LocalContent({ params }: LocalPageProps) {
   }
 
   // Cálculo matemático del próximo premio según las reglas del local
-  const nextMilestone = rules.rewardMilestones.find(
-    (m) => m.stampThreshold > wallet.currentStamps
+  const nextMilestone = effectiveRules.rewardMilestones.find(
+    (m) => m.stampThreshold > effectiveWallet.currentStamps
   );
   const stampsToNext = nextMilestone
-    ? nextMilestone.stampThreshold - wallet.currentStamps
+    ? nextMilestone.stampThreshold - effectiveWallet.currentStamps
     : 0;
 
   // Cálculo desacoplado del cooldown universal según la política del local
-  const cooldownHours = rules.policy?.cooldownHours || 3;
-  const cooldown = calculateCooldown(wallet.lastStampAt, cooldownHours);
+  const cooldownHours = effectiveRules.policy?.cooldownHours || 3;
+  const cooldown = calculateCooldown(effectiveWallet.lastStampAt, cooldownHours);
 
   // Detección de vouchers: si está en cooldown, no se habilita el botón de reclamo todavía
   const readyVoucher = cooldown.isCoolingDown
     ? undefined
-    : wallet.vouchers?.find((v) => v.status === 'ready');
+    : effectiveWallet.vouchers?.find((v) => v.status === 'ready');
 
   // Callback cuando se toca el botón de reclamar en el footer
   const handleClaimFromFooter = () => {
     if (readyVoucher) {
-      const rewardNode = rules.rewardMilestones.find(
+      const rewardNode = effectiveRules.rewardMilestones.find(
         (m) => m.stampThreshold === readyVoucher.milestoneStamp
       );
       if (rewardNode) {
-        const transaction = wallet.transactions?.find(
+        const transaction = effectiveWallet.transactions?.find(
           (t) => t.stampIndex === rewardNode.stampThreshold
         );
 
@@ -118,24 +148,40 @@ function LocalContent({ params }: LocalPageProps) {
     }
   };
 
+  const handleApplySimulator = (newConfig: DemoSimulatorConfig) => {
+    setSimulatorConfig(newConfig);
+    saveDemoSimulatorConfig(businessId, newConfig);
+    // Si el nodo seleccionado quedó fuera de rango tras el cambio, lo deseleccionamos
+    setSelectedNode(null);
+  };
+
+  const handleResetSimulator = () => {
+    clearDemoSimulatorConfig(businessId);
+    if (baseRules && initialWallet) {
+      const resetCfg = loadDemoSimulatorConfig(businessId, business.name, baseRules, initialWallet);
+      setSimulatorConfig(resetCfg);
+    }
+    setSelectedNode(null);
+  };
+
   return (
-    <main className="w-full max-w-md h-screen max-h-screen bg-white text-black relative flex flex-col overflow-hidden pb-24">
-      {/* 1. Barra superior fija minimalista con flecha volver */}
-      <LocalTopBar />
+    <main className="w-full max-w-md h-screen max-h-screen bg-white text-black relative flex flex-col overflow-hidden pb-[88px]">
+      {/* 1. Barra superior fija minimalista con flecha volver y botón sintonizador */}
+      <LocalTopBar onOpenSimulator={() => setIsSimulatorOpen(true)} />
 
       {/* 2. Área central para el Roadmap (scroll libre con autofoco e interactividad táctil) */}
       <RoadmapCanvas
-        rules={rules}
-        walletStatus={wallet}
+        rules={effectiveRules}
+        walletStatus={effectiveWallet}
         selectedNodeIndex={selectedNode?.stampIndex ?? null}
         onSelectNode={setSelectedNode}
       />
 
       {/* 3. Franja horizontal inferior fija con Zona de Notificaciones Dinámica */}
       <LocalFooterSummary
-        businessName={business.name}
+        businessName={effectiveBusinessName}
         address={business.address}
-        currentStamps={wallet.currentStamps}
+        currentStamps={effectiveWallet.currentStamps}
         stampsToNextReward={stampsToNext}
         nextRewardTitle={nextMilestone?.rewardTitle}
         cooldownRemainingMinutes={cooldown.isCoolingDown ? cooldown.remainingMinutes : undefined}
@@ -162,7 +208,7 @@ function LocalContent({ params }: LocalPageProps) {
         {selectedNode && (
           <NodeDetailContent
             selection={selectedNode}
-            businessName={business.name}
+            businessName={effectiveBusinessName}
             onClaim={handleClaimToken}
             onSceneChange={setCurrentScene}
           />
@@ -214,6 +260,17 @@ function LocalContent({ params }: LocalPageProps) {
             </div>
           </div>
         </div>
+      )}
+
+      {/* 6. Modal de Simulador Demo de Comercio montado condicionalmente */}
+      {isSimulatorOpen && (
+        <LocalDemoSimulatorModal
+          isOpen={isSimulatorOpen}
+          onClose={() => setIsSimulatorOpen(false)}
+          config={simulatorConfig}
+          onApply={handleApplySimulator}
+          onReset={handleResetSimulator}
+        />
       )}
     </main>
   );

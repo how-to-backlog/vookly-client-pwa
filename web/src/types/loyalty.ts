@@ -162,3 +162,39 @@ export interface RoadmapGeometryResult {
   horizon: RoadmapHorizonExtension;
 }
 
+// ============================================================================
+// SIMULADOR DEMO DE COMERCIO (HERRAMIENTA AUXILIAR)
+// ============================================================================
+
+/**
+ * Tramo individual de recompensa configurable.
+ * stampsFromPrevious representa los sellos incrementales (Delta S) desde el premio anterior.
+ * Para el primer premio: sellos desde el inicio (mínimo 1).
+ * Para los subsiguientes: sellos adicionales (0 a 6).
+ */
+export interface DemoRewardTier {
+  id: string;
+  stampsFromPrevious: number; // Delta S
+  rewardTitle: string;
+}
+
+/**
+ * Configuración completa del simulador demo
+ */
+export interface DemoSimulatorConfig {
+  businessName: string;
+  tiers: DemoRewardTier[];
+  simulatedCurrentStamps: number;
+}
+
+/**
+ * Hito absoluto computado para alimentar el motor matemático de fidelización
+ */
+export interface ComputedDemoMilestone {
+  tierIndex: number;
+  stampThreshold: number;
+  rewardTitle: string;
+  isMajorReward: boolean;
+}
+
+

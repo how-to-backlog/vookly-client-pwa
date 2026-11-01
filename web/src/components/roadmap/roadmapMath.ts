@@ -88,10 +88,13 @@ export function calculateRoadmapGeometry(
   const X_RIGHT = 284;
   const X_CENTER = 180;
 
-  const TOP_PADDING = 150; // Aire superior extendido para una proyección vertical elegante del horizonte
+  const TOP_PADDING = 120; // Proyección vertical compacta del horizonte
   const BOTTOM_PADDING = 115; // Bajamos la curva S a 115 para calzarla justo sobre los techos
   const BASE_SEGMENT_HEIGHT = 60; // Altura mínima base en px
   const PIXELS_PER_STAMP = 44; // ~44px de recorrido vertical por cada sello del tramo
+
+  // Altura mínima garantizada de la pantalla para que nunca queden huecos blancos en mapas chicos
+  const MIN_SCREEN_HEIGHT = 780;
 
   // Ordenamos hitos de menor a mayor umbral
   const sortedMilestones = [...rules.rewardMilestones].sort(
@@ -105,14 +108,14 @@ export function calculateRoadmapGeometry(
   const segmentHeights: number[] = [];
   sortedMilestones.forEach((m) => {
     const stampsInSegment = m.stampThreshold - previousStamp;
-    // Un tramo de 6 sellos pasa de 180px a ~324px: el doble de aire y holgura
     const segHeight = Math.max(180, BASE_SEGMENT_HEIGHT + stampsInSegment * PIXELS_PER_STAMP);
     segmentHeights.push(segHeight);
     accumulatedHeight += segHeight;
     previousStamp = m.stampThreshold;
   });
 
-  const totalHeight = TOP_PADDING + accumulatedHeight;
+  // El totalHeight es como mínimo la pantalla completa (780px)
+  const totalHeight = Math.max(MIN_SCREEN_HEIGHT, TOP_PADDING + accumulatedHeight);
 
   // Anclas de hitos: comenzamos desde el inicio (sello 0)
   const milestoneAnchors: Array<{
@@ -270,7 +273,7 @@ export function calculateRoadmapGeometry(
   const lastAnchor = milestoneAnchors[milestoneAnchors.length - 1];
   const horizonEndPoint = {
     x: X_CENTER,
-    y: Math.max(35, lastAnchor.point.y - 120) // 120px de proyección ascendente despegada del sello 30
+    y: 35 // Siempre arriba de todo fijo bajo la pastilla
   };
   const horizonDeltaY = lastAnchor.point.y - horizonEndPoint.y;
   const hp1 = { x: lastAnchor.point.x, y: lastAnchor.point.y - 0.5 * horizonDeltaY };

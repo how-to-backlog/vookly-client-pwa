@@ -113,7 +113,7 @@ export function RoadmapPathSvg({
 
       {/* 6. Indicador del Punto de corte / Sello actual */}
       {currentPoint && (
-        <g>
+        <g className="pointer-events-none">
           {/* Halo sutil estático para destacar el nodo actual */}
           <circle
             cx={currentPoint.x}
