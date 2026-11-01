@@ -1,0 +1,76 @@
+{
+  "$schema": "https://diagramdesign.dev/schema/er-v1.json",
+  "title": "Modelo Entidad-Relación: Core Transaccional P-Fidelizar",
+  "domain": "fidelizacion_retail",
+  "entities": [
+    {
+      "name": "Comercios",
+      "tableName": "comercios",
+      "description": "Negocios adheridos a la red de fidelización (Tenants)",
+      "fields": [
+        { "name": "id", "type": "UUID", "isPrimaryKey": true, "description": "Identificador único del comercio" },
+        { "name": "nombre_fantasia", "type": "VARCHAR(120)", "isNullable": false },
+        { "name": "rubro", "type": "VARCHAR(60)", "isNullable": false },
+        { "name": "telefono_contacto", "type": "VARCHAR(30)", "isNullable": true },
+        { "name": "activo", "type": "BOOLEAN", "defaultValue": "true" },
+        { "name": "creado_en", "type": "TIMESTAMPTZ", "defaultValue": "NOW()" }
+      ]
+    },
+    {
+      "name": "Clientes",
+      "tableName": "clientes",
+      "description": "Consumidores finales registrados en el sistema",
+      "fields": [
+        { "name": "id", "type": "UUID", "isPrimaryKey": true },
+        { "name": "telefono", "type": "VARCHAR(25)", "isUnique": true, "description": "ID natural de login / alta" },
+        { "name": "nombre", "type": "VARCHAR(100)", "isNullable": true },
+        { "name": "registrado_en", "type": "TIMESTAMPTZ", "defaultValue": "NOW()" }
+      ]
+    },
+    {
+      "name": "BilleteraPuntos",
+      "tableName": "billeteras_puntos",
+      "description": "Saldo de sellos acumulados por cliente en cada comercio específico",
+      "fields": [
+        { "name": "id", "type": "UUID", "isPrimaryKey": true },
+        { "name": "comercio_id", "type": "UUID", "isForeignKey": true, "references": "comercios.id" },
+        { "name": "cliente_id", "type": "UUID", "isForeignKey": true, "references": "clientes.id" },
+        { "name": "sellos_acumulados", "type": "INT", "defaultValue": "0" },
+        { "name": "ultima_actividad", "type": "TIMESTAMPTZ", "defaultValue": "NOW()" }
+      ]
+    },
+    {
+      "name": "TransaccionesSellos",
+      "tableName": "transacciones_sellos",
+      "description": "Ledger inmutable de movimientos: sumas por compra y canjes de productos",
+      "fields": [
+        { "name": "id", "type": "UUID", "isPrimaryKey": true },
+        { "name": "billetera_id", "type": "UUID", "isForeignKey": true, "references": "billeteras_puntos.id" },
+        { "name": "tipo_movimiento", "type": "ENUM('ALTA_COMPRA', 'CANJE_BENEFICIO')", "isNullable": false },
+        { "name": "cantidad_sellos", "type": "INT", "isNullable": false },
+        { "name": "monto_ticket", "type": "DECIMAL(12,2)", "isNullable": true },
+        { "name": "detalle_canje", "type": "VARCHAR(200)", "isNullable": true },
+        { "name": "timestamp", "type": "TIMESTAMPTZ", "defaultValue": "NOW()" }
+      ]
+    },
+    {
+      "name": "CampaniasPromocionales",
+      "tableName": "campanias_promocionales",
+      "description": "Campañas de fidelización lanzadas por los comercios hacia sus clientes",
+      "fields": [
+        { "name": "id", "type": "UUID", "isPrimaryKey": true },
+        { "name": "comercio_id", "type": "UUID", "isForeignKey": true, "references": "comercios.id" },
+        { "name": "titulo", "type": "VARCHAR(120)", "isNullable": false },
+        { "name": "condicion_sellos", "type": "INT", "isNullable": false },
+        { "name": "beneficio_ofrecido", "type": "TEXT", "isNullable": false },
+        { "name": "fecha_vencimiento", "type": "DATE", "isNullable": true }
+      ]
+    }
+  ],
+  "relationships": [
+    { "from": "comercios.id", "to": "billeteras_puntos.comercio_id", "cardinality": "1:N", "label": "emite saldos" },
+    { "from": "clientes.id", "to": "billeteras_puntos.cliente_id", "cardinality": "1:N", "label": "posee saldos" },
+    { "from": "billeteras_puntos.id", "to": "transacciones_sellos.billetera_id", "cardinality": "1:N", "label": "registra transacciones" },
+    { "from": "comercios.id", "to": "campanias_promocionales.comercio_id", "cardinality": "1:N", "label": "publica campañas" }
+  ]
+}
