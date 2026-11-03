@@ -67,6 +67,14 @@ export function LocalDemoSimulatorModal({
   // Aseguramos que los sellos actuales no superen el total y nunca sean menores a 1 (Regla onboarding)
   const safeStamps = Math.max(1, Math.min(draftStamps, totalMaxStamps));
 
+  // Próximo hito por alcanzar: el primero cuyo umbral supera los sellos actuales.
+  // Si los sellos actuales caen justo en un umbral, ese premio ya está listo para canjear.
+  const nextMilestone = computedMilestones.find((m) => m.stampThreshold > safeStamps);
+  const readyMilestone = computedMilestones.find((m) => m.stampThreshold === safeStamps);
+  const previousMilestone = [...computedMilestones]
+    .reverse()
+    .find((m) => m.stampThreshold < safeStamps);
+
   const handleStepDown = () => {
     setDraftStamps((prev) => Math.max(1, prev - 1));
   };
@@ -169,7 +177,110 @@ export function LocalDemoSimulatorModal({
         </div>
 
         {/* ============================================================== */}
-        {/* BLOQUE 2: MATRIZ ASIMÉTRICA DE TRAMOS Y PREMIOS (0 a 6 sellos) */}
+        {/* BLOQUE 2: PROGRESO SIMULADO DEL CLIENTE (DINÁMICO DE 1 A TOTAL)*/}
+        {/* ============================================================== */}
+        <div className="flex flex-col gap-2 mb-4 p-3.5 bg-neutral-50 rounded-2xl border border-neutral-100">
+          <div className="flex items-center justify-between">
+            <label className="text-[10.5px] font-bold uppercase tracking-wider text-neutral-500">
+              Progreso del Cliente
+            </label>
+            <span className="text-[10.5px] font-semibold text-neutral-400">
+              Rango: 1 a {totalMaxStamps} sellos
+            </span>
+          </div>
+
+          {/* Stepper numérico grande */}
+          <div className="flex items-center justify-between gap-3 mt-0.5">
+            <button
+              type="button"
+              onClick={handleStepDown}
+              disabled={safeStamps <= 1}
+              aria-label="Restar un sello"
+              className="w-9 h-9 rounded-xl bg-white border border-neutral-200 text-neutral-800 hover:bg-neutral-100 active:scale-90 disabled:opacity-40 disabled:pointer-events-none font-black text-[17px] flex items-center justify-center transition-all shadow-2xs"
+            >
+              −
+            </button>
+
+            <div className="flex flex-col items-center">
+              <span className="text-[24px] font-black text-neutral-900 leading-none">
+                {safeStamps}
+              </span>
+              <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">
+                {safeStamps === 1 ? 'sello conseguido' : 'sellos conseguidos'}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleStepUp}
+              disabled={safeStamps >= totalMaxStamps}
+              aria-label="Sumar un sello"
+              className="w-9 h-9 rounded-xl bg-white border border-neutral-200 text-neutral-800 hover:bg-neutral-100 active:scale-90 disabled:opacity-40 disabled:pointer-events-none font-black text-[17px] flex items-center justify-center transition-all shadow-2xs"
+            >
+              +
+            </button>
+          </div>
+
+          {/* Slider táctil continuo que se adapta estrictamente de 1 a totalMaxStamps */}
+          <div className="mt-1 px-1">
+            <input
+              type="range"
+              min={1}
+              max={totalMaxStamps}
+              value={safeStamps}
+              onChange={(e) => setDraftStamps(Number(e.target.value))}
+              className="w-full h-1.5 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-neutral-950"
+            />
+          </div>
+
+          {/* Estado del premio: comunica si el canje está disponible ahora mismo */}
+          <div className="mt-1 flex flex-col gap-1.5">
+            {readyMilestone ? (
+              <div className="flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
+                  <span className="text-[11px] font-bold text-emerald-900 truncate">
+                    Listo para canjear: {readyMilestone.rewardTitle}
+                  </span>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-700 flex-shrink-0">
+                  {readyMilestone.stampThreshold} sellos
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl bg-white border border-neutral-200">
+                <span className="text-[11px] font-semibold text-neutral-500 truncate">
+                  {nextMilestone
+                    ? `Faltan ${nextMilestone.stampThreshold - safeStamps} sellos para ${nextMilestone.rewardTitle}`
+                    : 'Camino completado'}
+                </span>
+                {nextMilestone && (
+                  <button
+                    type="button"
+                    onClick={() => setDraftStamps(nextMilestone.stampThreshold)}
+                    className="flex-shrink-0 px-2 py-1 rounded-full bg-neutral-950 hover:bg-neutral-800 text-white text-[10px] font-bold active:scale-95 transition-all"
+                  >
+                    Llevar al premio
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Atajo para devolver el cliente al último premio ya superado */}
+          {previousMilestone && !readyMilestone && (
+            <button
+              type="button"
+              onClick={() => setDraftStamps(previousMilestone.stampThreshold)}
+              className="self-start text-[10.5px] font-semibold text-neutral-400 hover:text-neutral-800 transition-colors"
+            >
+              Volver a {previousMilestone.rewardTitle} ({previousMilestone.stampThreshold} sellos)
+            </button>
+          )}
+        </div>
+
+        {/* ============================================================== */}
+        {/* BLOQUE 3: MATRIZ ASIMÉTRICA DE TRAMOS Y PREMIOS (0 a 6 sellos) */}
         {/* ============================================================== */}
         <div className="flex flex-col gap-2 mb-4">
           <div className="flex items-center justify-between">
@@ -271,64 +382,6 @@ export function LocalDemoSimulatorModal({
               <span>+ Agregar siguiente premio</span>
             </button>
           )}
-        </div>
-
-        {/* ============================================================== */}
-        {/* BLOQUE 3: PROGRESO SIMULADO DEL CLIENTE (DINÁMICO DE 1 A TOTAL)*/}
-        {/* ============================================================== */}
-        <div className="flex flex-col gap-2 mb-4 p-3.5 bg-neutral-50 rounded-2xl border border-neutral-100">
-          <div className="flex items-center justify-between">
-            <label className="text-[10.5px] font-bold uppercase tracking-wider text-neutral-500">
-              Progreso del Cliente
-            </label>
-            <span className="text-[10.5px] font-semibold text-neutral-400">
-              Rango: 1 a {totalMaxStamps} sellos
-            </span>
-          </div>
-
-          {/* Stepper numérico grande */}
-          <div className="flex items-center justify-between gap-3 mt-0.5">
-            <button
-              type="button"
-              onClick={handleStepDown}
-              disabled={safeStamps <= 1}
-              aria-label="Restar un sello"
-              className="w-9 h-9 rounded-xl bg-white border border-neutral-200 text-neutral-800 hover:bg-neutral-100 active:scale-90 disabled:opacity-40 disabled:pointer-events-none font-black text-[17px] flex items-center justify-center transition-all shadow-2xs"
-            >
-              −
-            </button>
-
-            <div className="flex flex-col items-center">
-              <span className="text-[24px] font-black text-neutral-900 leading-none">
-                {safeStamps}
-              </span>
-              <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">
-                {safeStamps === 1 ? 'sello conseguido' : 'sellos conseguidos'}
-              </span>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleStepUp}
-              disabled={safeStamps >= totalMaxStamps}
-              aria-label="Sumar un sello"
-              className="w-9 h-9 rounded-xl bg-white border border-neutral-200 text-neutral-800 hover:bg-neutral-100 active:scale-90 disabled:opacity-40 disabled:pointer-events-none font-black text-[17px] flex items-center justify-center transition-all shadow-2xs"
-            >
-              +
-            </button>
-          </div>
-
-          {/* Slider táctil continuo que se adapta estrictamente de 1 a totalMaxStamps */}
-          <div className="mt-1 px-1">
-            <input
-              type="range"
-              min={1}
-              max={totalMaxStamps}
-              value={safeStamps}
-              onChange={(e) => setDraftStamps(Number(e.target.value))}
-              className="w-full h-1.5 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-neutral-950"
-            />
-          </div>
         </div>
 
         {/* ============================================================== */}
