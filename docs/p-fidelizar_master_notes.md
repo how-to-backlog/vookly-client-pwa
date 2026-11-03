@@ -432,6 +432,20 @@
 - **Etiquetas:** `#frontend #geometria #roadmap #svg #etapa-6 #alta`
 - **Tópico / Componente Afectado:** `web/src/components/roadmap/*`, `web/src/app/local/[id]/page.tsx`, `docs/local_demo_simulator_spec.md`.
 
+### [NOTA-021] Acuerdos de Asamblea Plenaria: Validación de PWA Demo, Migración a Plane, Reglas en Vuelo y Stack de IA
+- **Fecha:** 2026-11-02 23:30
+- **Categoría:** Gestión / Arquitectura / MVP / Asamblea
+- **Diagnóstico / Contexto:** Asamblea general del equipo (Jesús, Facundo, Pedro, Ramiro). Se presentó la maqueta PWA, se consolidó el feedback de los 5 comercios visitados y se definieron decisiones estructurales para el MVP de Fase 1.
+- **Resoluciones Principales:**
+  1. **Validación Total de la PWA Demo:** El equipo adoptó la PWA de Jesús en Vercel como herramienta de ventas y demo oficial para las salidas de campo restantes.
+  2. **Gobernanza de Diseño (Stitch vs. Lego):** Consenso unánime: Stitch solo para wireframes/inspiración visual y prompts. Cero exportación de código de Stitch a producción; el MVP se construye modularmente bloque a bloque.
+  3. **Herramientas de Proyecto:** Migración oficial de Jira a **Plane** (soporta 12 usuarios gratuitos, integración MCP, opción VPS).
+  4. **Stack de IA Unificado:** Uso de **CoreWeb** con DeepSeek V4 Flash (baja latencia y bajo costo para WhatsApp y rutinas), GLM (código) y DeepSeek Full (razonamiento pesado).
+  5. **Reglas de Integridad en Vuelo:** Aprobado el modelo de versionado por tramo inmediato protegido (`docs/reglas_cambio_dinamico_premios_y_sellos.md`), historial inmutable y sustituto de mostrador por falta de stock.
+  6. **Próximos Hitos:** Jesús investiga Meta Business API (WhatsApp oficial); Ramiro diseña audit log append-only; Facundo y Ramiro inician API de back-office interno; Jesús y Pedro completan los 5 locales en Córdoba. Próxima asamblea: Viernes 16:00 hs.
+- **Etiquetas:** `#reunion #asamblea #plane #coreweb #pwa #mvp #alta`
+- **Tópico / Componente Afectado:** `docs/minuta_reunion_general_lunes_02_11.md`, `p-fidelizar_master_notes.md`.
+
 ---
 - **Fecha:** 2026-11-01 05:00
 - **Categoría:** Arquitectura / Negocio / Backend / Gamificación
