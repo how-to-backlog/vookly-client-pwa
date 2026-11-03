@@ -92,15 +92,15 @@ Criterio de aceptación:
 
 | ID   | Specs  | Route  | Archivo principal                                  | Commit |
 |------|--------|--------|----------------------------------------------------|--------|
-| T1   | S1,S2  | inline | `src/components/cards/CardContainer.tsx`             | `a5f1c8e` |
-| T2   | S1,S2  | inline | `src/components/cards/ScrollStackCard.tsx`           | `a5f1c8e` |
-| T3   | S6     | inline | `src/components/local/LocalDemoSimulatorModal.tsx`  | `a5f1c8e` |
+| T1   | S1,S2  | inline | `src/components/cards/CardContainer.tsx`             | `9b98c2d` |
+| T2   | S1,S2  | inline | `src/components/cards/ScrollStackCard.tsx`           | `9b98c2d` |
+| T3   | S6     | inline | `src/components/local/LocalDemoSimulatorModal.tsx`  | `9b98c2d` |
 | T4   | S3,S4  | inline | `src/components/local/RedemptionChoreography.tsx` (NUEVO) | - |
 | T5   | S3,S5  | inline | `src/app/local/[id]/page.tsx`                        | -      |
 | T6   | S3,S7  | inline | `src/components/local/NodeDetailContent.tsx`        | -      |
 | T7   | -      | inline | verificación runtime (CDP) + build final             | -      |
 
-T1, T2 y T3 comparten el commit `a5f1c8e` (Slice 1: hub + simulador). T1 y T2 comparten superficie de edicion (`CardContainer.tsx` renderiza `ScrollStackCard`), por lo que se ejecutan en el mismo paso.
+T1, T2 y T3 comparten el commit `9b98c2d` (Slice 1: hub + simulador). T1 y T2 comparten superficie de edicion (`CardContainer.tsx` renderiza `ScrollStackCard`), por lo que se ejecutan en el mismo paso.
 
 ## Log
 

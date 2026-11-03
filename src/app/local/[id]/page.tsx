@@ -66,7 +66,18 @@ function LocalContent({ params }: LocalPageProps) {
     : { rules: baseRules, wallet };
 
   const effectiveRules = activeEntities.rules;
-  const effectiveWallet = activeEntities.wallet;
+  // El simulador regenera los vouchers desde cero, así que el código emitido
+  // (activeCode) hay que reinyectarlo desde la billetera base para que el
+  // token no se pierda al derivar.
+  const effectiveWallet = activeEntities.wallet
+    ? {
+        ...activeEntities.wallet,
+        vouchers: activeEntities.wallet.vouchers?.map((v) => {
+          const baseVoucher = wallet?.vouchers?.find((bv) => bv.id === v.id);
+          return baseVoucher?.activeCode ? { ...v, activeCode: baseVoucher.activeCode } : v;
+        })
+      }
+    : activeEntities.wallet;
   const effectiveBusinessName = simulatorConfig.businessName || business?.name || 'Coffee Shop';
 
   // Estado reactivo del nodo seleccionado por tap en el Roadmap
@@ -131,21 +142,27 @@ function LocalContent({ params }: LocalPageProps) {
     }
   };
 
-  // Callback para generar y persistir el token de 4 dígitos en el repositorio
-  const handleClaimToken = async () => {
-    if (readyVoucher) {
-      const token = await claimVoucherToken('cust-01', businessId, readyVoucher.id);
-      if (token) {
-        // Actualizamos localmente el voucher para reflejar el token sin recargar
-        setWallet((prev) => {
-          if (!prev || !prev.vouchers) return prev;
-          const updatedVouchers = prev.vouchers.map((v) =>
-            v.id === readyVoucher.id ? { ...v, activeCode: token } : v
-          );
-          return { ...prev, vouchers: updatedVouchers };
-        });
-      }
-    }
+  // Callback para generar y persistir el token de 4 dígitos en el repositorio.
+  // Devuelve el código emitido para que la coreografía pueda mostrarlo.
+  // El simulador deriva vouchers con ids sintéticos (voucher-15), pero el
+  // repositorio real identifica su voucher por su hito (milestoneStamp):
+  // resolvemos acá el id del voucher base antes de pedir el token.
+  const handleClaimToken = async (): Promise<string | null> => {
+    const repoVoucher = wallet?.vouchers?.find(
+      (v) => v.milestoneStamp === readyVoucher?.milestoneStamp && v.status === 'ready'
+    );
+    if (!repoVoucher) return null;
+    const token = await claimVoucherToken('cust-01', businessId, repoVoucher.id);
+    if (!token) return null;
+    // Actualizamos localmente el voucher para reflejar el token sin recargar
+    setWallet((prev) => {
+      if (!prev || !prev.vouchers) return prev;
+      const updatedVouchers = prev.vouchers.map((v) =>
+        v.id === repoVoucher.id ? { ...v, activeCode: token } : v
+      );
+      return { ...prev, vouchers: updatedVouchers };
+    });
+    return token.code;
   };
 
   const handleApplySimulator = (newConfig: DemoSimulatorConfig) => {
@@ -209,7 +226,7 @@ function LocalContent({ params }: LocalPageProps) {
           <NodeDetailContent
             selection={selectedNode}
             businessName={effectiveBusinessName}
-            onClaim={handleClaimToken}
+            onRequestToken={handleClaimToken}
             onSceneChange={setCurrentScene}
           />
         )}

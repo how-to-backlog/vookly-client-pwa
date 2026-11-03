@@ -1,14 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { InteractiveNodeSelection } from '@/types/loyalty';
 import { formatExpirationDate, formatFullDateTime } from '@/lib/loyaltyRules';
 import { StampNodeBubble } from './StampNodeBubble';
+import { RedemptionChoreography } from './RedemptionChoreography';
 
 export interface NodeDetailContentProps {
   selection: InteractiveNodeSelection;
   businessName?: string;
-  onClaim?: () => void;
+  /** Requests a fresh redemption token. Returns the issued 4-digit code. */
+  onRequestToken?: () => Promise<string | null>;
   onSceneChange?: (scene: 'info' | 'warning' | 'active_token') => void;
   className?: string;
 }
@@ -24,12 +26,13 @@ export interface NodeDetailContentProps {
  *    - Arquetipo 3 (Premio ya canjeado): Nombre del producto + badge "Ya canjeado" + "Lo disfrutaste el día DD/MM/AAAA a las HH:MM hs"
  *    - Arquetipo 4 (Premio listo para reclamar): Nombre del producto + badge "Válido hasta DD/MM/AAAA" + Botón "Reclamar premio"
  *    - Arquetipo 5 (Premio futuro bloqueado): Nombre del producto + "Te faltan X sellos para reclamarlo"
- * 3. Flujo de Canje seguro (Paso warning y Paso active_token con código de 4 dígitos, timer de 15 min y regla de upselling).
+ * 3. Flujo de Canje seguro: gate de mostrador -> coreografía de tres momentos
+ *    (M1 rasgar el ticket, M2 presentar el premio, M3 mostrar el código de 4 dígitos).
  */
 export function NodeDetailContent({
   selection,
   businessName = 'este local',
-  onClaim,
+  onRequestToken,
   onSceneChange,
   className = ''
 }: NodeDetailContentProps) {
@@ -40,77 +43,19 @@ export function NodeDetailContent({
     setRedemptionStep(nextScene);
     onSceneChange?.(nextScene);
   };
-  const [tokenTimeLeftSeconds, setTokenTimeLeftSeconds] = useState(15 * 60); // 15 minutos
-
-  // Temporizador regresivo vivo para el código efímero de 4 dígitos
-  useEffect(() => {
-    if (redemptionStep !== 'active_token') return;
-
-    const interval = setInterval(() => {
-      setTokenTimeLeftSeconds((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          setRedemptionStep('info'); // Vuelve a info si expira (sin perder el voucher)
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [redemptionStep]);
-
-  // Formato mm:ss
-  const formatTimer = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${String(s).padStart(2, '0')}`;
-  };
 
   // -------------------------------------------------------------
-  // VISTA ESPECIAL 1: FICHA DE CÓDIGO EFÍMERO ACTIVO
+  // VISTA ESPECIAL 1: COREOGRAFÍA DE CANJE (M1 tear -> M2 premio -> M3 código)
   // -------------------------------------------------------------
   if (redemptionStep === 'active_token') {
-    const code = selection.voucher?.activeCode?.code || '4892';
-
     return (
-      <div className={`flex flex-col items-center text-center pt-0 pb-2 ${className}`}>
-        {/* Título de premio obtenido con exclamación */}
-        <h4 className="text-[17px] font-black text-neutral-900 tracking-tight">
-          ¡Te has ganado un {selection.rewardTitle || 'Premio'}!
-        </h4>
-
-        {/* Ficha numérica limpia */}
-        <div className="my-4 px-8 py-4 rounded-2xl bg-neutral-950 text-white shadow-lg flex flex-col items-center">
-          <div className="text-[40px] font-black tracking-[0.22em] pl-2 select-all font-mono leading-none">
-            {code}
-          </div>
-          <div className="mt-2.5 flex items-center gap-1.5 text-[12px] font-medium text-neutral-300">
-            <svg
-              className="w-3.5 h-3.5 text-white"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
-            <span>Vence en {formatTimer(tokenTimeLeftSeconds)} min</span>
-          </div>
-        </div>
-
-        {/* Botón contenido que abarca solo su frase */}
-        <button
-          type="button"
-          onClick={() => changeScene('info')}
-          className="inline-flex items-center justify-center px-5 py-2 rounded-full bg-neutral-100 hover:bg-neutral-200 active:scale-95 text-neutral-800 font-semibold text-[13px] transition-all"
-        >
-          Ocultar código temporalmente
-        </button>
-      </div>
+      <RedemptionChoreography
+        rewardTitle={selection.rewardTitle || 'Premio'}
+        stamps={selection.stampIndex}
+        businessName={businessName}
+        onRequestToken={onRequestToken ?? (async () => null)}
+        className={className}
+      />
     );
   }
 
@@ -132,7 +77,7 @@ export function NodeDetailContent({
             onClick={() => changeScene('active_token')}
             className="inline-flex items-center justify-center px-6 py-2 rounded-full bg-neutral-950 hover:bg-neutral-800 text-white font-bold text-[13px] shadow-2xs active:scale-95 transition-all"
           >
-            Sí, generar código
+            Sí, quiero mi premio
           </button>
           <button
             type="button"
@@ -251,14 +196,13 @@ export function NodeDetailContent({
                 )}
               </div>
 
-              {/* Botón Reclamar premio en la zona derecha */}
+              {/* Botón Reclamar premio en la zona derecha.
+                  El token NO se emite acá: se pide después de rasgar el ticket,
+                  para que la ventana de 15 minutos arranque cuando el cliente ve el código. */}
               {selection.interactiveState === 'reward_ready' && (
                 <button
                   type="button"
-                  onClick={() => {
-                    onClaim?.();
-                    changeScene('warning');
-                  }}
+                  onClick={() => changeScene('warning')}
                   className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-neutral-950 hover:bg-neutral-800 text-white font-bold text-[12px] shadow-2xs active:scale-95 transition-all flex-shrink-0 whitespace-nowrap"
                 >
                   Reclamar premio
