@@ -189,6 +189,24 @@ export function clearRedemption(
 }
 
 /**
+ * Elimina TODOS los canjes de un comercio.
+ *
+ * Se usa al reiniciar la demo: una demo reiniciada tiene que volver a un
+ * estado limpio, sin premios canjeados ni tokens vigentes, para que el
+ * usuario pueda volver a rasgar el ticket y obtener un código nuevo.
+ */
+export function clearAllRedemptions(customerId: string, businessId: string): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    window.localStorage.removeItem(storageKey(customerId, businessId));
+    notifyRedemptionsChanged(customerId, businessId);
+  } catch {
+    // Manejo silencioso en entornos restringidos.
+  }
+}
+
+/**
  * Devuelve true cuando el token sigue vigente (aún dentro de su ventana).
  */
 export function isTokenActive(activeCode: VoucherTokenEntity | undefined, now = Date.now()): boolean {

@@ -87,7 +87,11 @@ export const ScrollStackItem = ({
   boxShadow = CARD_SHADOW
 }: ScrollStackItemProps) => (
   <div
-    className={`relative box-border h-80 w-full origin-top rounded-[28px] ${padding} [color:light-dark(#18181b,#fafafa)] will-change-transform ${itemClassName}`.trim()}
+    // Height is NOT set here on purpose: a fixed `h-80` base would compete
+    // with the consumer's own height utility (Tailwind cascade order is not
+    // the class-string order), so the consumer owns the height via
+    // `itemClassName`.
+    className={`relative box-border w-full origin-top rounded-[28px] ${padding} [color:light-dark(#18181b,#fafafa)] will-change-transform ${itemClassName}`.trim()}
     style={{ boxShadow, background, ...style }}
   >
     {children}

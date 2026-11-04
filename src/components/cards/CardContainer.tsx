@@ -106,7 +106,7 @@ export const CardContainer: React.FC<CardContainerProps> = ({ cards = DEFAULT_CA
             padding="p-0"
             background="transparent"
             boxShadow="none"
-            itemClassName="h-[300px] rounded-[28px] overflow-hidden"
+            itemClassName="h-[240px] rounded-[28px] overflow-hidden"
           >
             <ScrollStackCard
               backgroundImage={card.imagePath}

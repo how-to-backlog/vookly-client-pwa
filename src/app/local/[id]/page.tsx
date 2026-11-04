@@ -21,6 +21,7 @@ import {
 } from '@/services/demoSimulatorStorage';
 import {
   applyRedemptionsToWallet,
+  clearAllRedemptions,
   clearRedemption,
   isTokenActive,
   getRedemptionsSnapshot,
@@ -187,29 +188,53 @@ function LocalContent({ params }: LocalPageProps) {
     }
   };
 
-  // Callback para generar y persistir el token de 4 dígitos en el repositorio.
+  // Callback para generar y persistir el token de 4 dígitos del canje.
   // Devuelve el token emitido (código + expiración) para que la coreografía
   // pueda mostrarlo y derivar el timer de su expiresAt.
-  // El simulador deriva vouchers con ids sintéticos (voucher-15), pero el
-  // repositorio real identifica su voucher por su hito (milestoneStamp):
-  // resolvemos acá el id del voucher base antes de pedir el token.
+  //
+  // El simulador deriva vouchers con ids sintéticos (voucher-15) y puede
+  // configurar hitos que el catálogo estático del repositorio no tiene
+  // (por ejemplo, "Brunch Completo" en el hito 20). Por eso:
+  //   1. intentamos emitir el token en el repositorio (fuente de verdad cuando
+  //      el voucher existe), y
+  //   2. si el repositorio no conoce el hito, emitimos el token acá con el
+  //      mismo formato (4 dígitos, la ventana de validez de la política),
+  //      porque el token es efímero y la coreografía solo necesita el código.
   const handleClaimToken = async (): Promise<VoucherTokenEntity | null> => {
+    const milestoneStamp = readyVoucher?.milestoneStamp;
+    if (milestoneStamp === undefined) return null;
+
     const repoVoucher = wallet?.vouchers?.find(
-      (v) => v.milestoneStamp === readyVoucher?.milestoneStamp && v.status === 'ready'
+      (v) => v.milestoneStamp === milestoneStamp && v.status === 'ready'
     );
-    if (!repoVoucher) return null;
-    const token = await claimVoucherToken('cust-01', businessId, repoVoucher.id);
-    if (!token) return null;
+
+    let token: VoucherTokenEntity | null = null;
+
+    if (repoVoucher) {
+      token = await claimVoucherToken('cust-01', businessId, repoVoucher.id);
+    }
+
+    if (!token) {
+      // Fallback: el hito no existe en el catálogo del repositorio (o su
+      // voucher ya no está 'ready'). Emitimos el token en la capa de la app.
+      const validityMinutes = effectiveRules?.policy?.tokenValidityMinutes || 15;
+      const now = new Date();
+      token = {
+        code: Math.floor(1000 + Math.random() * 9000).toString(),
+        generatedAt: now.toISOString(),
+        expiresAt: new Date(now.getTime() + validityMinutes * 60 * 1000).toISOString()
+      };
+    }
 
     // Persistimos el canje: tiene que sobrevivir al cierre del sheet y al
     // reload para que el estado "canjeado" no se pierda.
-    saveRedemption(customerId, businessId, repoVoucher.milestoneStamp, token);
+    saveRedemption(customerId, businessId, milestoneStamp, token);
 
     // Actualizamos localmente el voucher para reflejar el token sin recargar
     setWallet((prev) => {
       if (!prev || !prev.vouchers) return prev;
       const updatedVouchers = prev.vouchers.map((v) =>
-        v.id === repoVoucher.id ? { ...v, activeCode: token } : v
+        v.milestoneStamp === milestoneStamp ? { ...v, activeCode: token } : v
       );
       return { ...prev, vouchers: updatedVouchers };
     });
@@ -251,6 +276,10 @@ function LocalContent({ params }: LocalPageProps) {
 
   const handleResetSimulator = () => {
     clearDemoSimulatorConfig(businessId);
+    // Reiniciar la demo limpia todo: también los canjes guardados de este
+    // comercio. Si no, el premio quedaría en estado "canjeado" y no se
+    // podría volver a rasgar el ticket para obtener un código nuevo.
+    clearAllRedemptions(customerId, businessId);
     if (baseRules && initialWallet) {
       const resetCfg = loadDemoSimulatorConfig(businessId, business.name, baseRules, initialWallet);
       setSimulatorConfig(resetCfg);

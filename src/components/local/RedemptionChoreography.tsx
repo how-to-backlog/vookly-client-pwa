@@ -73,12 +73,25 @@ export function RedemptionChoreography({
   existingToken = null,
   className = ''
 }: RedemptionChoreographyProps) {
-  const [torn, setTorn] = useState(Boolean(existingToken));
-  const [flipped, setFlipped] = useState(Boolean(existingToken));
-  const [code, setCode] = useState<string>(existingToken?.code ?? '');
+  // Token issued during this session. It is kept so the code can be shown
+  // immediately, but the persisted redemption always wins: when the parent
+  // clears it (demo reset), the session token must not resurrect it.
+  const [sessionToken, setSessionToken] = useState<VoucherTokenEntity | null>(existingToken);
   const [tokenPending, setTokenPending] = useState(false);
   const [tokenError, setTokenError] = useState<string | null>(null);
-  const [expiresAt, setExpiresAt] = useState<string | null>(existingToken?.expiresAt ?? null);
+
+  // The live token is the one issued by the parent (persisted redemption) or,
+  // while the sheet is open, the one issued in this session. The parent is the
+  // source of truth: when the demo is reset the persisted redemption is
+  // cleared and this component must fall back to a fresh, tearable ticket.
+  const liveToken = existingToken ?? sessionToken;
+  const code = liveToken?.code ?? '';
+  const expiresAt = liveToken?.expiresAt ?? null;
+  // The ticket is torn as soon as there is a live token, and the card shows
+  // the code face whenever that token exists.
+  const torn = Boolean(liveToken);
+  const flipped = Boolean(liveToken);
+
   // Ticking clock used to render the countdown. It is NOT the source of truth:
   // the expiry timestamp is. This only tells the UI "hey, re-read the clock",
   // so the timer stays live without ever drifting from `expiresAt`.
@@ -97,7 +110,6 @@ export function RedemptionChoreography({
   // The ticket is the confirmation gesture: tearing it issues the token, so
   // the 15 minute window starts exactly when the customer sees the code.
   const handleTear = useCallback(async () => {
-    setTorn(true);
     setTokenPending(true);
     setTokenError(null);
     try {
@@ -106,10 +118,8 @@ export function RedemptionChoreography({
         setTokenError('No se pudo generar el código. Intentá de nuevo.');
         return;
       }
-      setCode(issued.code);
-      setExpiresAt(issued.expiresAt);
+      setSessionToken(issued);
       setNow(Date.now());
-      setFlipped(true);
     } catch {
       setTokenError('No se pudo generar el código. Intentá de nuevo.');
     } finally {
@@ -131,9 +141,7 @@ export function RedemptionChoreography({
 
       // ...and invalidate the token only when the window really closed.
       clearInterval(interval);
-      setCode('');
-      setExpiresAt(null);
-      setFlipped(false);
+      setSessionToken(null);
       onTokenExpired?.();
     }, 1000);
 
@@ -270,9 +278,7 @@ export function RedemptionChoreography({
           onFlipChange={(next) => {
             // The code face is never shown without an issued token, and the
             // card never flips back: the redemption is a one-way door.
-            if (next && !code) return;
-            if (!next) return;
-            setFlipped(next);
+            if (!next || !code) return;
           }}
           flipOnClick={false}
           draggable={false}
