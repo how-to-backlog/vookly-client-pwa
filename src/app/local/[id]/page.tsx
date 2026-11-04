@@ -41,6 +41,11 @@ interface LocalPageProps {
   }>;
 }
 
+// Snapshot del servidor para useSyncExternalStore: tiene que ser la MISMA
+// referencia en cada llamada, si no React avisa que puede haber un loop
+// infinito de renders.
+const EMPTY_REDEMPTIONS: Map<number, VoucherTokenEntity> = new Map();
+
 function LocalContent({ params }: LocalPageProps) {
   // Consumimos params de forma segura en Next.js 16
   const resolvedParams = React.use(params);
@@ -68,7 +73,7 @@ function LocalContent({ params }: LocalPageProps) {
   const redemptions = useSyncExternalStore(
     (onStoreChange) => subscribeToRedemptions(customerId, businessId, onStoreChange),
     () => getRedemptionsSnapshot(customerId, businessId),
-    () => new Map<number, VoucherTokenEntity>()
+    () => EMPTY_REDEMPTIONS
   );
 
   // Estado del simulador demo inicializado desde localStorage si está en cliente
