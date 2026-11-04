@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { TransitionProvider } from '@/components/transition/TransitionProvider';
+import { Inter } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: 'Vookly',
@@ -13,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="h-full bg-white antialiased">
+    <html lang="es" className={cn("h-full bg-white antialiased", "font-sans", inter.variable)}>
       <body className="h-full bg-white text-[#061b31]">
         <TransitionProvider>
           {children}

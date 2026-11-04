@@ -98,7 +98,7 @@ export const CardContainer: React.FC<CardContainerProps> = ({ cards = DEFAULT_CA
         smoothScroll
         snap
         innerPadding="px-4"
-        className="w-full h-full"
+        className="w-full h-full no-scrollbar"
       >
         {cards.map((card) => (
           <ScrollStackItem
