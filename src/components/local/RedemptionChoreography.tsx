@@ -3,10 +3,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import TearTicket from '@/components/registry/TearTicket';
 import FlipCard from '@/components/registry/FlipCard';
-import SlideCommit from '@/components/registry/SlideCommit';
 import CodeSlots from '@/components/registry/CodeSlots';
 
-export type RedemptionMoment = 'tear' | 'reward' | 'code';
+export type RedemptionMoment = 'tear' | 'code';
 
 export interface RedemptionChoreographyProps {
   /** Reward title displayed on the ticket and on the front face of the card. */
@@ -34,17 +33,19 @@ function formatTimer(seconds: number): string {
 }
 
 /**
- * RedemptionChoreography: the three-moment redemption sequence.
+ * RedemptionChoreography: the redemption sequence for the showroom.
  *
  * M1 · Tear — a vertical TearTicket carries the reward. Tearing it off is
- *        the consequence of confirming the "are you at the counter?" gate.
- * M2 · Reward — a FlipCard (axis "y") shows the earned reward on its front
- *        face, with a SlideCommit below it as an independent control.
- * M3 · Code — once the SlideCommit is committed, the card flips and the back
- *        face shows the 4-digit code with a 15-minute timer.
+ *        the consequence of confirming the "are you at the counter?" gate,
+ *        and the only gesture of the flow.
+ * M2 · Code — tearing the ticket issues the token and the FlipCard (axis "y")
+ *        flips to the back face, where the 4-digit code and its 15-minute
+ *        timer live.
  *
- * The SlideCommit never lives inside a card face: mixing a drag gesture with
- * a surface that owns its own flip gesture produces an ambiguous interaction.
+ * There is no intermediate confirmation step: the reward information already
+ * travelled on the ticket, so repeating it before the code only adds friction
+ * to the showroom. The flip is the animation that connects both moments, not
+ * an extra screen to get through.
  */
 export function RedemptionChoreography({
   rewardTitle,
@@ -65,42 +66,33 @@ export function RedemptionChoreography({
   // Keeps the countdown tied to the moment the code actually became visible.
   const tokenIssuedAtRef = useRef<number | null>(null);
 
-  const handleTear = useCallback(() => {
+  // The ticket is the confirmation gesture: tearing it issues the token, so
+  // the 15 minute window starts exactly when the customer sees the code.
+  const handleTear = useCallback(async () => {
     setTorn(true);
-    setMoment('reward');
-  }, []);
-
-  // The token is requested only after the tear, so the 15 minute window
-  // starts when the customer actually sees the code.
-  const handleConfirm = useCallback(async () => {
     setTokenPending(true);
     setTokenError(null);
     try {
       const issued = await onRequestToken();
       if (!issued) {
         setTokenError('No se pudo generar el código. Intentá de nuevo.');
-        throw new Error('token-not-issued');
+        return;
       }
       setCode(issued);
       setFlipped(true);
       setSecondsLeft(TOKEN_TTL_SECONDS);
       tokenIssuedAtRef.current = Date.now();
-    } catch (error) {
-      if (error instanceof Error && error.message === 'token-not-issued') throw error;
+      setMoment('code');
+    } catch {
       setTokenError('No se pudo generar el código. Intentá de nuevo.');
-      throw error;
     } finally {
       setTokenPending(false);
     }
   }, [onRequestToken]);
 
-  const handleFlipDone = useCallback(() => {
-    setMoment('code');
-  }, []);
-
   const handleHideCode = useCallback(() => {
     setFlipped(false);
-    setMoment('reward');
+    setMoment('tear');
   }, []);
 
   // Countdown: only runs while the code face is the visible one.
@@ -113,7 +105,7 @@ export function RedemptionChoreography({
           clearInterval(interval);
           // The reward is never lost: the card goes back to the reward face.
           setFlipped(false);
-          setMoment('reward');
+          setMoment('tear');
           onTokenExpired?.();
           return 0;
         }
@@ -131,10 +123,12 @@ export function RedemptionChoreography({
     return (
       <div className={`flex flex-col items-center pt-1 pb-2 ${className}`}>
         <h4 className="text-[17px] font-black text-neutral-900 tracking-tight text-center">
-          ¡Te has ganado un {rewardTitle}!
+          {tokenPending ? 'Generando tu código…' : `¡Te has ganado un ${rewardTitle}!`}
         </h4>
         <p className="mt-1 text-[12.5px] text-neutral-500 font-medium text-center">
-          Rasgá el ticket para canjearlo en {businessName}
+          {tokenPending
+            ? 'Soltá el ticket y mostrá el código en el mostrador'
+            : `Rasgá el ticket para canjearlo en ${businessName}`}
         </p>
 
         {/* The TearTicket stage is absolutely positioned: this wrapper gives
@@ -185,7 +179,7 @@ export function RedemptionChoreography({
   }
 
   // -----------------------------------------------------------------
-  // M2 · REWARD  /  M3 · CODE
+  // M2 · CODE
   // -----------------------------------------------------------------
   const rewardFace = (
     <div className="flex h-full flex-col items-center justify-center px-6 text-center">
@@ -197,9 +191,6 @@ export function RedemptionChoreography({
       </span>
       <span className="mt-3 inline-flex items-center px-3 py-1 rounded-full bg-neutral-100 text-[11px] font-bold text-neutral-600">
         {stamps} {stamps === 1 ? 'sello' : 'sellos'} canjeados
-      </span>
-      <span className="mt-4 text-[11.5px] font-medium text-neutral-400">
-        Deslizá para confirmar y ver tu código
       </span>
     </div>
   );
@@ -241,7 +232,7 @@ export function RedemptionChoreography({
   return (
     <div className={`flex flex-col items-center pt-1 pb-2 ${className}`}>
       <h4 className="text-[17px] font-black text-neutral-900 tracking-tight text-center">
-        {moment === 'code' ? 'Mostrá este código en el mostrador' : 'Confirmá tu canje'}
+        {moment === 'code' ? 'Mostrá este código en el mostrador' : 'Canjeando tu premio…'}
       </h4>
 
       <div className="mt-4 w-full flex justify-center">
@@ -249,8 +240,7 @@ export function RedemptionChoreography({
           axis="y"
           flipped={flipped}
           onFlipChange={(next) => {
-            // The code face is never shown without an issued token: keyboard
-            // flip must not bypass the SlideCommit confirmation.
+            // The code face is never shown without an issued token.
             if (next && !code) return;
             setFlipped(next);
           }}
@@ -270,43 +260,23 @@ export function RedemptionChoreography({
         />
       </div>
 
-      {/* The SlideCommit is an independent control, never inside a card face. */}
       <div className="mt-5 w-full max-w-[252px] flex flex-col gap-2">
-        {moment === 'code' ? (
-          <button
-            type="button"
-            onClick={handleHideCode}
-            className="self-center inline-flex items-center justify-center px-5 py-2 rounded-full bg-neutral-100 hover:bg-neutral-200 active:scale-95 text-neutral-800 font-semibold text-[13px] transition-all"
-          >
-            Ocultar código temporalmente
-          </button>
-        ) : (
-          <SlideCommit
-            label="Deslizá para canjear"
-            doneLabel="¡Canjeado!"
-            errorLabel="No se pudo canjear"
-            disabled={tokenPending}
-            onConfirm={handleConfirm}
-            onDone={handleFlipDone}
-            width={252}
-            height={46}
-            radius={23}
-            onError={() => {
-              setTokenError('No se pudo generar el código. Intentá de nuevo.');
-            }}
-          />
-        )}
+        <button
+          type="button"
+          onClick={handleHideCode}
+          className="self-center inline-flex items-center justify-center px-5 py-2 rounded-full bg-neutral-100 hover:bg-neutral-200 active:scale-95 text-neutral-800 font-semibold text-[13px] transition-all"
+        >
+          Ocultar código temporalmente
+        </button>
       </div>
 
       {tokenError && (
         <p className="mt-2 text-[12px] font-semibold text-red-600 text-center">{tokenError}</p>
       )}
 
-      {moment === 'reward' && (
-        <p className="mt-3 text-[11.5px] font-medium text-neutral-400 text-center">
-          El canje no suma un sello. Si comprás algo más, ¡sí te suma!
-        </p>
-      )}
+      <p className="mt-3 text-[11.5px] font-medium text-neutral-400 text-center">
+        El canje no suma un sello. Si comprás algo más, ¡sí te suma!
+      </p>
     </div>
   );
 }

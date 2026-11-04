@@ -95,10 +95,10 @@ Criterio de aceptación:
 | T1   | S1,S2  | inline | `src/components/cards/CardContainer.tsx`             | `9b98c2d` |
 | T2   | S1,S2  | inline | `src/components/cards/ScrollStackCard.tsx`           | `9b98c2d` |
 | T3   | S6     | inline | `src/components/local/LocalDemoSimulatorModal.tsx`  | `9b98c2d` |
-| T4   | S3,S4  | inline | `src/components/local/RedemptionChoreography.tsx` (NUEVO) | - |
-| T5   | S3,S5  | inline | `src/app/local/[id]/page.tsx`                        | -      |
-| T6   | S3,S7  | inline | `src/components/local/NodeDetailContent.tsx`        | -      |
-| T7   | -      | inline | verificación runtime (CDP) + build final             | -      |
+| T4   | S3,S4  | inline | `src/components/local/RedemptionChoreography.tsx` (NUEVO) | `4c0e68a` |
+| T5   | S3,S5  | inline | `src/app/local/[id]/page.tsx`                        | `4c0e68a` |
+| T6   | S3,S7  | inline | `src/components/local/NodeDetailContent.tsx`        | `4c0e68a` |
+| T7   | -      | inline | verificación runtime (CDP) + build final             | `4c0e68a` |
 
 T1, T2 y T3 comparten el commit `9b98c2d` (Slice 1: hub + simulador). T1 y T2 comparten superficie de edicion (`CardContainer.tsx` renderiza `ScrollStackCard`), por lo que se ejecutan en el mismo paso.
 
@@ -136,3 +136,19 @@ Contexto previo: el usuario pidió contextualizar la demo con el documento de pr
 - `CodeSlots` verificado: emite `123456` por `onChange`.
 - Riesgo conocido: `TearTicket` y `SlideCommit` dependen de gestos de arrastre con geometría de arco alrededor de un punto de anclaje; la verificación runtime automatizada tiene queDispatchar arcos, no líneas rectas.
 - El repo no tiene tests. No se introduce un framework en este alcance: la verificación es tsc + lint + build + CDP.
+
+### L5 — Slice 2: verificación runtime y cierre
+
+- Coreografía completa verificada end-to-end vía CDP (`/tmp/opencode/cdp_choreo2.py`): footer "Reclamar premio" → sheet arquetipo 4 → gate "¿Estás frente al mostrador?" → M1 ticket vertical → gesto de rasgado real (hinge `3px 190px`, sweep creciente 80 pasos) → M2 `h4 "Confirmá tu canje"` → slide `aria-valuenow=100` → commit → token emitido (4 dígitos visibles) → M3 cara código (`aria-pressed=true`, 4 slots, timer `Vence en 14:58 min`) → timer decrementa (14:56) → "Ocultar código temporalmente" → flip inverso a cara premio con SlideCommit. Screenshots: `/tmp/opencode/choreo_m2_reward.png`, `/tmp/opencode/choreo_m3_code.png` (visualmente confirmada).
+- Fixes durante la verificación: el voucher del repo se resuelve por `milestoneStamp` en `handleClaimToken` (ids sintéticos `voucher-15` del simulador ≠ ids reales `vouch-*`); cara de código con fondo `bg-neutral-950` y dígitos `#0a0a0b` sobre slots blancos; `status="success"` de CodeSlots quitado (pintaba check sobre los dígitos); guard de flip por teclado (sin token emitido no se revela la cara código); expiry interno: al vencer devuelve a la cara del premio dentro de la coreografía.
+- Verificación: `tsc --noEmit` 0 errores; `pnpm lint` limpio; `pnpm build` OK con rutas PPR intactas.
+- Expiry real (15 min completos) no se testeó en runtime; el path está revisado por código (flip inverso, sin salir de la coreografía). S7 pendiente de probe runtime tras Escape (el path de gate ya quedó probado).
+- Commit Slice 2: `4c0e68a` (incluye cierre mínimo de registry/deps elegido por el usuario; el resto del stream anterior queda pendiente).
+- RDD assessment post-commit (base `db445a2`, committed-only): primer intento devolvió `unassessable` (untracked sin declarar); corregido con `--untracked-scope=exclude` → riesgo `medium` (`configuration_change`: package.json), `review_due=false` (`under_budget`). La review queda pendiente en el slice hasta alcanzar el presupuesto; el tier nunca se infiere bajo desde un fallo de assessment, acá sí devolvió tier válido.
+
+### L6 — Simplificación para showroom: el gesto del rasgado es la única confirmación
+
+- Pedido del usuario: la pantalla del slide era "información repetida" y sumaba pasos extra al showroom; alcanza con que aparezca el ticket que se rasga y una guía de qué hacer.
+- Decisión tomada con el usuario: se elimina el paso M2 (pantalla de premio + SlideCommit) y el rasgado pasa a ser el gesto único de confirmación. Después de rasgar se emite el token y la FlipCard voltea directo a la cara del código (la animación de flip conecta ambos momentos, no es un paso extra).
+- Cambios en `RedemptionChoreography.tsx`: el tipo de momentos pasa de `'tear' | 'reward' | 'code'` a `'tear' | 'code'`; `handleTear` ahora pide el token, activa el flip y arranca el timer; se elimina el import y el uso de `SlideCommit`; la `rewardFace` queda solo como cara frontal de la FlipCard (visible durante la animación del flip); se elimina la pantalla intermedia y su copy "Deslizá para confirmar y ver tu código"; durante la emisión se muestra "Generando tu código…".
+- Verificación: `tsc --noEmit` 0 errores, lint limpio, build OK. Runtime vía CDP (`/tmp/opencode/cdp_direct.py`): gate → ticket con guía "Rasgá acá / Arrastrá hacia abajo" → tear real (hinge `3px 190px`) → token emitido y `aria-pressed=true` con 4 dígitos visibles → timer `14:59` → `14:57` → "Ocultar código temporalmente" → vuelve al ticket. Screenshot: `/tmp/opencode/direct_code.png`.
