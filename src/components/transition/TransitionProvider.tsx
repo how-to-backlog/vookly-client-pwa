@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useCallback, useRef, useEff
 import { useRouter } from 'next/navigation';
 
 interface TransitionContextType {
-  triggerTransition: (e: React.MouseEvent, targetUrl: string) => void;
+  triggerTransition: (e: React.MouseEvent | React.KeyboardEvent, targetUrl: string) => void;
 }
 
 const TransitionContext = createContext<TransitionContextType | null>(null);
@@ -30,10 +30,11 @@ export const TransitionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     };
   }, []);
 
-  const triggerTransition = useCallback((e: React.MouseEvent, targetUrl: string) => {
-    // Coordenadas del click o tap
-    const x = e.clientX || window.innerWidth / 2;
-    const y = e.clientY || window.innerHeight / 2;
+  const triggerTransition = useCallback((e: React.MouseEvent | React.KeyboardEvent, targetUrl: string) => {
+    // Coordenadas del click o tap. Un evento de teclado no las trae: se usa el centro.
+    const pointer = e as Partial<React.MouseEvent>;
+    const x = pointer.clientX || window.innerWidth / 2;
+    const y = pointer.clientY || window.innerHeight / 2;
 
     // Radio máximo hasta la esquina más lejana (Pitágoras)
     const endRadius = Math.hypot(
