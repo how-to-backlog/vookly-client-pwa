@@ -9,23 +9,10 @@ Buenas gente, les comparto el informe técnico detallado sobre la integración c
 Durante las pruebas de integración en consola y llamadas directas por API, se identificaron los siguientes bloqueos de infraestructura impuestos por Meta a nivel regional:
 
 1. **Meta Cloud API (Modo Directo):**  
-   Al enviar mensajes desde el número de prueba de Meta Developers, la API responde `HTTP 200 OK` (`message_status: accepted`), pero el mensaje es descartado antes de llegar al celular. Al auditar los webhooks oficiales, el servidor arrojó el error:
-   ```json
-   {
-     "code": 131031,
-     "title": "Business Account locked",
-     "message": "Business account has been locked."
-   }
-   ```
+   Al enviar mensajes desde el número de prueba de Meta Developers, la API responde `HTTP 200 OK` (`message_status: accepted`), pero el mensaje es descartado antes de llegar al celular. Al auditar los webhooks oficiales, el servidor arrojó el error `131031 (Business account has been locked)`. Meta exige la verificación comercial formal de la cuenta para habilitar el tráfico saliente.
+
 2. **Twilio (Gateway Intermedio):**  
-   Al intentar utilizar el Sandbox gratuito de Twilio desde Argentina, la API devuelve:
-   ```json
-   {
-     "code": 572002,
-     "message": "No Twilio trial phone number is assigned for messaging to this destination number."
-   }
-   ```
-   **Causa comprobada:** Meta restringe el tráfico saliente de números virtuales de prueba de Estados Unidos (`+1`) hacia redes móviles de Sudamérica (`+54` / `+55`) para prevenir abuso y spam en cuentas trial.
+   Al interactuar directamente contra la API de Twilio mediante cURL, las solicitudes de texto libre saliente son rechazadas con el error `21654 (ContentSid Required)`. Meta y Twilio exigen obligatoriamente el uso de plantillas (templates) pre-aprobadas con un identificador de contenido oficial (`ContentSid`) para iniciar conversaciones automáticas con clientes.
 
 3. **Conclusión operativa:**  
    No es un problema de código, endpoints ni tokens. Ningún proveedor (ni Meta directo ni Twilio) permite enviar mensajes automáticos salientes a números de Argentina sin que la cuenta esté formalmente verificada por Meta.
