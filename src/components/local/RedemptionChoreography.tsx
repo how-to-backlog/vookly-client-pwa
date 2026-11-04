@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import TearTicket from '@/components/registry/TearTicket';
 import FlipCard from '@/components/registry/FlipCard';
 import CodeSlots from '@/components/registry/CodeSlots';
+import { VoucherTokenEntity } from '@/types/loyalty';
 
 export type RedemptionMoment = 'tear' | 'code';
 
@@ -18,18 +19,28 @@ export interface RedemptionChoreographyProps {
    * Requests a fresh redemption token. Called after the ticket is torn,
    * right before the code becomes visible.
    */
-  onRequestToken: () => Promise<string | null>;
-  /** Called when the token expires: the card returns to the reward face. */
+  onRequestToken: () => Promise<VoucherTokenEntity | null>;
+  /** Called when the token expires: the reward becomes claimable again. */
   onTokenExpired?: () => void;
+  /**
+   * Token already issued for this reward, if any. When present and still
+   * valid, the choreography opens directly on the code face and the countdown
+   * resumes from its real remaining time.
+   */
+  existingToken?: VoucherTokenEntity | null;
   className?: string;
 }
-
-const TOKEN_TTL_SECONDS = 15 * 60;
 
 function formatTimer(seconds: number): string {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   return `${m}:${String(s).padStart(2, '0')}`;
+}
+
+function remainingSeconds(token: VoucherTokenEntity, now = Date.now()): number {
+  const expiresAt = new Date(token.expiresAt).getTime();
+  if (!Number.isFinite(expiresAt)) return 0;
+  return Math.max(0, Math.ceil((expiresAt - now) / 1000));
 }
 
 /**
@@ -46,6 +57,12 @@ function formatTimer(seconds: number): string {
  * travelled on the ticket, so repeating it before the code only adds friction
  * to the showroom. The flip is the animation that connects both moments, not
  * an extra screen to get through.
+ *
+ * The redemption is a one-way door: once the ticket is torn there is no "hide
+ * the code" gesture. The countdown is derived from the token's `expiresAt`, so
+ * closing the bottom sheet does not pause or reset it — when the sheet opens
+ * again the code is still there with the real remaining time, and once the
+ * window closes the reward becomes claimable again.
  */
 export function RedemptionChoreography({
   rewardTitle,
@@ -53,18 +70,29 @@ export function RedemptionChoreography({
   businessName,
   onRequestToken,
   onTokenExpired,
+  existingToken = null,
   className = ''
 }: RedemptionChoreographyProps) {
-  const [moment, setMoment] = useState<RedemptionMoment>('tear');
-  const [torn, setTorn] = useState(false);
-  const [flipped, setFlipped] = useState(false);
-  const [code, setCode] = useState<string>('');
+  const [torn, setTorn] = useState(Boolean(existingToken));
+  const [flipped, setFlipped] = useState(Boolean(existingToken));
+  const [code, setCode] = useState<string>(existingToken?.code ?? '');
   const [tokenPending, setTokenPending] = useState(false);
   const [tokenError, setTokenError] = useState<string | null>(null);
-  const [secondsLeft, setSecondsLeft] = useState(TOKEN_TTL_SECONDS);
+  const [expiresAt, setExpiresAt] = useState<string | null>(existingToken?.expiresAt ?? null);
+  // Ticking clock used to render the countdown. It is NOT the source of truth:
+  // the expiry timestamp is. This only tells the UI "hey, re-read the clock",
+  // so the timer stays live without ever drifting from `expiresAt`.
+  const [now, setNow] = useState(() => Date.now());
 
-  // Keeps the countdown tied to the moment the code actually became visible.
-  const tokenIssuedAtRef = useRef<number | null>(null);
+  // The countdown is always derived from the absolute expiry timestamp, never
+  // from a local counter: the timer must keep running while the sheet is
+  // closed and must survive a reload.
+  const secondsLeft = useMemo(
+    () => (expiresAt ? remainingSeconds({ code, generatedAt: '', expiresAt }, now) : 0),
+    [code, expiresAt, now]
+  );
+
+  const moment: RedemptionMoment = code && expiresAt ? 'code' : 'tear';
 
   // The ticket is the confirmation gesture: tearing it issues the token, so
   // the 15 minute window starts exactly when the customer sees the code.
@@ -78,11 +106,10 @@ export function RedemptionChoreography({
         setTokenError('No se pudo generar el código. Intentá de nuevo.');
         return;
       }
-      setCode(issued);
+      setCode(issued.code);
+      setExpiresAt(issued.expiresAt);
+      setNow(Date.now());
       setFlipped(true);
-      setSecondsLeft(TOKEN_TTL_SECONDS);
-      tokenIssuedAtRef.current = Date.now();
-      setMoment('code');
     } catch {
       setTokenError('No se pudo generar el código. Intentá de nuevo.');
     } finally {
@@ -90,31 +117,28 @@ export function RedemptionChoreography({
     }
   }, [onRequestToken]);
 
-  const handleHideCode = useCallback(() => {
-    setFlipped(false);
-    setMoment('tear');
-  }, []);
-
-  // Countdown: only runs while the code face is the visible one.
+  // Countdown: ticks once per second while the code is visible. When the
+  // window closes, the token is invalidated and the reward becomes claimable
+  // again — the customer is sent back to the ticket.
   useEffect(() => {
-    if (moment !== 'code' || tokenIssuedAtRef.current === null) return;
+    if (moment !== 'code') return;
 
     const interval = setInterval(() => {
-      setSecondsLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          // The reward is never lost: the card goes back to the reward face.
-          setFlipped(false);
-          setMoment('tear');
-          onTokenExpired?.();
-          return 0;
-        }
-        return prev - 1;
-      });
+      const current = Date.now();
+      // Re-render first so the countdown updates on every tick...
+      setNow(current);
+      if (remainingSeconds({ code, generatedAt: '', expiresAt: expiresAt ?? '' }, current) > 0) return;
+
+      // ...and invalidate the token only when the window really closed.
+      clearInterval(interval);
+      setCode('');
+      setExpiresAt(null);
+      setFlipped(false);
+      onTokenExpired?.();
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [moment, onTokenExpired]);
+  }, [moment, code, expiresAt, onTokenExpired]);
 
   // -----------------------------------------------------------------
   // M1 · TEAR
@@ -174,6 +198,10 @@ export function RedemptionChoreography({
             </div>
           </TearTicket>
         </div>
+
+        {tokenError && (
+          <p className="mt-2 text-[12px] font-semibold text-red-600 text-center">{tokenError}</p>
+        )}
       </div>
     );
   }
@@ -232,7 +260,7 @@ export function RedemptionChoreography({
   return (
     <div className={`flex flex-col items-center pt-1 pb-2 ${className}`}>
       <h4 className="text-[17px] font-black text-neutral-900 tracking-tight text-center">
-        {moment === 'code' ? 'Mostrá este código en el mostrador' : 'Canjeando tu premio…'}
+        Mostrá este código en el mostrador
       </h4>
 
       <div className="mt-4 w-full flex justify-center">
@@ -240,8 +268,10 @@ export function RedemptionChoreography({
           axis="y"
           flipped={flipped}
           onFlipChange={(next) => {
-            // The code face is never shown without an issued token.
+            // The code face is never shown without an issued token, and the
+            // card never flips back: the redemption is a one-way door.
             if (next && !code) return;
+            if (!next) return;
             setFlipped(next);
           }}
           flipOnClick={false}
@@ -254,20 +284,10 @@ export function RedemptionChoreography({
           background="#ffffff"
           shadow
           shadowOpacity={0.14}
-          ariaLabel={flipped ? 'Código de canje' : 'Premio obtenido'}
+          ariaLabel="Código de canje"
           front={rewardFace}
           back={codeFace}
         />
-      </div>
-
-      <div className="mt-5 w-full max-w-[252px] flex flex-col gap-2">
-        <button
-          type="button"
-          onClick={handleHideCode}
-          className="self-center inline-flex items-center justify-center px-5 py-2 rounded-full bg-neutral-100 hover:bg-neutral-200 active:scale-95 text-neutral-800 font-semibold text-[13px] transition-all"
-        >
-          Ocultar código temporalmente
-        </button>
       </div>
 
       {tokenError && (

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useCallback, useState, useSyncExternalStore } from 'react';
 import { LocalTopBar } from '@/components/navigation/LocalTopBar';
 import { LocalFooterSummary } from '@/components/local/LocalFooterSummary';
 import { BottomSheetNodeDetail } from '@/components/local/BottomSheetNodeDetail';
@@ -19,10 +19,19 @@ import {
   clearDemoSimulatorConfig,
   applyDemoConfigToEntities
 } from '@/services/demoSimulatorStorage';
+import {
+  applyRedemptionsToWallet,
+  clearRedemption,
+  isTokenActive,
+  getRedemptionsSnapshot,
+  saveRedemption,
+  subscribeToRedemptions
+} from '@/services/redemptionStorage';
 import { calculateCooldown } from '@/lib/loyaltyRules';
 import {
   DemoSimulatorConfig,
-  InteractiveNodeSelection
+  InteractiveNodeSelection,
+  VoucherTokenEntity
 } from '@/types/loyalty';
 
 interface LocalPageProps {
@@ -47,6 +56,20 @@ function LocalContent({ params }: LocalPageProps) {
   // Estado mutable de la billetera (para persistir canjes en memoria)
   const [wallet, setWallet] = useState(initialWallet);
 
+  // Canjes persistidos: sobreviven al cierre del bottom sheet y al reload.
+  // El token emitido (con su expiresAt) es la fuente de verdad del estado
+  // "canjeado", no el estado local del componente que lo muestra.
+  //
+  // localStorage es una fuente EXTERNA, así que se lee con useSyncExternalStore:
+  // el servidor devuelve el snapshot vacío (no puede tocar el storage) y el
+  // cliente devuelve el real. Así no hay setState dentro de un efecto ni
+  // mismatch de hidratación.
+  const redemptions = useSyncExternalStore(
+    (onStoreChange) => subscribeToRedemptions(customerId, businessId, onStoreChange),
+    () => getRedemptionsSnapshot(customerId, businessId),
+    () => new Map<number, VoucherTokenEntity>()
+  );
+
   // Estado del simulador demo inicializado desde localStorage si está en cliente
   const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
   const [simulatorConfig, setSimulatorConfig] = useState<DemoSimulatorConfig>(() => {
@@ -69,7 +92,7 @@ function LocalContent({ params }: LocalPageProps) {
   // El simulador regenera los vouchers desde cero, así que el código emitido
   // (activeCode) hay que reinyectarlo desde la billetera base para que el
   // token no se pierda al derivar.
-  const effectiveWallet = activeEntities.wallet
+  const walletWithCodes = activeEntities.wallet
     ? {
         ...activeEntities.wallet,
         vouchers: activeEntities.wallet.vouchers?.map((v) => {
@@ -78,6 +101,12 @@ function LocalContent({ params }: LocalPageProps) {
         })
       }
     : activeEntities.wallet;
+  // Los canjes persistidos mandan sobre el estado del voucher: si el token
+  // sigue vigente el premio está canjeado; si venció, vuelve a estar
+  // disponible para reclamar.
+  const effectiveWallet = walletWithCodes
+    ? (applyRedemptionsToWallet(walletWithCodes, redemptions) as typeof walletWithCodes)
+    : walletWithCodes;
   const effectiveBusinessName = simulatorConfig.businessName || business?.name || 'Coffee Shop';
 
   // Estado reactivo del nodo seleccionado por tap en el Roadmap
@@ -88,6 +117,16 @@ function LocalContent({ params }: LocalPageProps) {
 
   // Estado para desplegar el modal de info desde el botón de la cabecera
   const [showInfoModal, setShowInfoModal] = useState(false);
+
+  // Cuando el token expira, el premio vuelve a estar disponible para reclamar:
+  // limpiamos el canje persistido para que la billetera vuelva a 'ready'.
+  // Usamos el hito del nodo seleccionado porque, mientras el token está
+  // vigente, el voucher ya está en estado 'redeemed' y no es el 'ready'.
+  const handleTokenExpired = useCallback(() => {
+    const milestoneStamp = selectedNode?.voucher?.milestoneStamp;
+    if (milestoneStamp === undefined) return;
+    clearRedemption(customerId, businessId, milestoneStamp);
+  }, [customerId, businessId, selectedNode]);
 
   if (!business || !effectiveRules || !effectiveWallet) {
     return (
@@ -114,6 +153,12 @@ function LocalContent({ params }: LocalPageProps) {
   const readyVoucher = cooldown.isCoolingDown
     ? undefined
     : effectiveWallet.vouchers?.find((v) => v.status === 'ready');
+
+  // Premio ya canjeado cuyo token sigue vigente: el cliente puede volver a
+  // ver su código desde el footer sin pasar por el gate otra vez.
+  const redeemedVoucher = effectiveWallet.vouchers?.find(
+    (v) => v.status === 'redeemed' && isTokenActive(v.activeCode)
+  );
 
   // Callback cuando se toca el botón de reclamar en el footer
   const handleClaimFromFooter = () => {
@@ -143,17 +188,23 @@ function LocalContent({ params }: LocalPageProps) {
   };
 
   // Callback para generar y persistir el token de 4 dígitos en el repositorio.
-  // Devuelve el código emitido para que la coreografía pueda mostrarlo.
+  // Devuelve el token emitido (código + expiración) para que la coreografía
+  // pueda mostrarlo y derivar el timer de su expiresAt.
   // El simulador deriva vouchers con ids sintéticos (voucher-15), pero el
   // repositorio real identifica su voucher por su hito (milestoneStamp):
   // resolvemos acá el id del voucher base antes de pedir el token.
-  const handleClaimToken = async (): Promise<string | null> => {
+  const handleClaimToken = async (): Promise<VoucherTokenEntity | null> => {
     const repoVoucher = wallet?.vouchers?.find(
       (v) => v.milestoneStamp === readyVoucher?.milestoneStamp && v.status === 'ready'
     );
     if (!repoVoucher) return null;
     const token = await claimVoucherToken('cust-01', businessId, repoVoucher.id);
     if (!token) return null;
+
+    // Persistimos el canje: tiene que sobrevivir al cierre del sheet y al
+    // reload para que el estado "canjeado" no se pierda.
+    saveRedemption(customerId, businessId, repoVoucher.milestoneStamp, token);
+
     // Actualizamos localmente el voucher para reflejar el token sin recargar
     setWallet((prev) => {
       if (!prev || !prev.vouchers) return prev;
@@ -162,7 +213,33 @@ function LocalContent({ params }: LocalPageProps) {
       );
       return { ...prev, vouchers: updatedVouchers };
     });
-    return token.code;
+    return token;
+  };
+
+  // Callback para volver a ver el código de un premio ya canjeado (token vigente).
+  const handleViewRedeemedCode = () => {
+    if (!redeemedVoucher) return;
+    const rewardNode = effectiveRules.rewardMilestones.find(
+      (m) => m.stampThreshold === redeemedVoucher.milestoneStamp
+    );
+    if (!rewardNode) return;
+    const transaction = effectiveWallet.transactions?.find(
+      (t) => t.stampIndex === rewardNode.stampThreshold
+    );
+
+    setSelectedNode({
+      stampIndex: rewardNode.stampThreshold,
+      point: { x: 180, y: 710 },
+      isReward: true,
+      rewardTitle: rewardNode.rewardTitle,
+      isMajorReward: rewardNode.isMajorReward,
+      interactiveState: 'reward_redeemed',
+      voucher: redeemedVoucher,
+      transaction,
+      label: `Sello ${rewardNode.stampThreshold}: ${rewardNode.rewardTitle}`,
+      description: 'Premio canjeado. Tu código sigue vigente por unos minutos.'
+    });
+    setCurrentScene('active_token');
   };
 
   const handleApplySimulator = (newConfig: DemoSimulatorConfig) => {
@@ -203,7 +280,9 @@ function LocalContent({ params }: LocalPageProps) {
         nextRewardTitle={nextMilestone?.rewardTitle}
         cooldownRemainingMinutes={cooldown.isCoolingDown ? cooldown.remainingMinutes : undefined}
         readyVoucher={readyVoucher}
+        redeemedVoucher={redeemedVoucher}
         onClaimReward={handleClaimFromFooter}
+        onViewRedeemedCode={handleViewRedeemedCode}
         locationUrl={business.location?.googleMapsUrl}
       />
 
@@ -227,6 +306,13 @@ function LocalContent({ params }: LocalPageProps) {
             selection={selectedNode}
             businessName={effectiveBusinessName}
             onRequestToken={handleClaimToken}
+            existingToken={
+              selectedNode.voucher?.milestoneStamp !== undefined
+                ? redemptions.get(selectedNode.voucher.milestoneStamp) ?? null
+                : null
+            }
+            onTokenExpired={handleTokenExpired}
+            initialScene={currentScene}
             onSceneChange={setCurrentScene}
           />
         )}

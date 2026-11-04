@@ -85,6 +85,9 @@ export interface LocalFooterSummaryProps {
   cooldownRemainingMinutes?: number; // Para mostrar 'Disponible en HH:MM hs'
   readyVoucher?: CustomerVoucher; // Para activar el botón sobrio 'Reclamar premio'
   onClaimReward?: () => void; // Dispara apertura de Bottom Sheet
+  /** Premio ya canjeado cuyo token sigue vigente: habilita 'Ver mi código'. */
+  redeemedVoucher?: CustomerVoucher;
+  onViewRedeemedCode?: () => void;
   className?: string;
 }
 

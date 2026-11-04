@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { InteractiveNodeSelection } from '@/types/loyalty';
+import { InteractiveNodeSelection, VoucherTokenEntity } from '@/types/loyalty';
 import { formatExpirationDate, formatFullDateTime } from '@/lib/loyaltyRules';
 import { StampNodeBubble } from './StampNodeBubble';
 import { RedemptionChoreography } from './RedemptionChoreography';
@@ -10,7 +10,17 @@ export interface NodeDetailContentProps {
   selection: InteractiveNodeSelection;
   businessName?: string;
   /** Requests a fresh redemption token. Returns the issued 4-digit code. */
-  onRequestToken?: () => Promise<string | null>;
+  onRequestToken?: () => Promise<VoucherTokenEntity | null>;
+  /** Token already issued for this reward, if it is still valid. */
+  existingToken?: VoucherTokenEntity | null;
+  /** Called when the redemption token expires and the reward becomes claimable again. */
+  onTokenExpired?: () => void;
+  /**
+   * Escena con la que abre el detalle. El padre la usa para abrir directo en
+   * la coreografía cuando el cliente pide "Ver mi código" desde el footer:
+   * el botón dice "ver el código", así que no debe obligar a un paso extra.
+   */
+  initialScene?: 'info' | 'warning' | 'active_token';
   onSceneChange?: (scene: 'info' | 'warning' | 'active_token') => void;
   className?: string;
 }
@@ -33,11 +43,16 @@ export function NodeDetailContent({
   selection,
   businessName = 'este local',
   onRequestToken,
+  existingToken = null,
+  onTokenExpired,
+  initialScene = 'info',
   onSceneChange,
   className = ''
 }: NodeDetailContentProps) {
   // Sub-estados para el flujo de canje seguro: 'info' | 'warning' | 'active_token'
-  const [redemptionStep, setRedemptionStep] = useState<'info' | 'warning' | 'active_token'>('info');
+  const [redemptionStep, setRedemptionStep] = useState<'info' | 'warning' | 'active_token'>(
+    initialScene
+  );
 
   const changeScene = (nextScene: 'info' | 'warning' | 'active_token') => {
     setRedemptionStep(nextScene);
@@ -54,6 +69,8 @@ export function NodeDetailContent({
         stamps={selection.stampIndex}
         businessName={businessName}
         onRequestToken={onRequestToken ?? (async () => null)}
+        existingToken={existingToken}
+        onTokenExpired={onTokenExpired}
         className={className}
       />
     );
@@ -174,6 +191,17 @@ export function NodeDetailContent({
                   {redeemedTime.time || '12:00 hs'}
                 </strong>
               </p>
+              {/* Con el token todavía vigente, el cliente puede volver a ver
+                  su código: el canje ya ocurrió, solo falta mostrarlo. */}
+              {existingToken && (
+                <button
+                  type="button"
+                  onClick={() => changeScene('active_token')}
+                  className="mt-1 self-start inline-flex items-center justify-center px-4 py-2 rounded-full bg-neutral-950 hover:bg-neutral-800 text-white font-bold text-[12px] shadow-2xs active:scale-95 transition-all flex-shrink-0 whitespace-nowrap"
+                >
+                  Ver mi código
+                </button>
+              )}
             </div>
           ) : null}
 

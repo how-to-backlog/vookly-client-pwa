@@ -18,6 +18,8 @@ export const LocalFooterSummary: React.FC<LocalFooterSummaryProps> = ({
   cooldownRemainingMinutes,
   readyVoucher,
   onClaimReward,
+  redeemedVoucher,
+  onViewRedeemedCode,
   className = ''
 }) => {
   return (
@@ -80,6 +82,17 @@ export const LocalFooterSummary: React.FC<LocalFooterSummaryProps> = ({
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-neutral-950 flex-shrink-0" />
                 <span className="truncate">Reclamar {readyVoucher.rewardTitle}</span>
+              </button>
+            ) : redeemedVoucher ? (
+              /* ESTADO CANJEADO: el token sigue vigente, se puede volver a ver el código */
+              <button
+                type="button"
+                onClick={onViewRedeemedCode}
+                className="h-8 inline-flex items-center gap-1.5 px-3 rounded-full bg-neutral-950 text-white text-[12.5px] font-bold tracking-tight shadow-2xs hover:bg-neutral-800 active:scale-95 transition-all select-none max-w-full"
+                aria-label={`Ver mi código de ${redeemedVoucher.rewardTitle}`}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-white flex-shrink-0" />
+                <span className="truncate">Ver mi código</span>
               </button>
             ) : cooldownRemainingMinutes && cooldownRemainingMinutes > 0 ? (
               /* ESTADO COOLDOWN: En enfriamiento tras compra reciente */
