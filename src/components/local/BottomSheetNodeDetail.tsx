@@ -8,6 +8,7 @@ export interface BottomSheetNodeDetailProps {
   children: React.ReactNode;
   ariaLabel?: string;
   onInfoClick?: () => void;
+  onResetTicketClick?: () => void;
   className?: string;
 }
 
@@ -27,6 +28,7 @@ export function BottomSheetNodeDetail({
   children,
   ariaLabel = 'Detalle del nodo',
   onInfoClick,
+  onResetTicketClick,
   className = ''
 }: BottomSheetNodeDetailProps) {
   // Derivamos renderizado y visibilidad sin cascading renders en useEffect
@@ -147,8 +149,31 @@ export function BottomSheetNodeDetail({
           <div className="w-9 h-1 rounded-full bg-neutral-300" />
         </div>
 
-        {/* Cabecera Agnóstica Minimalista: botón de Info (si aplica) y botón X a la derecha */}
+        {/* Cabecera Agnóstica Minimalista: botón de Reset (demo), botón de Info (si aplica) y botón X a la derecha */}
         <div className="px-4 pb-0 pt-0 flex items-center justify-end gap-1.5 flex-shrink-0 min-h-[30px]">
+          {onResetTicketClick && (
+            <button
+              type="button"
+              onClick={onResetTicketClick}
+              aria-label="Probar animación de nuevo"
+              title="Probar animación de nuevo (Demo)"
+              className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-neutral-200 active:scale-95 transition-all flex items-center justify-center text-neutral-600 hover:text-black flex-shrink-0"
+            >
+              <svg
+                className="w-3.5 h-3.5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                viewBox="0 0 24 24"
+              >
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <path d="M3 3v5h5" />
+              </svg>
+            </button>
+          )}
+
           {onInfoClick && (
             <button
               type="button"

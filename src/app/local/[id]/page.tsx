@@ -124,6 +124,15 @@ function LocalContent({ params }: LocalPageProps) {
   // Estado para desplegar el modal de info desde el botón de la cabecera
   const [showInfoModal, setShowInfoModal] = useState(false);
 
+  // Callback para rebobinar el ticket (modo demo/showroom):
+  // Limpia el token del storage y resetea la escena para que el ticket vuelva a estar intacto.
+  const handleResetTicket = useCallback(() => {
+    const milestoneStamp = selectedNode?.voucher?.milestoneStamp;
+    if (milestoneStamp !== undefined) {
+      clearRedemption(customerId, businessId, milestoneStamp);
+    }
+  }, [customerId, businessId, selectedNode]);
+
   // Cuando el token expira, el premio vuelve a estar disponible para reclamar:
   // limpiamos el canje persistido para que la billetera vuelva a 'ready'.
   // Usamos el hito del nodo seleccionado porque, mientras el token está
@@ -332,6 +341,13 @@ function LocalContent({ params }: LocalPageProps) {
         onInfoClick={
           currentScene === 'warning' || currentScene === 'active_token'
             ? () => setShowInfoModal(true)
+            : undefined
+        }
+        onResetTicketClick={
+          currentScene === 'active_token' &&
+          selectedNode?.voucher?.milestoneStamp !== undefined &&
+          Boolean(redemptions.get(selectedNode.voucher.milestoneStamp))
+            ? handleResetTicket
             : undefined
         }
       >
