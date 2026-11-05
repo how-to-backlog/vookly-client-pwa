@@ -1,8 +1,13 @@
-# 🏛️ Consideraciones Previas al MVP de Vookly
+# 🏛️ Consideraciones Previas al MVP de Vookly (Borrador de Trabajo / No Definitivo)
 
 > **Documento:** `docs/consideraciones_previas_mvp.md`  
-> **Estado:** Documento base estratégico, arquitectónico y de producto para discusión en equipo  
-> **Alcance:** Definición del ecosistema dual de interfaces, modelo Micro-SaaS, planes comerciales por sucursales/cajas y desglose para Plane.
+> **Estado:** Documento de discusión abierta para el equipo (propuestas y consideraciones no decididas aún)  
+> **Propósito:** Servir como disparador de debate técnico y de producto antes de consensuar y diagramar los módulos y work items en Plane.
+
+---
+
+> ⚠️ **Nota aclaratoria para el equipo:**  
+> Los puntos expuestos en este documento son **propuestas preliminares, hipótesis arquitectónicas e ideas de alcance**. No representan decisiones cerradas ni lineamientos definitivos. El objetivo es que cada integrante (y sus respectivos agentes) pueda analizarlos, cuestionarlos, sugerir alternativas o descartar lo que no aplique antes de volcar las tareas formales en Plane.
 
 ---
 
@@ -67,11 +72,11 @@ Sistema para el comerciante y su personal de caja. Debe adaptarse al dispositivo
 
 ---
 
-## 4. 💰 Modelo de Suscripción, Gestión de Sucursales y Múltiples Cajas
+## 4. 💰 Modelo de Suscripción, Gestión de Sucursales y Múltiples Cajas (A Debatir)
 
-Uno de los puntos clave a definir con el equipo de backend es el modelo de licenciamiento para evitar fraudes y cobrar de forma equitativa según el tamaño real del comercio:
+Uno de los puntos clave a analizar en conjunto con el equipo de backend es cómo estructurar el modelo de licenciamiento para evitar abusos y cobrar de forma equitativa según el tamaño real del comercio. A continuación, se presenta un esquema técnico tentativo para evaluar su viabilidad:
 
-### A. Jerarquía de Entidades en Base de Datos
+### A. Propuesta de Jerarquía de Entidades en Base de Datos (Borrador)
 Para no atar "1 usuario = 1 local", se utiliza una estructura jerárquica de tres niveles:
 1. **Cuenta / Propietario (`User`):** Credenciales de acceso del dueño del negocio y plan de suscripción contratado.
 2. **Empresa / Marca (`Business` / `Organization`):** Nombre comercial, catálogo general y reglas de fidelización.
@@ -97,9 +102,11 @@ El valor de la suscripción mensual se escala principalmente por **cantidad de s
 
 ---
 
-## 5. 🗂️ Estructuración Propuesta para Plane: Módulo DISEÑO & UI/UX
+## 5. 🗂️ Ideas Tentativas para Plane: Módulo DISEÑO & UI/UX
 
-Para que el equipo de diseño opere de forma autónoma y sin dependencias bloqueantes con el backend, se formalizará en Plane el módulo **`DISEÑO & UI/UX`**, organizado en las siguientes tareas:
+Como punto de partida para debatir la organización de las tareas de diseño, se propone evaluar la creación de un módulo dedicado **`DISEÑO & UI/UX`**, para que el equipo que tome el frente visual (Jesús y Ramiro) pueda avanzar de forma articulada pero autónoma, sin bloquear ni generar fricciones con el desarrollo de backend/storage (Facu y Pedro). 
+
+Las siguientes tareas son sugerencias preliminares para enriquecer, fusionar o reorganizar entre todos:
 
 ### Bloque A: Fundamentos e Identidad Visual
 * `[UI/UX] Sistema de Diseño y Tokens Base (Tipografía, Paleta de Color OKLCH, Elevaciones y Bordes)`
