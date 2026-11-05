@@ -306,10 +306,6 @@ export function RedemptionChoreography({
       {tokenError && (
         <p className="mt-2 text-[12px] font-semibold text-red-600 text-center">{tokenError}</p>
       )}
-
-      <p className="mt-3 text-[11.5px] font-medium text-neutral-400 text-center">
-        El canje no suma un sello. Si comprás algo más, ¡sí te suma!
-      </p>
     </div>
   );
 }
