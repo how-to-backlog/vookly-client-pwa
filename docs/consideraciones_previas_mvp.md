@@ -6,11 +6,6 @@
 
 ---
 
-> ⚠️ **Nota aclaratoria para el equipo:**  
-> Los puntos expuestos en este documento son **propuestas preliminares, hipótesis arquitectónicas e ideas de alcance**. No representan decisiones cerradas ni lineamientos definitivos. El objetivo es que cada integrante (y sus respectivos agentes) pueda analizarlos, cuestionarlos, sugerir alternativas o descartar lo que no aplique antes de volcar las tareas formales en Plane.
-
----
-
 ## 1. 🌐 Visión General del Ecosistema Vookly
 
 Vookly opera bajo un modelo Micro-SaaS estructurado en dos aplicaciones con propósitos, audiencias y contextos técnicos diferentes, pero integradas a un núcleo transaccional y de datos común:
@@ -72,11 +67,9 @@ Sistema para el comerciante y su personal de caja. Debe adaptarse al dispositivo
 
 ---
 
-## 4. 💰 Modelo de Suscripción, Gestión de Sucursales y Múltiples Cajas (A Debatir)
+## 4. 💰 Modelo de Suscripción, Gestión de Sucursales y Múltiples Cajas
 
-Uno de los puntos clave a analizar en conjunto con el equipo de backend es cómo estructurar el modelo de licenciamiento para evitar abusos y cobrar de forma equitativa según el tamaño real del comercio. A continuación, se presenta un esquema técnico tentativo para evaluar su viabilidad:
-
-### A. Propuesta de Jerarquía de Entidades en Base de Datos (Borrador)
+### A. Jerarquía de Entidades en Base de Datos (Propuesta)
 Para no atar "1 usuario = 1 local", se utiliza una estructura jerárquica de tres niveles:
 1. **Cuenta / Propietario (`User`):** Credenciales de acceso del dueño del negocio y plan de suscripción contratado.
 2. **Empresa / Marca (`Business` / `Organization`):** Nombre comercial, catálogo general y reglas de fidelización.
