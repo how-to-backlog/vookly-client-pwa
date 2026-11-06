@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'motion/react';
 import { Gift, Sparkles, ChevronRight } from 'lucide-react';
 import type { CardItem } from '@/components/cards/CardContainer';
 import {
@@ -38,17 +39,9 @@ export type BannerState =
     }
   | null;
 
-/**
- * Calcula el estado del banner inteligente leyendo el estado reactivo del simulador
- * y las tarjetas disponibles, respetando la regla de negocio y prioridad FIFO:
- * 1. Prioridad 1: Premios ya desbloqueados (status === 'ready' o no canjeados aún).
- * 2. Prioridad 2: Próximo premio a 1 o 2 sellos de distancia.
- * 3. Si faltan 3 o más sellos, o no hay premios cercanos: null (no renderiza).
- */
 export function computeBannerState(cards: CardItem[]): BannerState {
   if (typeof window === 'undefined') return null;
 
-  // 1. Analizar el comercio interactivo activo (Cafetería / Coffee Shop)
   const cafeteriaCard = cards.find((c) => c.href === '/local/cafeteria');
   if (cafeteriaCard) {
     const config = loadDemoSimulatorConfig(
@@ -66,7 +59,6 @@ export function computeBannerState(cards: CardItem[]): BannerState {
 
     const businessDisplayName = config.businessName || MOCK_BUSINESS_CAFETERIA.name;
 
-    // Buscar si hay algún voucher listo para retirar (FIFO: el primero en orden de hitos)
     const vouchers = wallet.vouchers || [];
     const readyVoucher = vouchers.find((v) => v.status === 'ready');
     if (readyVoucher) {
@@ -80,7 +72,6 @@ export function computeBannerState(cards: CardItem[]): BannerState {
       };
     }
 
-    // Si no hay premios listos, verificar si está a 1 o 2 sellos de conseguir el próximo hito
     const sortedMilestones = [...rules.rewardMilestones].sort(
       (a, b) => a.stampThreshold - b.stampThreshold
     );
@@ -102,19 +93,17 @@ export function computeBannerState(cards: CardItem[]): BannerState {
     }
   }
 
-  // Si no está listo ni a 1-2 sellos, no se muestra nada
   return null;
 }
 
 /**
- * SmartRewardBanner: Bloque Lego modular que expone dinámicamente el premio real
- * listo o próximo del simulador. Si el usuario está a 3+ sellos, desaparece por completo.
+ * SmartRewardBanner estilo Status Island (Kokonut UI / Dynamic Island):
+ * Píldora flotante compacta y elegante de estética oscura nativa con animación fluida en GPU.
  */
 export const SmartRewardBanner: React.FC<SmartRewardBannerProps> = ({ cards }) => {
   const [banner, setBanner] = useState<BannerState>(null);
 
   useEffect(() => {
-    // Sincronizar estado en cliente leyendo localStorage del simulador
     setBanner(computeBannerState(cards));
 
     const handleStorageChange = () => {
@@ -125,7 +114,6 @@ export const SmartRewardBanner: React.FC<SmartRewardBannerProps> = ({ cards }) =
     return () => window.removeEventListener('storage', handleStorageChange);
   }, [cards]);
 
-  // Si no hay premios listos ni a 1-2 sellos, retorno nulo (cero espacio en el DOM)
   if (!banner) {
     return null;
   }
@@ -133,52 +121,77 @@ export const SmartRewardBanner: React.FC<SmartRewardBannerProps> = ({ cards }) =
   const isReady = banner.type === 'ready';
 
   return (
-    <section className="px-5 py-2 select-none">
-      <Link
-        href={banner.href}
-        className={`group relative flex items-center justify-between p-3.5 rounded-2xl border transition-all duration-150 active:scale-[0.98] ${
-          isReady
-            ? 'bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent border-emerald-500/25 hover:border-emerald-500/40'
-            : 'bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border-amber-500/25 hover:border-amber-500/40'
-        }`}
-      >
-        <div className="flex items-center gap-3 min-w-0 pr-2">
-          {/* Icono Badge */}
+    <section className="px-5 py-2.5 flex justify-center select-none">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={banner.rewardTitle + banner.badgeText}
+          initial={{ opacity: 0, y: -8, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -6, scale: 0.96 }}
+          transition={{ type: 'spring', duration: 0.45, bounce: 0.2 }}
+          className="relative w-full"
+        >
+          {/* Capa decorativa posterior tipo Dynamic Island (Stack de profundidad) */}
           <div
-            className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${
-              isReady ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white'
-            }`}
+            aria-hidden="true"
+            className="absolute inset-0 -top-1 mx-auto w-[92%] h-full rounded-[24px] bg-neutral-800/40 opacity-70 scale-95 blur-[0.5px]"
+          />
+
+          {/* Isla Principal Flotante (Status Island) */}
+          <Link
+            href={banner.href}
+            className="relative flex items-center justify-between w-full h-[54px] px-3.5 bg-neutral-950 text-white rounded-[22px] shadow-xl shadow-black/20 border border-white/10 active:scale-[0.98] transition-transform duration-150 overflow-hidden"
           >
-            {isReady ? (
-              <Gift className="w-5 h-5 animate-pulse" />
-            ) : (
-              <Sparkles className="w-5 h-5" />
-            )}
-          </div>
+            {/* Lado izquierdo: Icono de Estado + Textos */}
+            <div className="flex items-center gap-3 min-w-0 pr-2">
+              {/* Badge Icono Circular pulsante */}
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                  isReady
+                    ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/40'
+                    : 'bg-amber-500/20 text-amber-400 ring-1 ring-amber-500/40'
+                }`}
+              >
+                {isReady ? (
+                  <Gift className="w-4 h-4 animate-pulse" />
+                ) : (
+                  <Sparkles className="w-4 h-4" />
+                )}
+              </div>
 
-          {/* Información Dinámica Real */}
-          <div className="min-w-0">
-            <span
-              className={`inline-block text-[11px] font-bold uppercase tracking-wider ${
-                isReady ? 'text-emerald-700' : 'text-amber-700'
-              }`}
-            >
-              {banner.badgeText}
-            </span>
-            <h2 className="text-[14px] font-bold text-neutral-900 truncate leading-tight">
-              {banner.rewardTitle}
-            </h2>
-            <p className="text-[12px] font-medium text-neutral-500 truncate mt-0.5">
-              {banner.subtitle}
-            </p>
-          </div>
-        </div>
+              {/* Textos de la Isla */}
+              <div className="min-w-0 flex flex-col justify-center">
+                <div className="flex items-center gap-1.5 leading-tight">
+                  <span
+                    className={`text-[10.5px] font-bold uppercase tracking-wider ${
+                      isReady ? 'text-emerald-400' : 'text-amber-400'
+                    }`}
+                  >
+                    {banner.badgeText}
+                  </span>
+                  <span className="text-neutral-500 text-[10px]">•</span>
+                  <span className="text-[11.5px] font-semibold text-neutral-300 truncate max-w-[130px]">
+                    {banner.businessName}
+                  </span>
+                </div>
+                <h2 className="text-[13px] font-bold text-white truncate leading-snug">
+                  {banner.rewardTitle}
+                </h2>
+              </div>
+            </div>
 
-        {/* Chevron de Acción */}
-        <div className="shrink-0 w-8 h-8 rounded-full bg-white/80 border border-neutral-100 flex items-center justify-center text-neutral-400 group-hover:text-neutral-900 group-hover:bg-white transition-colors">
-          <ChevronRight className="w-4 h-4" />
-        </div>
-      </Link>
+            {/* Lado derecho: Píldora de acción "Canjear" / Chevron */}
+            <div className="flex items-center gap-1.5 shrink-0 pl-2">
+              <span className="text-[11px] font-semibold text-neutral-400 group-hover:text-white transition-colors">
+                {isReady ? 'Canjear' : 'Ver'}
+              </span>
+              <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-neutral-300">
+                <ChevronRight className="w-3.5 h-3.5" />
+              </div>
+            </div>
+          </Link>
+        </motion.div>
+      </AnimatePresence>
     </section>
   );
 };
