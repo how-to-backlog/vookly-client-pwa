@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from "next/script";
 import './globals.css';
 import { TransitionProvider } from '@/components/transition/TransitionProvider';
 import { Inter } from "next/font/google";
@@ -18,6 +19,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={cn("h-full bg-white antialiased", "font-sans", inter.variable)}>
+      <head>
+        {process.env.NODE_ENV === "development" && (
+          <Script
+            src="//unpkg.com/react-grab/dist/index.global.js"
+            crossOrigin="anonymous"
+            strategy="beforeInteractive"
+          />
+        )}
+      </head>
       <body className="h-full bg-white text-[#061b31]">
         <TransitionProvider>
           {children}
