@@ -31,7 +31,7 @@ export interface CardItem {
  * se ajusta con datos, no con lógica de negocio: para cambiar lo que se
  * ve frente al comercio alcanza con editar este array.
  */
-const DEFAULT_CARDS: CardItem[] = [
+export const DEFAULT_CARDS: CardItem[] = [
   {
     id: '1',
     localName: 'Cafetería',
