@@ -432,6 +432,35 @@
 - **Etiquetas:** `#frontend #geometria #roadmap #svg #etapa-6 #alta`
 - **Tópico / Componente Afectado:** `web/src/components/roadmap/*`, `web/src/app/local/[id]/page.tsx`, `docs/local_demo_simulator_spec.md`.
 
+### [NOTA-022] Refactorización Visual de Pantalla Principal (PWA), Status Island y Acuerdos de Onboarding/MVP
+- **Fecha:** 2026-11-06 03:00
+- **Categoría:** Frontend / UI-UX / Arquitectura / MVP / Gobernanza
+- **Diagnóstico / Contexto:** Sesión de desarrollo y sincronización con Ramiro y Facundo para preparar la demo comercial oficial hacia el fin de semana. Refactorización modular de la Home de la PWA (`/`) sin sobrecarga de peso, y delimitación arquitectónica entre la PWA del cliente y el panel web del comerciante.
+- **Implementaciones y Decisiones:**
+  1. **Arquitectura Modular "Bloques de Lego" en Pantalla Principal:**
+     - `TopBar.tsx`: Logo Vookly a la izquierda y botón de soporte WhatsApp con ícono `Headphones` de Lucide a la derecha.
+     - `HomeGreeting.tsx`: Detección de hora local sin red (`new Date().getHours()`) con saludo dinámico (*Buen día / Buenas tardes / Buenas noches*) y copy activador: *"¿Qué premios vas a canjear hoy?"*.
+     - `SmartRewardBanner.tsx` (**Status Island**): Píldora oscura flotante inspirada en Kokonut UI / Dynamic Island (`motion/react` ya instalado, 0 KB de librerías extra). Aplica lógica FIFO estricta:
+       - Si hay premio desbloqueado: Muestra el más antiguo sin reclamar (*"¡PREMIO LISTO! • Coffee Shop"* -> *Café Clásico* con píldora *Canjear*).
+       - Si está a 1 o 2 sellos: Indica proximidad (*"A SOLO 1 SELLO • Coffee Shop"* con píldora *Ver*).
+       - Si está a 3+ sellos: Auto-ocultamiento total (desaparece del DOM).
+     - `WalletSectionHeader.tsx`: Rótulo *"Tus tarjetas (4)"* con chip indicativo *"Deslizá ↕"*.
+     - Preservación íntegra del `ScrollStack` de tarjetas de crédito interactivas desarrollado por Ramiro.
+  2. **Estrategia de Onboarding para Demo de Campo (Hito Sábado):**
+     - Se acordó separar la experiencia creando una **pantalla previa de Onboarding** con dos opciones: 
+       a) Personalizar local en 1 minuto (nombre, color de tarjeta, primer producto y sellos).
+       b) Saltar directo a demo precargada (*Coffee Shop*).
+     - Incorporación de **Driver.js** (5 KB, MIT, touch nativo) para tour guiado paso a paso, a implementar por Jesús y Ramiro.
+  3. **Delimitación Arquitectónica PWA vs. Panel Comercio:**
+     - Plataforma 1: PWA Mobile-First para clientes (sin contraseñas, vía WhatsApp, gamificación y canje).
+     - Plataforma 2: WebApp Responsive para comercio (operación de caja en <2s, numpad PC o celular táctil, administración y catálogo).
+     - Ambas plataformas comparten un único backend y base de datos.
+  4. **Antifraude y Modelo de Negocio SaaS:**
+     - Planes escalados por cantidad de sucursales físicas y cupo de terminales concurrentes bajo la misma IP local.
+     - Próxima sesión técnica de 3 a 4 horas con Facundo y Pedro dedicada al diseño y normalización de la base de datos.
+- **Etiquetas:** `#frontend #ui-ux #status-island #pwa #onboarding #driverjs #arquitectura #alta`
+- **Tópico / Componente Afectado:** `src/app/page.tsx`, `src/components/home/*`, `docs/refactor_pantalla_principal_pwa.md`, `docs/consideraciones_previas_mvp.md`, `docs/minuta_reunion_maqueta_onboarding_mvp_05_11.md`.
+
 ### [NOTA-021] Acuerdos de Asamblea Plenaria: Validación de PWA Demo, Migración a Plane, Reglas en Vuelo y Stack de IA
 - **Fecha:** 2026-11-02 23:30
 - **Categoría:** Gestión / Arquitectura / MVP / Asamblea
