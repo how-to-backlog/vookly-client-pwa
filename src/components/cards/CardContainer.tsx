@@ -3,11 +3,13 @@
 import React from 'react';
 import ScrollStack, { ScrollStackItem } from '@/components/registry/ScrollStack';
 import { ScrollStackCard } from './ScrollStackCard';
+import type { CategoryIconName } from '@/components/icons/CategoryIcon';
 
 export interface CardItem {
   id: string;
   localName: string;
-  imagePath: string;
+  /** Icono de categoría que define la superficie de la tarjeta. */
+  categoryIcon: CategoryIconName;
   /** Ruta de detalle del comercio. Ausente cuando el comercio todavía no está disponible. */
   href?: string;
   /** Sellos acumulados del cliente en este comercio. */
@@ -35,7 +37,7 @@ export const DEFAULT_CARDS: CardItem[] = [
   {
     id: '1',
     localName: 'Cafetería',
-    imagePath: '/images/cards/cafeteria/card-bg.jpg',
+    categoryIcon: 'cafeteria',
     href: '/local/cafeteria',
     stamps: 15,
     totalStamps: 30,
@@ -44,7 +46,7 @@ export const DEFAULT_CARDS: CardItem[] = [
   {
     id: '2',
     localName: 'Heladería',
-    imagePath: '/images/cards/heladeria/card-bg.jpg',
+    categoryIcon: 'heladeria',
     href: '/local/heladeria',
     stamps: 4,
     totalStamps: 12,
@@ -54,7 +56,7 @@ export const DEFAULT_CARDS: CardItem[] = [
   {
     id: '3',
     localName: 'Barbería',
-    imagePath: '/images/cards/barberia/card-bg.jpg',
+    categoryIcon: 'barberia',
     href: '/local/barberia',
     stamps: 8,
     totalStamps: 20,
@@ -64,7 +66,7 @@ export const DEFAULT_CARDS: CardItem[] = [
   {
     id: '4',
     localName: 'Panadería',
-    imagePath: '/images/cards/panaderia/card-bg.jpg',
+    categoryIcon: 'panaderia',
     href: '/local/panaderia',
     stamps: 2,
     totalStamps: 10,
@@ -109,9 +111,9 @@ export const CardContainer: React.FC<CardContainerProps> = ({ cards = DEFAULT_CA
             itemClassName="h-[240px] rounded-[28px] overflow-hidden"
           >
             <ScrollStackCard
-              backgroundImage={card.imagePath}
               href={card.href}
               localName={card.localName}
+              categoryIcon={card.categoryIcon}
               stamps={card.stamps}
               totalStamps={card.totalStamps}
               nextRewardTitle={card.nextRewardTitle}

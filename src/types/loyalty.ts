@@ -15,7 +15,11 @@ export interface BusinessProfile {
   category: string;
   address: string;
   location?: LocationCoordinates;
-  cardImage: string;
+  /**
+   * Foto de portada del comercio. Opcional: la tarjeta del hub se genera por
+   * código a partir de la categoría (ver `CategoryCardSurface`), no de un JPG.
+   */
+  cardImage?: string;
   accentColor?: string;
 }
 

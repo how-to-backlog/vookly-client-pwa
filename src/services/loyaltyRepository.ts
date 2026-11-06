@@ -19,7 +19,6 @@ const DB_BUSINESSES: Record<string, BusinessProfile> = {
       longitude: -64.1888,
       googleMapsUrl: 'https://maps.google.com/?q=-31.4201,-64.1888'
     },
-    cardImage: '/images/cards/cafeteria/card-bg.jpg',
     accentColor: '#000000'
   }
 };

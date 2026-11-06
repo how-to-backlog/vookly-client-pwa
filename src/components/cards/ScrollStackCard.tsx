@@ -1,19 +1,26 @@
 'use client';
 
 import { usePageTransition } from '@/components/transition/TransitionProvider';
+import { resolveCategoryIcon, type CategoryIconName } from '@/components/icons/CategoryIcon';
+import { CategoryCardSurface } from './CategoryCardSurface';
+
 import React from 'react';
 
 
 // ! FIDELIZAR-4- BUGFIX
 // ? Eliminado [ShowProgress, localName, stamps]; Revisar y considerar refactor de la Card.
 
+
+
 export interface ScrollStackCardProps {
-  /** Ruta a la imagen de fondo de la tarjeta */
-  backgroundImage?: string;
   /** URL destino al hacer click/tap */
   href?: string;
   /** Nombre del comercio, mostrado en la píldora superior */
   localName: string;
+  /**
+   * Icono de categoría. Si se omite se resuelve desde `href` o `localName`.
+   */
+  categoryIcon?: CategoryIconName;
   /** Sellos acumulados del cliente en este comercio -- DEPRECATED */
   stamps?: number;
   /** Sellos totales del roadmap de este comercio -- DEPRECATED */
@@ -24,6 +31,11 @@ export interface ScrollStackCardProps {
   unavailable?: boolean;
   className?: string;
   children?: React.ReactNode;
+  /**
+   * Contenido del pie de la tarjeta. Reservado para el nombre del comercio y
+   * el contador de sellos.
+   */
+  footer?: React.ReactNode;
 }
 
 /**
@@ -32,12 +44,13 @@ export interface ScrollStackCardProps {
  *
  */
 export const ScrollStackCard: React.FC<ScrollStackCardProps> = ({
-  backgroundImage,
   href,
   localName,
+  categoryIcon,
   unavailable = false,
   className = '',
-  children
+  children,
+  footer
 }) => {
   const { triggerTransition } = usePageTransition();
 
@@ -57,6 +70,9 @@ export const ScrollStackCard: React.FC<ScrollStackCardProps> = ({
     triggerTransition(e, href);
   };
 
+  // El icono de categoría se resuelve por el slug del comercio (`/local/cafeteria`)
+  // y, si no hay ruta, por el nombre del comercio sin acentos.
+  const iconName = categoryIcon ?? resolveCategoryIcon(href ?? localName);
 
   return (
     <article
@@ -67,11 +83,8 @@ export const ScrollStackCard: React.FC<ScrollStackCardProps> = ({
       aria-label={navigable ? `${localName}. Ver sellos y premios` : `${localName}. Próximamente`}
       className={`relative h-full w-full overflow-hidden select-none ${navigable ? 'cursor-pointer' : ''} ${className}`}
     >
-      {backgroundImage && (
-        <div
-          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none"
-          style={{ backgroundImage: `url(${backgroundImage})` }}
-        />
+      {iconName && (
+        <CategoryCardSurface name={iconName} muted={unavailable} footer={footer} />
       )}
 
       {children && (
