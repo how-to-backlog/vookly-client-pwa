@@ -25,27 +25,61 @@ export type CategoryIconName = 'cafeteria' | 'heladeria' | 'barberia' | 'panader
 export interface CategoryPalette {
   /** Color sólido de fondo de la tarjeta. */
   background: string;
-  /** Color del trazo del icono. */
+  /** Color del trazo del icono sobre el fondo pastel. */
   ink: string;
+  /**
+   * Versión saturada del color del rubro. Se usa como fondo del chip activo
+   * en la barra de filtros, donde el pastel no alcanza para marcar selección.
+   */
+  accent: string;
+  /**
+   * Color del trazo del icono sobre el fondo `accent`.
+   *
+   * No se puede reutilizar `ink`: ese color está calibrado para leerse sobre
+   * el pastel de la tarjeta y sobre el chip inactivo (gris claro), pero contra
+   * el fondo saturado queda por debajo del contraste mínimo para elementos
+   * gráficos. Este valor es un crema del mismo tono del rubro y mantiene el
+   * contraste por encima de 3:1 en los cuatro rubros.
+   */
+  accentInk: string;
 }
 
 export const CATEGORY_PALETTE: Record<CategoryIconName, CategoryPalette> = {
   cafeteria: {
     background: '#f3e2d0',
-    ink: '#6f4423'
+    ink: '#6f4423',
+    accent: '#a9682f',
+    accentInk: '#f7e8d7'
   },
   heladeria: {
     background: '#f9dbe5',
-    ink: '#a83b63'
+    ink: '#a83b63',
+    accent: '#c94f7c',
+    accentInk: '#ffe9f1'
   },
   barberia: {
     background: '#dce3ec',
-    ink: '#3c4959'
+    ink: '#3c4959',
+    accent: '#56657a',
+    accentInk: '#e2e8f0'
   },
   panaderia: {
     background: '#f7e7c6',
-    ink: '#8a6420'
+    ink: '#8a6420',
+    accent: '#b8862f',
+    accentInk: '#fffaf0'
   }
+};
+
+/**
+ * Nombre legible de cada rubro. Se usa para la etiqueta accesible de los
+ * controles de filtrado, donde el ícono por sí solo no comunica el significado.
+ */
+export const CATEGORY_LABELS: Record<CategoryIconName, string> = {
+  cafeteria: 'Cafetería',
+  heladeria: 'Heladería',
+  barberia: 'Barbería',
+  panaderia: 'Panadería'
 };
 
 export interface CategoryIconProps {

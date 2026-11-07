@@ -77,29 +77,46 @@ export const DEFAULT_CARDS: CardItem[] = [
 
 export interface CardContainerProps {
   cards?: CardItem[];
+  /**
+   * Clave de identidad del conjunto visible de tarjetas.
+   *
+   * Al cambiarla, el stack se remonta y vuelve al inicio. Se usa cuando el
+   * filtro reemplaza el conjunto de tarjetas, para que la nueva vista arranque
+   * desde arriba en lugar de quedar en una posición de scroll que ya no existe.
+   */
+  stackKey?: string;
 }
 
 /**
  * CardContainer: Apila las tarjetas de comercios con ScrollStack.
  * Cada tarjeta se fija (sticky) y se desplaza sobre la anterior al hacer scroll.
  */
-export const CardContainer: React.FC<CardContainerProps> = ({ cards = DEFAULT_CARDS }) => {
+export const CardContainer: React.FC<CardContainerProps> = ({
+  cards = DEFAULT_CARDS,
+  stackKey
+}) => {
   return (
     <section className="w-full h-full">
       <ScrollStack
-        itemDistance={90}
-        itemStackDistance={22}
-        stackPosition="12%"
-        itemScale={0.05}
+        key={stackKey}
+        itemDistance={64}
+        // Deck parejo: itemStackDistance en 0 hace que todas las tarjetas se
+        // fijen en el mismo top (mazo apilado, sin desnivel entre ellas).
+        // El scroll y el snap siguen avanzando de a una porque el flujo entre
+        // tarjetas no depende de este valor.
+        itemStackDistance={0}
+        stackPosition={24}
+        // Sin escala, tilt ni rotación: cada tarjeta es idéntica a la anterior.
+        itemScale={0}
         baseScale={0.92}
         dimAmount={0.25}
         blurAmount={1}
-        tiltAmount={4}
-        rotationAmount={1.5}
+        tiltAmount={0}
+        rotationAmount={0}
         holdDistance={140}
         smoothScroll
         snap
-        innerPadding="px-4"
+        innerPadding="px-5"
         className="w-full h-full no-scrollbar"
       >
         {cards.map((card) => (
@@ -108,7 +125,7 @@ export const CardContainer: React.FC<CardContainerProps> = ({ cards = DEFAULT_CA
             padding="p-0"
             background="transparent"
             boxShadow="none"
-            itemClassName="h-[240px] rounded-[28px] overflow-hidden"
+            itemClassName="h-[220px] rounded-[28px] overflow-hidden"
           >
             <ScrollStackCard
               href={card.href}

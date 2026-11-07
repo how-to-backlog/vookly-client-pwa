@@ -6,6 +6,19 @@ export interface TopBarProps {
   supportPhone?: string;
   /** Mensaje inicial precargado en WhatsApp. */
   defaultMessage?: string;
+  /**
+   * Superficie de la cabecera.
+   *
+   * - `solid`: velo blanco difuminado, para pantallas con fondo plano.
+   * - `transparent`: deja ver el fondo animado y deja de taparlo con una banda
+   *   opaca. El texto pasa a blanco para poder leerse sobre la aurora.
+   * - `bare`: sin fondo ni borde. La cabecera se apoya directamente en la
+   *   superficie de la página, de modo que el fondo se lee como una sola
+   *   superficie continua y no como bandas superpuestas.
+   */
+  variant?: 'solid' | 'transparent' | 'bare';
+  /** Acción opcional, renderizada antes del acceso a soporte. */
+  action?: React.ReactNode;
 }
 
 /**
@@ -14,28 +27,66 @@ export interface TopBarProps {
  */
 export const TopBar: React.FC<TopBarProps> = ({
   supportPhone = '5493512345678',
-  defaultMessage = 'Hola! Tengo una consulta sobre mi cuenta de Vookly.'
+  defaultMessage = 'Hola! Tengo una consulta sobre mi cuenta de Vookly.',
+  variant = 'solid',
+  action
 }) => {
   const whatsappUrl = `https://wa.me/${supportPhone}?text=${encodeURIComponent(defaultMessage)}`;
+  const isTransparent = variant === 'transparent';
+  const isBare = variant === 'bare';
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-neutral-100">
+    <header
+      className={`sticky top-0 z-50 w-full ${
+        isBare
+          ? 'bg-transparent'
+          : isTransparent
+            ? 'bg-transparent backdrop-blur-sm border-b border-white/15'
+            : 'bg-white/80 backdrop-blur-md border-b border-neutral-100'
+      }`}
+    >
       <div className="w-full max-w-md mx-auto px-5 h-14 flex items-center justify-between">
         {/* Logotipo Vookly */}
-        <span className="text-xl font-black tracking-tight text-neutral-900 select-none">
+        <span
+          className={`text-[19px] font-semibold tracking-tight select-none ${
+            isTransparent
+              ? 'text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.45)]'
+              : 'text-neutral-900'
+          }`}
+        >
           Vookly
         </span>
 
-        {/* Botón de Soporte WhatsApp */}
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Contactar soporte técnico por WhatsApp"
-          className="p-2 rounded-full text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100/80 active:scale-95 transition-all duration-150 flex items-center justify-center"
-        >
-          <Headphones className="w-5 h-5" strokeWidth={2.2} />
-        </a>
+        <div className="flex items-center gap-1">
+          {/*
+            Acción opcional de la cabecera.
+
+            Sobre superficies claras (variante `bare`) el slot se normaliza con
+            un chip neutro claro para que el control no se convierta en el
+            objeto de mayor contraste de la barra. Se sobreescribe el fondo del
+            botón que se pasa por `action` sin acoplarlo a este componente.
+          */}
+          {action ? (
+            <div className="[&>button]:!bg-neutral-200/70 [&>button]:!border-transparent [&>button]:!text-neutral-500 [&>button:hover]:!bg-neutral-200 [&>button:hover]:!text-neutral-700">
+              {action}
+            </div>
+          ) : null}
+
+          {/* Botón de Soporte WhatsApp */}
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Contactar soporte técnico por WhatsApp"
+            className={`p-2 rounded-full active:scale-95 transition-all duration-150 flex items-center justify-center ${
+              isTransparent
+                ? 'text-white/85 hover:text-white hover:bg-white/20'
+                : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100/80'
+            }`}
+          >
+            <Headphones className="w-5 h-5" strokeWidth={2.2} />
+          </a>
+        </div>
       </div>
     </header>
   );

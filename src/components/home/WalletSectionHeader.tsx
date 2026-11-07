@@ -1,33 +1,46 @@
 'use client';
 
 import React from 'react';
-import { ArrowUpDown } from 'lucide-react';
 
 export interface WalletSectionHeaderProps {
-  /** Cantidad total de tarjetas cargadas en la billetera */
+  /** Cantidad de tarjetas visibles en la vista actual. */
   totalCards: number;
+  /** `true` cuando hay un rubro seleccionado y la lista está filtrada. */
+  isFiltered?: boolean;
+  /** Cantidad total de tarjetas disponibles antes de filtrar. */
+  totalAvailable?: number;
 }
 
 /**
  * WalletSectionHeader: Bloque Lego modular que rotula la sección
- * de la billetera e instruye sutilmente la interacción de scroll vertical.
+ * de la billetera.
+ *
+ * El rótulo es una etiqueta de sección, no un título: el saludo de la
+ * pantalla ya ocupa el nivel de título. Por eso va en peso medio, con
+ * tracking positivo y color apagado — cualquier peso extra lo haría competir
+ * con el saludo en lugar de accompanyarlo.
+ *
+ * El contador aparece sólo cuando la vista está filtrada, donde el dato
+ * importa ("2 de 4"). Sin filtro no aporta nada que las propias tarjetas no
+ * digan, así que no ocupa espacio ni atención.
  */
-export const WalletSectionHeader: React.FC<WalletSectionHeaderProps> = ({ totalCards }) => {
-  return (
-    <div className="px-5 pt-3 pb-1 flex items-center justify-between select-none">
-      <div className="flex items-center gap-2">
-        <h2 className="text-base font-bold tracking-tight text-neutral-900">
-          Tus tarjetas
-        </h2>
-        <span className="text-xs font-bold text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200/60">
-          {totalCards}
-        </span>
-      </div>
+export const WalletSectionHeader: React.FC<WalletSectionHeaderProps> = ({
+  totalCards,
+  isFiltered = false,
+  totalAvailable
+}) => {
+  const showCount = isFiltered && typeof totalAvailable === 'number';
 
-      <div className="flex items-center gap-1 text-[11.5px] font-medium text-neutral-400">
-        <ArrowUpDown className="w-3.5 h-3.5" />
-        <span>Deslizá</span>
-      </div>
+  return (
+    <div className="px-5 pt-5 pb-1 flex justify-between items-baseline gap-2 select-none">
+      <h2 className="text-[12px] font-black uppercase tracking-[0.12em] text-neutral-500">
+        Tus tarjetas
+      </h2>
+      {showCount ? (
+        <span className="text-[12px] font-black text-neutral-500 tabular-nums">
+          {totalCards} de {totalAvailable}
+        </span>
+      ) : null}
     </div>
   );
 };
