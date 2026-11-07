@@ -100,13 +100,14 @@ export const CardContainer: React.FC<CardContainerProps> = ({
       <ScrollStack
         key={stackKey}
         itemDistance={64}
-        // Deck parejo: itemStackDistance en 0 hace que todas las tarjetas se
-        // fijen en el mismo top (mazo apilado, sin desnivel entre ellas).
-        // El scroll y el snap siguen avanzando de a una porque el flujo entre
-        // tarjetas no depende de este valor.
-        itemStackDistance={0}
+        // Mazo parejo: cada tarjeta se fija 20px más abajo que la anterior, así
+        // se ve el filo de las que quedan detrás (efecto de apilamiento) y al
+        // mismo tiempo los bordes quedan rectos y alineados. Con 0 el mazo se
+        // convertía en una sola carta superpuesta.
+        itemStackDistance={20}
         stackPosition={24}
-        // Sin escala, tilt ni rotación: cada tarjeta es idéntica a la anterior.
+        // Sin escala, tilt ni rotación: cada carta es idéntica a la anterior,
+        // el mazo se ve parejo y no un montón torcido.
         itemScale={0}
         baseScale={0.92}
         dimAmount={0.25}
