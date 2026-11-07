@@ -113,7 +113,7 @@ export const CardContainer: React.FC<CardContainerProps> = ({
         dimAmount={0.25}
         blurAmount={1}
         tiltAmount={0}
-        rotationAmount={0}
+        rotationAmount={1}
         holdDistance={140}
         smoothScroll
         snap

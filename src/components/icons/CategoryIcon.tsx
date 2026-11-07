@@ -76,10 +76,10 @@ export const CATEGORY_PALETTE: Record<CategoryIconName, CategoryPalette> = {
  * controles de filtrado, donde el ícono por sí solo no comunica el significado.
  */
 export const CATEGORY_LABELS: Record<CategoryIconName, string> = {
-  cafeteria: 'Cafetería',
-  heladeria: 'Heladería',
-  barberia: 'Barbería',
-  panaderia: 'Panadería'
+  cafeteria: 'Cafeterías de especialidad',
+  heladeria: 'Heladerías',
+  barberia: 'Barberías',
+  panaderia: 'Panaderías'
 };
 
 export interface CategoryIconProps {
@@ -109,12 +109,10 @@ const ICON_PATHS: Record<CategoryIconName, IconPaths> = {
     'M6.342 11l5.658 11l5.657 -11l-11.315 0'
   ],
   barberia: [
-    'M8 3v2',
-    'M12 3v2',
-    'M16 3v2',
-    'M9 12v6a3 3 0 0 0 6 0v-6h-6',
-    'M8 5h8l-1 4h-6l-1 -4',
-    'M12 17v1'
+    'M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0',
+    'M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0',
+    'M8.6 8.6l10.4 10.4',
+    'M8.6 15.4l10.4 -10.4'
   ],
   panaderia: [
     'M5.628 11.283l5.644 -5.637c2.665 -2.663 5.924 -3.747 8.663 -1.205l.188 .181a2.987 2.987 0 0 1 0 4.228l-11.287 11.274a3 3 0 0 1 -4.089 .135l-.143 -.135c-2.728 -2.724 -1.704 -6.117 1.024 -8.841',

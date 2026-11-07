@@ -48,13 +48,13 @@ export const TopBar: React.FC<TopBarProps> = ({
       <div className="w-full max-w-md mx-auto px-5 h-14 flex items-center justify-between">
         {/* Logotipo Vookly */}
         <span
-          className={`text-[19px] font-semibold tracking-tight select-none ${
+          className={`text-[19px] font-semibold tracking-tight select-none inline-flex items-baseline ${
             isTransparent
               ? 'text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.45)]'
               : 'text-neutral-900'
           }`}
         >
-          Vookly
+          vookly<span className="text-[24px] leading-none text-neutral-400 font-black ml-[1px]">.</span>
         </span>
 
         <div className="flex items-center gap-1">

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { Gift, Sparkles } from 'lucide-react';
+import { Ticket } from 'lucide-react';
 import type { RewardStatus } from '@/components/home/useRewardStatus';
 
 export interface RewardFabProps {
@@ -52,57 +52,70 @@ export const RewardFab: React.FC<RewardFabProps> = ({ status }) => {
     return () => clearInterval(timer);
   }, [status, reducedMotion]);
 
-  if (!status) {
+  // Opción A: Desaparición condicional estricta.
+  // El botón flotante SOLO se muestra cuando hay un premio listo para canjear.
+  if (!status || status.type !== 'ready') {
     return null;
   }
 
-  const isReady = status.type === 'ready';
   const isFirstPulse = pulseKey === 0;
-  const label = isReady
-    ? `Canjear ${status.rewardTitle} en ${status.businessName}`
-    : `Ver el progreso hacia ${status.rewardTitle} en ${status.businessName}`;
+  const label = `Canjear ${status.rewardTitle} en ${status.businessName}`;
 
   return (
     <AnimatePresence>
       <motion.div
-        key={status.type + status.rewardTitle}
+        key={`ready-${status.rewardTitle}`}
         initial={{ opacity: 0, scale: reducedMotion ? 1 : 0.7, y: reducedMotion ? 0 : 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: reducedMotion ? 1 : 0.7, y: reducedMotion ? 0 : 16 }}
         transition={{ type: 'spring', stiffness: 320, damping: 24 }}
-        className="absolute bottom-5 right-5 z-30"
+        className="absolute bottom-5 right-[30px] z-30"
       >
-        {!reducedMotion && (
-          <motion.span
-            key={pulseKey}
-            aria-hidden="true"
-            className={`pointer-events-none absolute inset-0 z-0 rounded-full border-2 ${
-              isReady ? 'border-emerald-400/70' : 'border-amber-400/70'
-            }`}
-            initial={{ opacity: isFirstPulse ? PULSE_OPACITY_ANNOUNCE : PULSE_OPACITY_REMINDER, scale: 1 }}
-            animate={{ opacity: 0, scale: 1.85 }}
-            transition={{
-              duration: PULSE_DURATION_MS,
-              ease: [0.25, 1, 0.5, 1],
-              delay: isFirstPulse ? 0.42 : 0,
-            }}
-          />
-        )}
         <Link
           href={status.href}
           aria-label={label}
           title={label}
-          className={`relative z-10 flex w-14 h-14 items-center justify-center rounded-full text-white active:scale-95 transition-transform duration-150 ${
-            isReady
-              ? 'bg-emerald-600 shadow-[0_12px_28px_-10px_rgba(4,120,87,0.75)]'
-              : 'bg-amber-500 shadow-[0_12px_28px_-10px_rgba(180,83,9,0.7)]'
-          }`}
+          className="relative z-10 flex w-14 h-14 items-center justify-center rounded-full text-white active:scale-95 transition-transform duration-150 bg-emerald-600 shadow-[5px_5px_16px_-2px_rgba(0,0,0,0.45)] overflow-hidden"
         >
-          {isReady ? (
-            <Gift className="w-6 h-6" aria-hidden="true" />
-          ) : (
-            <Sparkles className="w-6 h-6" aria-hidden="true" />
+          {/* Shimmer / Destello de luz diagonal continuo */}
+          {!reducedMotion && (
+            <motion.div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-20 w-full h-full"
+              style={{
+                background:
+                  'linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.45) 50%, transparent 80%)'
+              }}
+              animate={{
+                x: ['-120%', '150%']
+              }}
+              transition={{
+                duration: 2.2,
+                repeat: Infinity,
+                repeatDelay: 2.5,
+                ease: 'easeInOut'
+              }}
+            />
           )}
+
+          {/* Icono con meneo elástico (Ticket Wiggle) sin respiración */}
+          <motion.div
+            animate={
+              reducedMotion
+                ? { rotate: -12 }
+                : {
+                    rotate: [-12, 8, -16, 10, -12, -12]
+                  }
+            }
+            transition={{
+              duration: 2.2,
+              repeat: Infinity,
+              repeatDelay: 2.5,
+              ease: 'easeInOut'
+            }}
+          >
+            <Ticket className="w-6 h-6" aria-hidden="true" />
+          </motion.div>
         </Link>
       </motion.div>
     </AnimatePresence>

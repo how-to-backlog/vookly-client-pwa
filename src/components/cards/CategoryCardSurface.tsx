@@ -45,28 +45,22 @@ export const CategoryCardSurface: React.FC<CategoryCardSurfaceProps> = ({
 
   return (
     <div
-      className={`relative flex h-full w-full items-center gap-5 overflow-hidden ${className}`.trim()}
+      className={`relative h-full w-full overflow-hidden ${className}`.trim()}
       style={{
         backgroundColor: palette.background,
-        opacity: muted ? 0.80 : 1
+        opacity: muted ? 0.8 : 1
       }}
     >
       {/*
-        Icono del rubro: es la referencia principal de la tarjeta.
-
-        Se dibuja directo sobre la banda de color, sin disco ni borde: el
-        ícono ES la ilustración de la card, y envolverlo en una forma
-        redundante lo convierte en un adorno sobre un rectángulo de color.
-
-        La card es un bloque que respira desde el margen de página, así que el
-        ícono lleva su propio aire interior (pl-5) en lugar de pegarse al
-        borde de la banda.
+        Icono del rubro: ubicado en la esquina superior derecha.
+        Deja todo el cuerpo y pie de la tarjeta despejados para futuros elementos
+        (nombre del comercio, sellos, chips, etc.).
       */}
-      <div className="shrink-0 pl-5">
+      <div className="absolute top-5 right-5 pointer-events-none">
         <CategoryIcon name={name} size={iconSize} stroke={palette.ink} strokeWidth={1.4} />
       </div>
 
-      {footer && <div className="min-w-0 flex-1 pr-5">{footer}</div>}
+      {footer && <div className="relative z-10 h-full w-full">{footer}</div>}
     </div>
   );
 };

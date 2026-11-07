@@ -58,11 +58,11 @@ export const HomeGreeting: React.FC<HomeGreetingProps> = ({ forcedHour, reward }
   const greeting = getGreetingText(hour);
 
   return (
-    <section className="px-5 pt-4 pb-3 select-none">
+    <section className="px-5 pt-4 pb-0 select-none">
       <h1 className="text-[38px] font-bold tracking-[-0.02em] text-neutral-900 leading-[1.15]">
         {greeting}
       </h1>
-      <p className="text-[14px] font-normal text-neutral-300 mt-2 leading-[1.4]">
+      <p className="text-[14px] font-normal text-neutral-300 mt-4 mb-2 leading-[1.4]">
         {reward ? (
           <>
             {/* El punto convierte la línea en un aviso escaneable: el estado

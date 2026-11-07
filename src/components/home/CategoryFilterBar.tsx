@@ -74,11 +74,16 @@ export const CategoryFilterBar: React.FC<CategoryFilterBarProps> = ({
     })
   ];
 
+  const currentLabel =
+    value === 'all'
+      ? 'Todos nuestros comercios'
+      : CATEGORY_LABELS[value as CategoryIconName] || 'Comercios';
+
   return (
     // El control se centra en el ancho disponible: el grupo de chips se ajusta
     // a su contenido y quedaba pegado al borde izquierdo, dejando un hueco
     // muerto del lado derecho.
-    <div className="flex justify-center px-5 pt-2 pb-3 select-none">
+    <div className="flex flex-col justify-start px-5 pt-2 pb-3 select-none gap-2">
       <JellyRadio
         items={items}
         value={value}
@@ -88,7 +93,7 @@ export const CategoryFilterBar: React.FC<CategoryFilterBarProps> = ({
         textColor="#334155"
         activeTextColor={ALL_INK}
         size="lg"
-        gap={20}
+        gap={46}
         radius={999}
         ariaLabel="Filtrar tarjetas por rubro"
         // Los chips son circulares: el padding lateral que el control reserva
@@ -97,6 +102,9 @@ export const CategoryFilterBar: React.FC<CategoryFilterBarProps> = ({
         // de lectura que el texto que lo acompaña.
         inset
       />
+      <p className="text-center text-sm font-semibold text-neutral-600 tracking-wide pt-2.5">
+        {currentLabel}
+      </p>
     </div>
   );
 };
