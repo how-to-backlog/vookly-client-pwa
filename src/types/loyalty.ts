@@ -190,6 +190,7 @@ export interface DemoRewardTier {
  */
 export interface DemoSimulatorConfig {
   businessName: string;
+  categoryIcon?: 'cafeteria' | 'barberia' | 'heladeria' | 'panaderia';
   tiers: DemoRewardTier[];
   simulatedCurrentStamps: number;
 }

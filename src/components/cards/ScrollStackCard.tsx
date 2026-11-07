@@ -21,6 +21,10 @@ export interface ScrollStackCardProps {
    * Icono de categoría. Si se omite se resuelve desde `href` o `localName`.
    */
   categoryIcon?: CategoryIconName;
+  /** Color de fondo opcional para diferenciar tarjetas del mismo nicho. */
+  backgroundColor?: string;
+  /** Color de trazo opcional para el icono. */
+  inkColor?: string;
   /** Sellos acumulados del cliente en este comercio -- DEPRECATED */
   stamps?: number;
   /** Sellos totales del roadmap de este comercio -- DEPRECATED */
@@ -47,6 +51,8 @@ export const ScrollStackCard: React.FC<ScrollStackCardProps> = ({
   href,
   localName,
   categoryIcon,
+  backgroundColor,
+  inkColor,
   unavailable = false,
   className = '',
   children,
@@ -84,7 +90,13 @@ export const ScrollStackCard: React.FC<ScrollStackCardProps> = ({
       className={`relative h-full w-full overflow-hidden select-none ${navigable ? 'cursor-pointer' : ''} ${className}`}
     >
       {iconName && (
-        <CategoryCardSurface name={iconName} muted={unavailable} footer={footer} />
+        <CategoryCardSurface
+          name={iconName}
+          backgroundColor={backgroundColor}
+          inkColor={inkColor}
+          muted={unavailable}
+          footer={footer}
+        />
       )}
 
       {children && (

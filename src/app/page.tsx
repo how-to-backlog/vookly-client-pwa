@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { TopBar } from '@/components/TopBar';
 import { HomeGreeting } from '@/components/home/HomeGreeting';
 import { RewardFab } from '@/components/home/RewardFab';
@@ -9,9 +10,11 @@ import { useCategoryFilter } from '@/components/home/useCategoryFilter';
 import { useRewardStatus } from '@/components/home/useRewardStatus';
 import { AuroraBackdrop } from '@/components/home/AuroraBackdrop';
 import { CardContainer, DEFAULT_CARDS } from '@/components/cards/CardContainer';
+import { MerchantDirectoryModal } from '@/components/home/MerchantDirectoryModal';
 
 export default function Home() {
   const { selected, setSelected, visibleCards } = useCategoryFilter(DEFAULT_CARDS);
+  const [isDirectoryOpen, setIsDirectoryOpen] = useState(false);
   // El estado de premio se resuelve una vez y se reparte entre el mensaje del
   // saludo y la acción flotante: la vista no vuelve a derivar los datos.
   const rewardStatus = useRewardStatus(DEFAULT_CARDS);
@@ -42,12 +45,24 @@ export default function Home() {
 
           {/* 5. Contenedor Modular de Tarjetas (ScrollStack) */}
           <div className="flex-1 w-full bg-transparent min-h-0">
-            <CardContainer cards={visibleCards} stackKey={selected} />
+            <CardContainer
+              cards={visibleCards}
+              stackKey={selected}
+              activeCategory={selected}
+              onOpenDirectory={() => setIsDirectoryOpen(true)}
+            />
           </div>
         </div>
 
         {/* 6. Acción flotante del premio (presentacional, sólo si hay premio) */}
         <RewardFab status={rewardStatus} />
+
+        {/* 7. Modal Bottom Sheet de Comercios Adheridos */}
+        <MerchantDirectoryModal
+          isOpen={isDirectoryOpen}
+          onClose={() => setIsDirectoryOpen(false)}
+          initialCategory={selected}
+        />
       </main>
     </div>
   );

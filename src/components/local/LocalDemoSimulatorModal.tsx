@@ -12,36 +12,55 @@ export interface LocalDemoSimulatorModalProps {
   onReset: () => void;
 }
 
-// Presets de demostración comercial de 1 toque
+// Presets de demostración comercial de 1 toque alineados a los 4 nichos oficiales
 const DEMO_PRESETS: Array<{
   name: string;
   businessName: string;
+  categoryIcon: 'cafeteria' | 'barberia' | 'heladeria' | 'panaderia';
   tiers: DemoRewardTier[];
 }> = [
   {
     name: 'Cafetería',
     businessName: 'Coffee Shop',
+    categoryIcon: 'cafeteria',
     tiers: [
-      { id: 't1', stampsFromPrevious: 3, rewardTitle: 'Café Chico' },
-      { id: 't2', stampsFromPrevious: 4, rewardTitle: 'Medialuna' },
-      { id: 't3', stampsFromPrevious: 5, rewardTitle: 'Tostado Especial' }
-    ]
-  },
-  {
-    name: 'Burger & Bar',
-    businessName: 'Burger Joint',
-    tiers: [
-      { id: 't1', stampsFromPrevious: 4, rewardTitle: 'Papas Cheddar' },
-      { id: 't2', stampsFromPrevious: 5, rewardTitle: 'Pinta Artesanal' }
+      { id: 't1', stampsFromPrevious: 2, rewardTitle: 'Medialuna de manteca' },
+      { id: 't2', stampsFromPrevious: 2, rewardTitle: 'Café Chico' },
+      { id: 't3', stampsFromPrevious: 2, rewardTitle: 'Café Especial + Alfajor' },
+      { id: 't4', stampsFromPrevious: 2, rewardTitle: 'Tostado Especial' },
+      { id: 't5', stampsFromPrevious: 2, rewardTitle: 'Taza Cerámica Térmica' }
     ]
   },
   {
     name: 'Heladería',
     businessName: 'Heladería del Parque',
+    categoryIcon: 'heladeria',
     tiers: [
-      { id: 't1', stampsFromPrevious: 3, rewardTitle: 'Cucurucho' },
-      { id: 't2', stampsFromPrevious: 3, rewardTitle: '1/4 Kg de Helado' },
-      { id: 't3', stampsFromPrevious: 4, rewardTitle: '1 Kg de Helado' }
+      { id: 't1', stampsFromPrevious: 2, rewardTitle: 'Topping Extra Bañado' },
+      { id: 't2', stampsFromPrevious: 2, rewardTitle: 'Cucurucho 2 bochas' },
+      { id: 't3', stampsFromPrevious: 2, rewardTitle: '1/4 Kg de Helado' },
+      { id: 't4', stampsFromPrevious: 2, rewardTitle: '1/2 Kg de Helado' },
+      { id: 't5', stampsFromPrevious: 2, rewardTitle: 'Vaso Térmico + 1 Kg' }
+    ]
+  },
+  {
+    name: 'Barbería',
+    businessName: 'La Barbería Club',
+    categoryIcon: 'barberia',
+    tiers: [
+      { id: 't1', stampsFromPrevious: 1, rewardTitle: 'Bebida de cortesía' },
+      { id: 't2', stampsFromPrevious: 1, rewardTitle: 'Perfilado de Barba' },
+      { id: 't3', stampsFromPrevious: 2, rewardTitle: 'Corte Clásico' }
+    ]
+  },
+  {
+    name: 'Panadería',
+    businessName: 'Panadería La Espiga',
+    categoryIcon: 'panaderia',
+    tiers: [
+      { id: 't1', stampsFromPrevious: 2, rewardTitle: 'Medialunas x2' },
+      { id: 't2', stampsFromPrevious: 2, rewardTitle: 'Pan de Masa Madre' },
+      { id: 't3', stampsFromPrevious: 3, rewardTitle: 'Docena de Facturas' }
     ]
   }
 ];
@@ -55,6 +74,9 @@ export function LocalDemoSimulatorModal({
 }: LocalDemoSimulatorModalProps) {
   // Estado borrador editable dentro del modal antes de aplicar
   const [draftBusinessName, setDraftBusinessName] = useState(config.businessName);
+  const [draftCategory, setDraftCategory] = useState<'cafeteria' | 'barberia' | 'heladeria' | 'panaderia'>(
+    config.categoryIcon || 'cafeteria'
+  );
   const [draftStamps, setDraftStamps] = useState(config.simulatedCurrentStamps);
   const [draftTiers, setDraftTiers] = useState<DemoRewardTier[]>(config.tiers);
 
@@ -115,6 +137,7 @@ export function LocalDemoSimulatorModal({
   // Cargar preset de 1 toque (mínimo 1 sello inicial de onboarding)
   const handleLoadPreset = (preset: typeof DEMO_PRESETS[0]) => {
     setDraftBusinessName(preset.businessName);
+    setDraftCategory(preset.categoryIcon);
     setDraftTiers(preset.tiers);
     setDraftStamps(1);
   };
@@ -122,6 +145,7 @@ export function LocalDemoSimulatorModal({
   const handleApply = () => {
     onApply({
       businessName: draftBusinessName.trim() || 'Coffee Shop',
+      categoryIcon: draftCategory,
       tiers: draftTiers.map((t, idx) => ({
         ...t,
         rewardTitle: t.rewardTitle.trim() || `Premio ${idx + 1}`
@@ -161,19 +185,68 @@ export function LocalDemoSimulatorModal({
         </div>
 
         {/* ============================================================== */}
-        {/* BLOQUE 1: IDENTIDAD DEL COMERCIO                               */}
+        {/* BLOQUE 1: IDENTIDAD DEL COMERCIO Y NICHO                      */}
         {/* ============================================================== */}
-        <div className="flex flex-col gap-1.5 mb-4">
-          <label className="text-[10.5px] font-bold uppercase tracking-wider text-neutral-500">
-            Nombre del Local
-          </label>
-          <input
-            type="text"
-            value={draftBusinessName}
-            onChange={(e) => setDraftBusinessName(e.target.value)}
-            placeholder="Ej: Café Martínez, La Birrería"
-            className="w-full px-3.5 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-[13.5px] font-bold text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:bg-white transition-all"
-          />
+        <div className="flex flex-col gap-3 mb-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[10.5px] font-bold uppercase tracking-wider text-neutral-500">
+              Nombre del Local
+            </label>
+            <input
+              type="text"
+              value={draftBusinessName}
+              onChange={(e) => setDraftBusinessName(e.target.value)}
+              placeholder="Ej: Café Martínez, La Birrería"
+              className="w-full px-3.5 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-[13.5px] font-bold text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:bg-white transition-all"
+            />
+          </div>
+
+          {/* Selector de Nicho Comercial */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[10.5px] font-bold uppercase tracking-wider text-neutral-500">
+              Elegí rubro
+            </label>
+            <div className="grid grid-cols-2 gap-1.5">
+              {[
+                { id: 'cafeteria', label: 'Cafetería' },
+                { id: 'heladeria', label: 'Heladería' },
+                { id: 'barberia', label: 'Barbería' },
+                { id: 'panaderia', label: 'Panadería' }
+              ].map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setDraftCategory(cat.id as typeof draftCategory)}
+                  className={`py-1.5 px-2.5 rounded-xl text-[11px] font-bold transition-all text-center border ${
+                    draftCategory === cat.id
+                      ? 'bg-neutral-950 text-white border-neutral-950 shadow-xs'
+                      : 'bg-neutral-50 text-neutral-600 border-neutral-200 hover:bg-neutral-100'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Presets Rápidos: reubicado justo debajo de Elegí rubro */}
+          <div className="flex flex-col gap-1.5 pt-1">
+            <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+              Presets Rápidos
+            </label>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {DEMO_PRESETS.map((preset) => (
+                <button
+                  key={preset.name}
+                  type="button"
+                  onClick={() => handleLoadPreset(preset)}
+                  className="px-2.5 py-1 rounded-full bg-neutral-100 hover:bg-neutral-200 active:scale-95 text-neutral-700 font-semibold text-[11px] transition-all"
+                >
+                  {preset.name}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* ============================================================== */}
@@ -269,7 +342,7 @@ export function LocalDemoSimulatorModal({
             })}
           </div>
 
-          {/* Botón para agregar siguiente premio */}
+          {/* Botón para agregar siguiente premio (hasta 5) */}
           {draftTiers.length < 5 && (
             <button
               type="button"
@@ -279,27 +352,6 @@ export function LocalDemoSimulatorModal({
               <span>+ Agregar siguiente premio</span>
             </button>
           )}
-        </div>
-
-        {/* ============================================================== */}
-        {/* BLOQUE 3: PRESETS DE 1 TOQUE                                   */}
-        {/* ============================================================== */}
-        <div className="flex flex-col gap-1.5 mb-4">
-          <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
-            Presets Rápidos
-          </label>
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {DEMO_PRESETS.map((preset) => (
-              <button
-                key={preset.name}
-                type="button"
-                onClick={() => handleLoadPreset(preset)}
-                className="px-2.5 py-1 rounded-full bg-neutral-100 hover:bg-neutral-200 active:scale-95 text-neutral-700 font-semibold text-[11px] transition-all"
-              >
-                {preset.name}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Botones de pie */}

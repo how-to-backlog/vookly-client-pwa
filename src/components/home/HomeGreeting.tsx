@@ -59,7 +59,7 @@ export const HomeGreeting: React.FC<HomeGreetingProps> = ({ forcedHour, reward }
 
   return (
     <section className="px-5 pt-4 pb-0 select-none">
-      <h1 className="text-[38px] font-bold tracking-[-0.02em] text-neutral-900 leading-[1.15]">
+      <h1 className="text-[36px] font-normal tracking-[-0.03em] text-neutral-900 leading-[1.1] font-sans antialiased">
         {greeting}
       </h1>
       <p className="text-[14px] font-normal text-neutral-300 mt-4 mb-2 leading-[1.4]">

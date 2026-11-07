@@ -76,32 +76,31 @@ export const CategoryFilterBar: React.FC<CategoryFilterBarProps> = ({
 
   const currentLabel =
     value === 'all'
-      ? 'Todos nuestros comercios'
+      ? 'Todos'
       : CATEGORY_LABELS[value as CategoryIconName] || 'Comercios';
 
   return (
-    // El control se centra en el ancho disponible: el grupo de chips se ajusta
-    // a su contenido y quedaba pegado al borde izquierdo, dejando un hueco
-    // muerto del lado derecho.
-    <div className="flex flex-col justify-start px-5 pt-2 pb-3 select-none gap-2">
-      <JellyRadio
-        items={items}
-        value={value}
-        onChange={next => onChange(next as CategoryFilterValue)}
-        chipColor="#ebeef2"
-        activeColor={ALL_ACCENT}
-        textColor="#334155"
-        activeTextColor={ALL_INK}
-        size="lg"
-        gap={46}
-        radius={999}
-        ariaLabel="Filtrar tarjetas por rubro"
-        // Los chips son circulares: el padding lateral que el control reserva
-        // para que el chip activo crezca sin recortarse sólo descentra los
-        // íconos. `inset` lo desactiva para que el filtro viva en el mismo eje
-        // de lectura que el texto que lo acompaña.
-        inset
-      />
+    // El contenedor ocupa todo el ancho y distribuye los 5 botones con flex justify-between
+    // dinámico: en pantallas chicas se acercan al mínimo seguro, y en pantallas más grandes
+    // el espacio se expande al máximo disponible automáticamente.
+    <div className="flex flex-col items-center w-full px-5 pt-2 pb-3 select-none gap-2">
+      <div className="w-full">
+        <JellyRadio
+          items={items}
+          value={value}
+          onChange={next => onChange(next as CategoryFilterValue)}
+          chipColor="#ebeef2"
+          activeColor={ALL_ACCENT}
+          textColor="#334155"
+          activeTextColor={ALL_INK}
+          size="lg"
+          gap={0}
+          radius={999}
+          ariaLabel="Filtrar tarjetas por rubro"
+          className="w-full justify-between"
+          inset
+        />
+      </div>
       <p className="text-center text-sm font-semibold text-neutral-600 tracking-wide pt-2.5">
         {currentLabel}
       </p>

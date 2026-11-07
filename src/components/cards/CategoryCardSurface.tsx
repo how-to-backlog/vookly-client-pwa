@@ -26,6 +26,10 @@ export interface CategoryCardSurfaceProps {
   name: CategoryIconName;
   /** Lado del icono en píxeles. */
   iconSize?: number;
+  /** Color de fondo opcional para diferenciar tarjetas del mismo nicho. */
+  backgroundColor?: string;
+  /** Color de trazo opcional para el icono. */
+  inkColor?: string;
   /** Cuando es true la superficie se ve atenuada (comercio no disponible). */
   muted?: boolean;
   className?: string;
@@ -36,6 +40,8 @@ export interface CategoryCardSurfaceProps {
 export const CategoryCardSurface: React.FC<CategoryCardSurfaceProps> = ({
   name,
   iconSize = 64,
+  backgroundColor,
+  inkColor,
   muted = false,
   className = '',
   footer
@@ -43,12 +49,15 @@ export const CategoryCardSurface: React.FC<CategoryCardSurfaceProps> = ({
   const palette = CATEGORY_PALETTE[name];
   if (!palette) return null;
 
+  const bg = backgroundColor || palette.background;
+  const ink = inkColor || palette.ink;
+
   return (
     <div
       className={`relative h-full w-full overflow-hidden ${className}`.trim()}
       style={{
-        backgroundColor: palette.background,
-        opacity: muted ? 0.8 : 1
+        backgroundColor: bg,
+        opacity: 1
       }}
     >
       {/*
@@ -57,7 +66,7 @@ export const CategoryCardSurface: React.FC<CategoryCardSurfaceProps> = ({
         (nombre del comercio, sellos, chips, etc.).
       */}
       <div className="absolute top-5 right-5 pointer-events-none">
-        <CategoryIcon name={name} size={iconSize} stroke={palette.ink} strokeWidth={1.4} />
+        <CategoryIcon name={name} size={iconSize} stroke={ink} strokeWidth={1.4} />
       </div>
 
       {footer && <div className="relative z-10 h-full w-full">{footer}</div>}

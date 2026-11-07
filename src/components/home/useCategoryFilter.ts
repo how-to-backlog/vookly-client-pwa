@@ -23,16 +23,19 @@ export const CATEGORY_ORDER: CategoryIconName[] = [
 /**
  * Agrupa las tarjetas por rubro.
  *
- * En el estado "todos" conserva el orden original del dataset. Cuando hay un
- * rubro activo, devuelve únicamente las tarjetas de ese rubro, ordenadas por
- * `CATEGORY_ORDER` para que varias tarjetas del mismo rubro queden contiguas
- * y el stack sea estable.
+ * Tanto en el estado 'all' (todos los comercios) como al seleccionar un rubro
+ * puntual, garantiza que las tarjetas pertenecientes al mismo nicho se mantengan
+ * siempre contiguas y agrupadas según `CATEGORY_ORDER`.
  */
 export const groupCardsByCategory = (
   cards: CardItem[],
   selected: CategoryFilterValue
 ): CardItem[] => {
-  if (selected === 'all') return cards;
+  if (selected === 'all') {
+    return [...cards].sort(
+      (a, b) => CATEGORY_ORDER.indexOf(a.categoryIcon) - CATEGORY_ORDER.indexOf(b.categoryIcon)
+    );
+  }
 
   return cards
     .filter(card => card.categoryIcon === selected)
