@@ -5,37 +5,35 @@ import React from 'react';
 import Aurora, { type AuroraProps } from '@/components/registry/Aurora';
 
 /**
- * AURORA_PRESET_LANDING: cortina de luz azul profunda para la landing de demo.
- *
- * A diferencia del preset "Arctic" del hub (claro, pensado para una superficie
- * blanca), este preset usa `lightMode: false` para que el shader devuelva el
- * color real de las paradas con su propia cobertura. La paleta va del celeste
- * de arriba hacia un azul casi negro al pie, siguiendo la imagen de referencia.
+ * AURORA_PRESET_LANDING:
+ * Cortina de luz vibrante con burbujas y ondas dinámicas de azules.
+ * Aumentamos la velocidad (speed: 1.1), amplitud (0.95), blend (0.6) y layers: 2
+ * para que tenga movimiento orgánico continuo y notorio en pantalla,
+ * generando esas "burbujas" y contrastes vivos de distintos tonos de azul.
  */
 export const AURORA_PRESET_LANDING: AuroraProps = {
-  colorStops: ['#7cc4ff', '#2f74e8', '#123a9e', '#050b26'],
+  colorStops: ['#5eead4', '#38bdf8', '#2563eb', '#1e1b4b'],
   direction: 'top',
-  height: 1,
-  amplitude: 0.65,
-  blend: 0.55,
-  glow: 0.85,
-  scale: 1,
-  speed: 0.45,
-  brightness: 1,
-  layers: 1,
-  opacity: 0.95,
+  height: 1.1,
+  amplitude: 0.95,
+  blend: 0.6,
+  glow: 0.9,
+  scale: 1.1,
+  speed: 1.1,
+  brightness: 1.1,
+  layers: 2,
+  opacity: 0.92,
   mouseInteraction: true,
   intro: true,
   lightMode: false
 };
 
 /**
- * Fondo de la landing: aurora azul + respaldo sólido para que el color
- * profundo nunca quede con transparencia contra el body.
+ * Fondo de la landing: aurora azul en movimiento continuo con ondas perceptibles.
  */
 export function LandingBackdrop() {
   return (
-    <div className="absolute inset-0 z-0 overflow-hidden bg-[#050b26]" aria-hidden="true">
+    <div className="absolute inset-0 z-0 overflow-hidden bg-[#0a0f2c]" aria-hidden="true">
       <Aurora {...AURORA_PRESET_LANDING} className="h-full w-full" />
     </div>
   );

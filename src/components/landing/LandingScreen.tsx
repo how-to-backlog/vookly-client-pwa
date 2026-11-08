@@ -15,22 +15,22 @@ import { saveDemoSimulatorConfig } from '@/services/demoSimulatorStorage';
 import type { DemoSimulatorConfig } from '@/types/loyalty';
 
 /**
- * Paleta de colores enriquecida, más oscura y profunda para las tarjetas:
- * Armoniza con el fondo de la Aurora sin deslumbrar, con contraste blanco/marfil nítido:
- * - Cafetería tostada: #3b2314 (moca espresso)
- * - Barbería noche: #172554 (azul noche pizarra)
- * - Heladería frutos rojos: #4a1528 (borgoña profundo)
- * - Panadería centeno: #3d2a10 (corteza tostada)
- * - Verde bosque: #123524 (menta oscura)
- * - Púrpura índigo: #261642 (amatista oscuro)
+ * Gama armónica de azules profundos y marinos para las tarjetas:
+ * Contrastan de forma elegante con la Aurora sin generar choques de colores extraños:
+ * 1. Azul Zafiro Profundo: #172554 con texto #e0f2fe
+ * 2. Azul Cobalto Nocturno: #1e3a8a con texto #f0fdfa
+ * 3. Azul Marino Índigo: #1e1b4b con texto #ede9fe
+ * 4. Azul Océano Medianoche: #0f172a con texto #e2e8f0
+ * 5. Azul Acero Oscuro: #1e293b con texto #f8fafc
+ * 6. Azul Petróleo Profundo: #164e63 con texto #ecfeff
  */
-const CARD_DARK_THEMES = [
-  { bg: '#3b2314', ink: '#fef3e7' }, // Cafetería Tostada profunda
-  { bg: '#172554', ink: '#eef4ff' }, // Azul Noche Pizarra
-  { bg: '#4a1528', ink: '#fcebf1' }, // Frutos Rojos / Borgoña
-  { bg: '#3d2a10', ink: '#fef7ea' }, // Trigo / Centeno Tostado
-  { bg: '#123524', ink: '#ebfaef' }, // Menta Bosque Oscura
-  { bg: '#261642', ink: '#f5effe' }  // Índigo Profundo
+const CARD_BLUE_THEMES = [
+  { bg: '#172554', ink: '#e0f2fe' }, // Azul Zafiro
+  { bg: '#1e3a8a', ink: '#f0fdfa' }, // Azul Cobalto
+  { bg: '#1e1b4b', ink: '#ede9fe' }, // Azul Índigo
+  { bg: '#0f172a', ink: '#e2e8f0' }, // Azul Medianoche
+  { bg: '#1e293b', ink: '#f8fafc' }, // Azul Acero
+  { bg: '#164e63', ink: '#ecfeff' }  // Azul Petróleo
 ];
 
 export function LandingScreen() {
@@ -39,7 +39,7 @@ export function LandingScreen() {
 
   const cardsWithColors = useMemo(() => {
     return LANDING_PITCH_MESSAGES.map((message, index) => {
-      const theme = CARD_DARK_THEMES[index % CARD_DARK_THEMES.length];
+      const theme = CARD_BLUE_THEMES[index % CARD_BLUE_THEMES.length];
       return { message, ...theme };
     });
   }, []);
@@ -76,23 +76,22 @@ export function LandingScreen() {
   };
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-[#050b26]">
-      {/* Fondo vivo: Aurora azul profunda animada en tiempo real */}
+    <div className="relative h-screen w-full overflow-hidden bg-[#0a0f2c]">
+      {/* Fondo vivo: Aurora azul multicapa y con movimiento ondulatorio continuo */}
       <LandingBackdrop />
 
-      <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-12 pt-12">
-        {/* Cabecera de Bienvenida */}
-        <div className="shrink-0">
-          <h1 className="text-[34px] font-normal leading-[1.1] tracking-[-0.03em] text-neutral-100 font-sans antialiased">
-            {LANDING_TITLE}
+      <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-10 pt-12">
+        {/* Cabecera: Tipografía llamativa con palo ancho, peso bold/black y centrado perfecto */}
+        <div className="shrink-0 w-full text-center">
+          <h1 className="text-[32px] sm:text-[36px] font-black tracking-[-0.035em] text-white leading-tight font-sans drop-shadow-md">
+            Bienvenido a <span className="text-sky-300">vookly.</span>
           </h1>
         </div>
 
         {/*
-          Contenedor del Stack Cuadrado Compacto:
+          Contenedor del Stack Cuadrado Compacto en Gama de Azules:
           - Formato 265px x 265px centrado con margen de desborde protegido.
-          - Texto en esquina inferior izquierda con tipografía más gorda.
-          - Cascada suave y controlada sin fugas en el viewport.
+          - Texto en esquina inferior izquierda con tipografía contundente.
         */}
         <div className="my-auto flex items-center justify-center w-full py-2">
           <div className="w-full max-w-[265px] aspect-square ml-4">
@@ -125,26 +124,26 @@ export function LandingScreen() {
         </div>
 
         {/*
-          Acciones de Navegación Inferiores Reordenadas:
-          - "Personaliza tu local": centrado como acción principal.
-          - "Omitir este paso": debajo, centrado y con respiración vertical holgada respecto al pie.
+          Acciones de Navegación Inferiores:
+          - Botón "Personaliza tu local" más compacto y refinado.
+          - "Omitir este paso" sutil debajo, con buena respiración del borde inferior.
         */}
-        <nav className="shrink-0 flex flex-col items-center justify-center gap-3 w-full">
+        <nav className="shrink-0 flex flex-col items-center justify-center gap-2.5 w-full">
           <button
             type="button"
             onClick={() => setIsSheetOpen(true)}
-            className="flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-[15px] font-medium text-white transition-all active:scale-98 shadow-sm backdrop-blur-xs"
+            className="inline-flex items-center justify-center gap-1.5 px-4.5 py-2 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 text-[13.5px] font-medium text-white transition-all active:scale-95 shadow-sm backdrop-blur-xs"
           >
             Personaliza tu local
-            <ChevronRight className="h-4 w-4 opacity-80" />
+            <ChevronRight className="h-3.5 w-3.5 opacity-80" />
           </button>
           <button
             type="button"
             onClick={handleSkip}
-            className="flex items-center justify-center gap-1 text-[13.5px] font-normal text-white/60 hover:text-white/90 transition-colors py-1"
+            className="flex items-center justify-center gap-1 text-[13px] font-normal text-white/60 hover:text-white/90 transition-colors py-0.5"
           >
             Omitir este paso
-            <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+            <ChevronRight className="h-3 w-3 opacity-60" />
           </button>
         </nav>
       </main>
