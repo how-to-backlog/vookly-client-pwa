@@ -50,7 +50,10 @@ export function LandingScreen() {
       rewardTitle: values.rewardTitle,
       stampsRequired: values.stampsRequired,
       onboardingCompleted: true,
-      completedAt: new Date().toISOString()
+      completedAt: new Date().toISOString(),
+      customBackgroundColor: values.customBackgroundColor,
+      customInkColor: values.customInkColor,
+      customPatternId: values.customPatternId
     };
 
     saveDemoSimulatorConfig(values.category, config);

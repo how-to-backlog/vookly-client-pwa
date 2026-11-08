@@ -1,16 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Minus, Plus } from 'lucide-react';
+import { Minus, Plus, Palette } from 'lucide-react';
 
 import BottomSheetNodeDetail from '@/components/local/BottomSheetNodeDetail';
-import CategoryIcon, { type CategoryIconName } from '@/components/icons/CategoryIcon';
+import CategoryIcon, {
+  CATEGORY_PALETTE,
+  type CategoryIconName
+} from '@/components/icons/CategoryIcon';
+import CardColorPicker from '@/components/landing/onboarding/CardColorPicker';
+import CardPatternPicker from '@/components/landing/onboarding/CardPatternPicker';
+import LiveCardPreview from '@/components/landing/onboarding/LiveCardPreview';
 
-/**
- * Nichos disponibles para el alta. El id coincide con el businessId del
- * catálogo (loyaltyRepository), así la demo precargada usa los presets del
- * simulador de sellos de ese rubro.
- */
 const BUSINESS_TYPES: { id: CategoryIconName; label: string }[] = [
   { id: 'cafeteria', label: 'Cafetería' },
   { id: 'heladeria', label: 'Heladería' },
@@ -27,6 +28,9 @@ export interface MerchantOnboardingValues {
   rewardTitle: string;
   stampsRequired: number;
   category: CategoryIconName;
+  customBackgroundColor?: string;
+  customInkColor?: string;
+  customPatternId?: string;
 }
 
 export interface MerchantOnboardingSheetProps {
@@ -35,9 +39,6 @@ export interface MerchantOnboardingSheetProps {
   onSubmit: (values: MerchantOnboardingValues, event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-/**
- * Hoja de alta del local personalizado: ultra simplificada, limpia y directa.
- */
 export function MerchantOnboardingSheet({
   isOpen,
   onClose,
@@ -48,7 +49,27 @@ export function MerchantOnboardingSheet({
   const [stampsRequired, setStampsRequired] = useState(DEFAULT_STAMPS);
   const [category, setCategory] = useState<CategoryIconName>('cafeteria');
 
+  // Personalización visual de la tarjeta
+  const defaultPalette = CATEGORY_PALETTE[category] || CATEGORY_PALETTE.cafeteria;
+  const [customBgColor, setCustomBgColor] = useState<string>(defaultPalette.background);
+  const [customInkColor, setCustomInkColor] = useState<string>(defaultPalette.ink);
+  const [customPatternId, setCustomPatternId] = useState<string>('formalInvitation');
+
   const canSubmit = businessName.trim().length > 0 && rewardTitle.trim().length > 0;
+
+  const handleCategoryChange = (newCat: CategoryIconName) => {
+    setCategory(newCat);
+    const pal = CATEGORY_PALETTE[newCat];
+    if (pal) {
+      setCustomBgColor(pal.background);
+      setCustomInkColor(pal.ink);
+    }
+  };
+
+  const handleColorSelect = (bg: string, ink: string) => {
+    setCustomBgColor(bg);
+    setCustomInkColor(ink);
+  };
 
   const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!canSubmit) return;
@@ -58,7 +79,10 @@ export function MerchantOnboardingSheet({
         businessName: businessName.trim(),
         rewardTitle: rewardTitle.trim(),
         stampsRequired,
-        category
+        category,
+        customBackgroundColor: customBgColor,
+        customInkColor: customInkColor,
+        customPatternId
       },
       event
     );
@@ -71,9 +95,9 @@ export function MerchantOnboardingSheet({
       ariaLabel="Alta de local personalizado"
       headerContent={<span className="text-[15px] font-semibold text-neutral-900">Personaliza tu local</span>}
       disableBackdropBlur
-      contentClassName="pb-2"
+      contentClassName="pb-4"
     >
-      <div className="flex flex-col gap-4 pt-1">
+      <div className="flex flex-col gap-4 pt-1 max-h-[74vh] overflow-y-auto no-scrollbar pr-0.5">
         <label className="flex flex-col gap-1.5">
           <span className="text-[12px] font-semibold uppercase tracking-wide text-neutral-500">
             Nombre de tu negocio
@@ -138,6 +162,7 @@ export function MerchantOnboardingSheet({
           </div>
         </div>
 
+        {/* Tipo de negocio / Rubro */}
         <div className="flex flex-col gap-1.5">
           <span className="text-[12px] font-semibold uppercase tracking-wide text-neutral-500">
             Tipo de negocio
@@ -150,7 +175,7 @@ export function MerchantOnboardingSheet({
                 <button
                   key={type.id}
                   type="button"
-                  onClick={() => setCategory(type.id)}
+                  onClick={() => handleCategoryChange(type.id)}
                   className={`flex items-center gap-2 rounded-xl border p-2.5 text-left transition-colors ${
                     isSelected
                       ? 'border-neutral-900 bg-neutral-900 text-white'
@@ -171,8 +196,42 @@ export function MerchantOnboardingSheet({
           </div>
         </div>
 
-        {/* Botón "Ir a vookly." achicado y centrado, sin estirarse de punta a punta */}
-        <div className="pt-2 flex justify-center w-full">
+        {/* SECCIÓN FINAL: PERSONALIZACIÓN VISUAL Y VISTA PREVIA EN VIVO */}
+        <div className="flex flex-col gap-3.5 pt-2 border-t border-neutral-200/80">
+          <div className="flex items-center gap-1.5 text-neutral-900">
+            <Palette className="h-4 w-4 text-sky-600" />
+            <span className="text-[13px] font-bold tracking-tight">
+              Diseño de tu tarjeta
+            </span>
+          </div>
+
+          {/* Vista previa en vivo */}
+          <LiveCardPreview
+            businessName={businessName}
+            category={category}
+            stampsRequired={stampsRequired}
+            rewardTitle={rewardTitle}
+            backgroundColor={customBgColor}
+            inkColor={customInkColor}
+            patternId={customPatternId}
+          />
+
+          {/* Selector de color oficial */}
+          <CardColorPicker
+            selectedBgColor={customBgColor}
+            onSelectColor={handleColorSelect}
+          />
+
+          {/* Selector de patrones Hero Patterns */}
+          <CardPatternPicker
+            selectedPatternId={customPatternId}
+            inkColor={customInkColor}
+            onSelectPattern={setCustomPatternId}
+          />
+        </div>
+
+        {/* Botón de envío */}
+        <div className="pt-2 pb-1 flex justify-center w-full">
           <button
             type="button"
             onClick={handleSubmit}

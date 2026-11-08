@@ -15,6 +15,8 @@ export interface CardItem {
   backgroundColor?: string;
   /** Color de trazo personalizado para el icono. */
   inkColor?: string;
+  /** Identificador opcional del patrón Hero Patterns */
+  patternId?: string;
   /** Ruta de detalle del comercio. Ausente cuando el comercio todavía no está disponible. */
   href?: string;
   /** Sellos acumulados del cliente en este comercio. */
@@ -193,6 +195,7 @@ export const CardContainer: React.FC<CardContainerProps> = ({
               categoryIcon={card.categoryIcon}
               backgroundColor={card.backgroundColor}
               inkColor={card.inkColor}
+              patternId={card.patternId}
               stamps={card.stamps}
               totalStamps={card.totalStamps}
               nextRewardTitle={card.nextRewardTitle}

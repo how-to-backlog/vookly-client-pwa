@@ -201,6 +201,12 @@ export interface DemoSimulatorConfig {
   onboardingCompleted?: boolean;
   /** Fecha de cierre del alta en formato ISO 8601. */
   completedAt?: string;
+  /** Color de fondo personalizado elegido para la tarjeta. */
+  customBackgroundColor?: string;
+  /** Color de tinta correspondiente para el trazo y tipografía. */
+  customInkColor?: string;
+  /** Identificador del patrón de Hero Patterns seleccionado. */
+  customPatternId?: string;
 }
 
 /**

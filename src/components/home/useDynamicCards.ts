@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from 'react';
 import type { CardItem } from '@/components/cards/CardContainer';
 import { DEFAULT_CARDS } from '@/components/cards/CardContainer';
+import { getUniqueCardPatternAssignment } from '@/data/cardPatternsRegistry';
 import {
   getBusinessSync,
   getBusinessLoyaltyRulesSync,
@@ -19,6 +20,7 @@ export interface CardStateWithSim {
   categoryIcon: CardItem['categoryIcon'];
   backgroundColor?: string;
   inkColor?: string;
+  patternId?: string;
   href?: string;
   stamps: number;
   totalStamps: number;
@@ -75,6 +77,11 @@ export function resolveDynamicCardState(card: CardItem): CardStateWithSim {
   // Nombre dinámico (del simulador si fue editado, sino el configurado)
   const dynamicName = config.businessName?.trim() || card.localName || baseBusiness.name;
 
+  // Personalización visual opcional del comerciante (fondo, ink, patrón)
+  const dynamicBg = config.customBackgroundColor || card.backgroundColor;
+  const dynamicInk = config.customInkColor || card.inkColor;
+  const dynamicPattern = config.customPatternId || card.patternId;
+
   // Sellos actuales y totales
   const stamps = wallet.currentStamps;
   const totalStamps = rules.totalRoadmapStamps;
@@ -92,6 +99,9 @@ export function resolveDynamicCardState(card: CardItem): CardStateWithSim {
   return {
     ...card,
     localName: dynamicName,
+    backgroundColor: dynamicBg,
+    inkColor: dynamicInk,
+    patternId: dynamicPattern,
     stamps,
     totalStamps,
     nextRewardTitle,
@@ -124,19 +134,37 @@ const getServerCards = (initialCards: CardItem[]): CardStateWithSim[] => {
 /**
  * Hook reactivo que escucha cambios en el simulador / localStorage
  * y mantiene las 8 tarjetas actualizadas en tiempo real con nombre y sellos dinámicos.
+ * Además, distribuye de forma determinística los 12 patrones de Hero Patterns
+ * garantizando que ninguna de las 8 tarjetas repita patrón.
  */
 export function useDynamicCards(initialCards: CardItem[] = DEFAULT_CARDS): CardStateWithSim[] {
   return useSyncExternalStore(
     subscribeToStorage,
     () => {
       const resolved = initialCards.map(resolveDynamicCardState);
-      const key = resolved
-        .map((c) => `${c.id}:${c.localName}:${c.stamps}:${c.totalStamps}:${c.hasReadyReward}`)
+
+      // Detectamos si el comerciante tiene un patrón personalizado configurado
+      const merchantCard = resolved.find((c) => Boolean(c.patternId));
+      const patternAssignments = getUniqueCardPatternAssignment(merchantCard?.patternId);
+
+      const finalCards = resolved.map((c) => {
+        // Si la tarjeta ya trae su propio patrón de la demo, lo respeta
+        if (c.patternId) return c;
+        // Si no, le asigna su patrón único garantizado sin colisiones
+        const assignedPattern = patternAssignments[c.id] || 'formalInvitation';
+        return {
+          ...c,
+          patternId: assignedPattern
+        };
+      });
+
+      const key = finalCards
+        .map((c) => `${c.id}:${c.localName}:${c.stamps}:${c.totalStamps}:${c.hasReadyReward}:${c.patternId}:${c.backgroundColor}`)
         .join('|');
 
       if (key !== cardsCache.key) {
         cardsCache.key = key;
-        cardsCache.cards = resolved;
+        cardsCache.cards = finalCards;
       }
       return cardsCache.cards;
     },

@@ -18,6 +18,8 @@ export interface ScrollStackCardProps {
   backgroundColor?: string;
   /** Color de trazo opcional para el icono. */
   inkColor?: string;
+  /** Identificador opcional del patrón Hero Patterns */
+  patternId?: string;
   /** Sellos acumulados del cliente en este comercio */
   stamps?: number;
   /** Sellos totales del roadmap de este comercio */
@@ -45,6 +47,7 @@ export const ScrollStackCard: React.FC<ScrollStackCardProps> = ({
   categoryIcon,
   backgroundColor,
   inkColor,
+  patternId,
   stamps,
   totalStamps,
   nextRewardTitle,
@@ -93,6 +96,7 @@ export const ScrollStackCard: React.FC<ScrollStackCardProps> = ({
           hasReadyReward={hasReadyReward}
           backgroundColor={backgroundColor}
           inkColor={inkColor}
+          patternId={patternId}
           muted={unavailable}
           footer={footer}
         />
