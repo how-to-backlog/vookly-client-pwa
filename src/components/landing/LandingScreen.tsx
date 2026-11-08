@@ -12,6 +12,7 @@ import { Stack } from '@/components/registry/Stack';
 import { GradientText } from '@/components/registry/GradientText';
 import { usePageTransition } from '@/components/transition/TransitionProvider';
 import { LANDING_PITCH_MESSAGES } from '@/data/landingContent';
+import { buildOnboardingTiers } from '@/data/defaultNicheTiers';
 import { saveDemoSimulatorConfig } from '@/services/demoSimulatorStorage';
 import type { DemoSimulatorConfig } from '@/types/loyalty';
 
@@ -39,17 +40,15 @@ export function LandingScreen() {
     values: MerchantOnboardingValues,
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
+    // Ensamblamos automáticamente el roadmap de 3 tramos:
+    // Tier 1 con el producto del comerciante + Tiers 2 y 3 complementarios del nicho
+    const tiers = buildOnboardingTiers(values.rewardTitle, values.stampsRequired, values.category);
+
     const config: DemoSimulatorConfig = {
       businessName: values.businessName,
       categoryIcon: values.category,
-      tiers: [
-        {
-          id: 'tier-1',
-          stampsFromPrevious: values.stampsRequired,
-          rewardTitle: values.rewardTitle
-        }
-      ],
-      simulatedCurrentStamps: 1,
+      tiers,
+      simulatedCurrentStamps: 1, // Arranca con su primera compra simulada ya acreditada
       rewardTitle: values.rewardTitle,
       stampsRequired: values.stampsRequired,
       onboardingCompleted: true,
@@ -113,7 +112,6 @@ export function LandingScreen() {
         {/*
           Zona Inferior:
           1. Badge "Demo" centrado en el espacio intermedio entre las tarjetas y "Personaliza tu local".
-             Degradado animado de 2 colores: blanco (#ffffff) y azul oscuro zafiro/cobalto (#2563eb).
           2. Botones de acción vertical centrados.
         */}
         <div className="shrink-0 flex flex-col items-center justify-center w-full gap-5 pb-1">

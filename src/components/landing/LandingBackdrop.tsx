@@ -16,17 +16,17 @@ import Aurora, { type AuroraProps } from '@/components/registry/Aurora';
  *    bailan libremente sin ninguna barra ni corte vertical en los bordes.
  */
 export const AURORA_PRESET_LANDING: AuroraProps = {
-  colorStops: ['#38bdf8', '#818cf8', '#60a5fa'],
+  colorStops: ['#00014A', '#2800F2', '#0E005E'],
   direction: 'top',
   height: 0.85,
-  amplitude: 0.85,
-  blend: 0.65,
+  amplitude: 0.45,
+  blend: 0.90,
   glow: 0.75,
-  scale: 1.2,
-  speed: 0.75,
+  scale: 0.4,
+  speed: 1.05,
   brightness: 1.1,
   layers: 1,
-  opacity: 0.75,
+  opacity: 0.95,
   mouseInteraction: true,
   intro: true,
   lightMode: true
