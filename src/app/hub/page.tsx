@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState, useTransition } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { TopBar } from '@/components/TopBar';
 import { HomeGreeting } from '@/components/home/HomeGreeting';
 import { RewardFab } from '@/components/home/RewardFab';
@@ -12,11 +13,22 @@ import { useDynamicCards } from '@/components/home/useDynamicCards';
 import { AuroraBackdrop } from '@/components/home/AuroraBackdrop';
 import { CardContainer } from '@/components/cards/CardContainer';
 import { MerchantDirectoryModal } from '@/components/home/MerchantDirectoryModal';
+import type { CategoryFilterValue } from '@/components/home/useCategoryFilter';
 
-export default function Hub() {
+function HubContent() {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get('category') as CategoryFilterValue | null;
+
   // Las 8 tarjetas ahora se resuelven dinámicamente con reactividad al simulador y al Onboarding
   const dynamicCards = useDynamicCards();
-  const { selected, setSelected, visibleCards } = useCategoryFilter(dynamicCards);
+
+  // Si vino de personalizar su local con ?category=barberia, arranca preseleccionado en ese nicho
+  const initialCategory: CategoryFilterValue =
+    categoryParam && ['cafeteria', 'barberia', 'heladeria', 'panaderia'].includes(categoryParam)
+      ? categoryParam
+      : 'all';
+
+  const { selected, setSelected, visibleCards } = useCategoryFilter(dynamicCards, initialCategory);
   const [isDirectoryOpen, setIsDirectoryOpen] = useState(false);
 
   // El estado de premio se resuelve una vez y se reparte entre el saludo y la acción flotante
@@ -43,7 +55,7 @@ export default function Hub() {
             totalAvailable={dynamicCards.length}
           />
 
-          {/* 4. Filtro por rubro del comercio */}
+          {/* 4. Filtro por rubro del comercio (con el nicho del comerciante activo por defecto) */}
           <CategoryFilterBar value={selected} onChange={setSelected} />
 
           {/* 5. Contenedor Modular de Tarjetas (ScrollStack) */}
@@ -70,5 +82,13 @@ export default function Hub() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function Hub() {
+  return (
+    <Suspense fallback={<div className="h-screen w-full bg-[#070d24]" />}>
+      <HubContent />
+    </Suspense>
   );
 }

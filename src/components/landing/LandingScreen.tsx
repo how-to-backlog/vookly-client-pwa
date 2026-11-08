@@ -57,7 +57,7 @@ export function LandingScreen() {
 
     saveDemoSimulatorConfig(values.category, config);
     setIsSheetOpen(false);
-    triggerTransition(event, '/hub');
+    triggerTransition(event, `/hub?category=${values.category}`);
   };
 
   const handleSkip = (event: React.MouseEvent<HTMLButtonElement>) => {
