@@ -9,6 +9,8 @@ import { WalletSectionHeader } from '@/components/home/WalletSectionHeader';
 import { CategoryFilterBar } from '@/components/home/CategoryFilterBar';
 import { useCategoryFilter } from '@/components/home/useCategoryFilter';
 import { useRewardStatus } from '@/components/home/useRewardStatus';
+import { useRewardStatusQueue } from '@/components/home/useRewardStatusQueue';
+import { useRotatingRewardMessage } from '@/components/home/useRotatingRewardMessage';
 import { useDynamicCards } from '@/components/home/useDynamicCards';
 import { AuroraBackdrop } from '@/components/home/AuroraBackdrop';
 import { CardContainer } from '@/components/cards/CardContainer';
@@ -31,22 +33,31 @@ function HubContent() {
   const { selected, setSelected, visibleCards } = useCategoryFilter(dynamicCards, initialCategory);
   const [isDirectoryOpen, setIsDirectoryOpen] = useState(false);
 
-  // El estado de premio se resuelve una vez y se reparte entre el saludo y la acción flotante
+  // El estado de premio se resuelve una vez para el botón flotante y la
+  // cartelera del saludo gira por la cola priorizada completa (T77).
   const rewardStatus = useRewardStatus(dynamicCards);
+  const rewardQueue = useRewardStatusQueue(dynamicCards);
+  const rotatingReward = useRotatingRewardMessage(rewardQueue);
 
   return (
-    <div className="h-screen bg-neutral-100 flex justify-center overflow-hidden">
+    <div className="h-dvh bg-white flex justify-center overflow-hidden">
       {/* Shell Móvil Centrado */}
-      <main className="w-full max-w-md h-screen bg-transparent relative isolate flex flex-col overflow-hidden shadow-2xl">
+      <main className="w-full max-w-[640px] h-dvh bg-transparent relative isolate flex flex-col overflow-hidden">
         {/* Fondo vivo: la aurora ocupa toda la superficie detrás del contenido */}
         <AuroraBackdrop />
 
-        <div className="relative z-10 flex flex-col h-full min-h-0">
+        {/*
+          Columna de contenido: se limita a max-w-md (448px) para que las
+          tarjetas conserven el tamaño real de una tarjeta física en cualquier
+          teléfono, mientras el Aurora del shell sigue llegando a los bordes
+          (full-bleed hasta 640px).
+        */}
+        <div className="relative z-10 flex flex-col h-full min-h-0 w-full max-w-md mx-auto">
           {/* 1. Cabecera Minimalista */}
           <TopBar variant="bare" />
 
           {/* 2. Saludo Contextual por Horario + mensaje dinámico de premio */}
-          <HomeGreeting reward={rewardStatus} />
+          <HomeGreeting reward={rotatingReward} />
 
           {/* 3. Encabezado de la Sección de Billetera */}
           <WalletSectionHeader
@@ -87,7 +98,7 @@ function HubContent() {
 
 export default function Hub() {
   return (
-    <Suspense fallback={<div className="h-screen w-full bg-[#070d24]" />}>
+    <Suspense fallback={<div className="h-dvh w-full bg-[#070d24]" />}>
       <HubContent />
     </Suspense>
   );

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { ChevronRight } from 'lucide-react';
 import { HERO_PATTERNS_LIST } from '@/data/cardPatternsRegistry';
 
 export interface CardPatternPickerProps {
@@ -18,14 +19,15 @@ export const CardPatternPicker: React.FC<CardPatternPickerProps> = ({
     <div className="flex flex-col gap-2 w-full">
       <div className="flex items-center justify-between">
         <span className="text-[11px] font-semibold tracking-wider text-neutral-500 uppercase">
-          Patrón geométrico (Hero Patterns)
+          Patrones
         </span>
-        <span className="text-[11px] font-medium text-neutral-400">
-          12 estilos
+        <span className="text-[10px] font-medium text-neutral-400 inline-flex items-center gap-0.5">
+          Deslizá
+          <ChevronRight className="h-3 w-3" />
         </span>
       </div>
-      <div className="flex items-center gap-2 overflow-x-auto pb-1.5 pt-0.5 no-scrollbar">
-        {HERO_PATTERNS_LIST.map((pattern) => {
+      <div className="flex items-center gap-2 overflow-x-auto pb-1.5 pt-0.5 px-3 no-scrollbar">
+        {HERO_PATTERNS_LIST.map((pattern, index) => {
           const isSelected = selectedPatternId === pattern.id;
           const bgUrl = pattern.getSvgUrl(inkColor, 0.4);
 
@@ -34,16 +36,15 @@ export const CardPatternPicker: React.FC<CardPatternPickerProps> = ({
               key={pattern.id}
               type="button"
               onClick={() => onSelectPattern(pattern.id)}
-              className={`group shrink-0 flex flex-col items-center gap-1.5 p-1 rounded-xl transition-all active:scale-95 ${
-                isSelected
-                  ? 'bg-neutral-900 text-white shadow-xs'
-                  : 'bg-neutral-100 hover:bg-neutral-200/80 text-neutral-700'
+              className={`shrink-0 rounded-xl p-1 transition-all active:scale-95 ${
+                isSelected ? 'ring-2 ring-neutral-900' : 'ring-0'
               }`}
+              aria-label={`Patrón ${index + 1}`}
             >
-              {/* Thumbnail con el patrón vectorial visible */}
+              {/* Thumbnail suelto con el patrón vectorial visible, numerado */}
               <div
                 className={`h-11 w-11 rounded-lg overflow-hidden border transition-all ${
-                  isSelected ? 'border-white/40 shadow-inner' : 'border-black/5 bg-white'
+                  isSelected ? 'border-neutral-900 bg-white' : 'border-black/5 bg-white'
                 }`}
                 style={{
                   backgroundImage: bgUrl,
@@ -51,8 +52,8 @@ export const CardPatternPicker: React.FC<CardPatternPickerProps> = ({
                   backgroundRepeat: 'repeat'
                 }}
               />
-              <span className="text-[10px] font-medium tracking-tight px-1 max-w-[64px] truncate">
-                {pattern.name}
+              <span className="block text-center text-[10px] font-medium tracking-tight px-1 text-neutral-600">
+                {index + 1}
               </span>
             </button>
           );

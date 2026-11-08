@@ -17,7 +17,7 @@ export const CardColorPicker: React.FC<CardColorPickerProps> = ({
       <span className="text-[11px] font-semibold tracking-wider text-neutral-500 uppercase">
         Color de fondo
       </span>
-      <div className="flex items-center gap-2.5 overflow-x-auto pb-1.5 pt-0.5 no-scrollbar">
+      <div className="flex items-center gap-2.5 overflow-x-auto pb-1.5 pt-0.5 px-3 no-scrollbar">
         {OFFICIAL_CARD_COLORS.map((item) => {
           const isSelected = selectedBgColor.toLowerCase() === item.bg.toLowerCase();
           return (
@@ -31,7 +31,7 @@ export const CardColorPicker: React.FC<CardColorPickerProps> = ({
               <span
                 className={`block h-8 w-8 rounded-full transition-all shadow-2xs border ${
                   isSelected
-                    ? 'ring-2 ring-neutral-900 ring-offset-2 scale-105 border-neutral-400'
+                    ? 'scale-110 border-black/30'
                     : 'border-black/10 hover:scale-105'
                 }`}
                 style={{ backgroundColor: item.bg }}

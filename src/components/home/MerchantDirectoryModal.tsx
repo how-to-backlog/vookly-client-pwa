@@ -240,7 +240,8 @@ export const MerchantDirectoryModal: React.FC<MerchantDirectoryModalProps> = ({
                   Sumate a {activeMerchant.name}
                 </span>
                 <p className="text-neutral-500">
-                  Acercate al local y adherite a Vookly.
+                  Gana estos y muchos productos más acercándote al local y
+                  preguntando por vookly.
                 </p>
               </div>
             </div>

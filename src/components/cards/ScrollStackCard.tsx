@@ -1,6 +1,6 @@
 'use client';
 
-import { usePageTransition } from '@/components/transition/TransitionProvider';
+import { useRouter } from 'next/navigation';
 import { resolveCategoryIcon, type CategoryIconName } from '@/components/icons/CategoryIcon';
 import { CategoryCardSurface } from './CategoryCardSurface';
 import React from 'react';
@@ -57,21 +57,27 @@ export const ScrollStackCard: React.FC<ScrollStackCardProps> = ({
   children,
   footer
 }) => {
-  const { triggerTransition } = usePageTransition();
+  const router = useRouter();
 
   const navigable = Boolean(href) && !unavailable;
 
-  const handleClick = (e: React.MouseEvent) => {
+  // Navegación directa sin overlay: el efecto de círculo blanco quedó
+  // reservado únicamente para el cierre del onboarding y 'Omitir'.
+  const handleNavigate = () => {
     if (navigable && href) {
-      triggerTransition(e, href);
+      router.push(href);
     }
+  };
+
+  const handleClick = () => {
+    handleNavigate();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!navigable || !href) return;
     if (e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault();
-    triggerTransition(e, href);
+    handleNavigate();
   };
 
   const iconName = categoryIcon ?? resolveCategoryIcon(href ?? localName);

@@ -55,67 +55,79 @@ const DEMO_CUSTOMER_ID = 'cust-01';
  * Vive fuera del componente que lo muestra para que la vista sea
  * presentacional: recibe el estado ya resuelto y no sabe de dónde sale.
  */
+/**
+ * Resuelve el estado de premio de UNA tarjeta (bloque Lego reutilizable).
+ *
+ * Devuelve 'ready' si la tarjeta tiene un premio exactamente listo para
+ * canjear, o 'close' si le faltan 1 o 2 sellos. En cualquier otro caso
+ * devuelve null para esa tarjeta.
+ */
+export function computeCardRewardStatus(card: CardItem): RewardStatus | null {
+  if (typeof window === 'undefined') return null;
+
+  const slug = extractBusinessSlug(card.href);
+  if (!slug) return null;
+
+  const business = getBusinessSync(slug);
+  const rules = getBusinessLoyaltyRulesSync(slug);
+  const wallet = getCustomerWalletSync(DEMO_CUSTOMER_ID, slug);
+  if (!business || !rules || !wallet) return null;
+
+  const config = loadDemoSimulatorConfig(slug, card.localName || business.name, rules, wallet);
+  const { rules: resolvedRules, wallet: resolvedWallet } = applyDemoConfigToEntities(
+    config,
+    rules,
+    wallet
+  );
+
+  const businessName = config.businessName?.trim() || card.localName || business.name;
+  const href = card.href || `/local/${slug}`;
+
+  const readyVoucher = (resolvedWallet.vouchers || []).find((v) => v.status === 'ready');
+  if (readyVoucher) {
+    return {
+      type: 'ready',
+      href,
+      businessName,
+      rewardTitle: readyVoucher.rewardTitle,
+      badgeText: '¡Premio listo!',
+      detail: `${readyVoucher.rewardTitle} en ${businessName}`
+    };
+  }
+
+  const sortedMilestones = [...resolvedRules.rewardMilestones].sort(
+    (a, b) => a.stampThreshold - b.stampThreshold
+  );
+  const nextMilestone = sortedMilestones.find((m) => m.stampThreshold > resolvedWallet.currentStamps);
+
+  if (nextMilestone) {
+    const stampsLeft = nextMilestone.stampThreshold - resolvedWallet.currentStamps;
+    if (stampsLeft === 1 || stampsLeft === 2) {
+      return {
+        type: 'close',
+        href,
+        businessName,
+        rewardTitle: nextMilestone.rewardTitle,
+        stampsLeft,
+        badgeText: stampsLeft === 1 ? 'A solo 1 sello' : 'A solo 2 sellos',
+        detail: `${nextMilestone.rewardTitle} en ${businessName}`
+      };
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Estado consolidado del premio a anunciar en el hub: el primero que
+ * encuentre en orden de prioridad (primero los listos, luego los cercanos).
+ */
 export function computeRewardStatus(cards: CardItem[]): RewardStatus {
   if (typeof window === 'undefined') return null;
 
-  const candidates = cards
-    .map((card) => ({ card, slug: extractBusinessSlug(card.href) }))
-    .filter((entry): entry is { card: CardItem; slug: string } => Boolean(entry.slug));
-
-  for (const { card, slug } of candidates) {
-    const business = getBusinessSync(slug);
-    const rules = getBusinessLoyaltyRulesSync(slug);
-    const wallet = getCustomerWalletSync(DEMO_CUSTOMER_ID, slug);
-
-    if (!business || !rules || !wallet) continue;
-
-    const config = loadDemoSimulatorConfig(
-      slug,
-      card.localName || business.name,
-      rules,
-      wallet
-    );
-
-    const { rules: resolvedRules, wallet: resolvedWallet } = applyDemoConfigToEntities(
-      config,
-      rules,
-      wallet
-    );
-
-    const businessName = config.businessName?.trim() || card.localName || business.name;
-    const href = card.href || `/local/${slug}`;
-
-    const readyVoucher = (resolvedWallet.vouchers || []).find((v) => v.status === 'ready');
-    if (readyVoucher) {
-      return {
-        type: 'ready',
-        href,
-        businessName,
-        rewardTitle: readyVoucher.rewardTitle,
-        badgeText: '¡Premio listo!',
-        detail: `${readyVoucher.rewardTitle} en ${businessName}`
-      };
-    }
-
-    const sortedMilestones = [...resolvedRules.rewardMilestones].sort(
-      (a, b) => a.stampThreshold - b.stampThreshold
-    );
-    const nextMilestone = sortedMilestones.find((m) => m.stampThreshold > resolvedWallet.currentStamps);
-
-    if (nextMilestone) {
-      const stampsLeft = nextMilestone.stampThreshold - resolvedWallet.currentStamps;
-      if (stampsLeft === 1 || stampsLeft === 2) {
-        return {
-          type: 'close',
-          href,
-          businessName,
-          rewardTitle: nextMilestone.rewardTitle,
-          stampsLeft,
-          badgeText: stampsLeft === 1 ? 'A solo 1 sello' : 'A solo 2 sellos',
-          detail: `para ganar ${nextMilestone.rewardTitle} en ${businessName}`
-        };
-      }
-    }
+  for (const card of cards) {
+    const status = computeCardRewardStatus(card);
+    if (status) return status;
   }
 
   return null;

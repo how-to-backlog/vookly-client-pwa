@@ -63,6 +63,44 @@ export function getDefaultDemoConfig(
   };
 }
 
+const configCache = new Map<string, { raw: string; parsed: DemoSimulatorConfig }>();
+
+/**
+ * Snapshot referencialmente estable de la configuración del simulador para useSyncExternalStore.
+ */
+export function getDemoSimulatorConfigSnapshot(
+  businessId: string,
+  businessName: string,
+  rules: BusinessLoyaltyRules,
+  wallet: CustomerWalletStatus
+): DemoSimulatorConfig {
+  if (typeof window === 'undefined') {
+    return getDefaultDemoConfig(businessName, rules, wallet);
+  }
+
+  const raw = localStorage.getItem(`${STORAGE_PREFIX}${businessId}`) ?? '';
+  const cached = configCache.get(businessId);
+  if (cached && cached.raw === raw) {
+    return cached.parsed;
+  }
+
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as DemoSimulatorConfig;
+      if (parsed && Array.isArray(parsed.tiers) && parsed.tiers.length > 0) {
+        configCache.set(businessId, { raw, parsed });
+        return parsed;
+      }
+    } catch {
+      // Si falla el parseo, cae al valor por defecto
+    }
+  }
+
+  const def = getDefaultDemoConfig(businessName, rules, wallet);
+  configCache.set(businessId, { raw, parsed: def });
+  return def;
+}
+
 /**
  * Carga la configuración del simulador desde localStorage con fallback
  */
@@ -92,24 +130,27 @@ export function loadDemoSimulatorConfig(
 }
 
 /**
- * Guarda la configuración en localStorage
+ * Guarda la configuración en localStorage y emite el evento para que los
+ * suscriptores de la misma pestaña reaccionen de inmediato.
  */
 export function saveDemoSimulatorConfig(businessId: string, config: DemoSimulatorConfig): void {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(`${STORAGE_PREFIX}${businessId}`, JSON.stringify(config));
+    window.dispatchEvent(new Event('storage'));
   } catch {
     // Manejo silencioso en entornos restringidos
   }
 }
 
 /**
- * Limpia la configuración guardada de localStorage
+ * Limpia la configuración guardada de localStorage y emite el evento de sincronización.
  */
 export function clearDemoSimulatorConfig(businessId: string): void {
   if (typeof window === 'undefined') return;
   try {
     localStorage.removeItem(`${STORAGE_PREFIX}${businessId}`);
+    window.dispatchEvent(new Event('storage'));
   } catch {
     // Manejo silencioso
   }

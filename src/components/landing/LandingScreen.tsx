@@ -67,7 +67,7 @@ export function LandingScreen() {
   };
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-white">
+    <div className="relative h-dvh w-full overflow-hidden bg-white">
       {/* Fondo vivo: Mismo Aurora claro de la Billetera sobre blanco */}
       <LandingBackdrop />
 
@@ -83,12 +83,13 @@ export function LandingScreen() {
         </GradientText>
       </div>
 
-      <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-10 pt-16">
+      <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-8 pt-12 overflow-y-auto no-scrollbar">
         {/*
-          Cabecera: Marca "vookly." aumentada un 10% (82px a 95px)
-          y con posición más baja (pt-14 en el bloque para acercarse más al mazo)
+          Cabecera: Marca "vookly." compacta para que el botón 'Omitir' quede
+          siempre dentro del viewport en pantallas chicas (Motorola G42).
+          El bloque scrollea como respaldo si el alto disponible no alcanza.
         */}
-        <div className="shrink-0 w-full text-center pt-14 pb-1">
+        <div className="shrink-0 w-full text-center pt-4 pb-1">
           <h1 className="text-[82px] sm:text-[95px] font-black tracking-[-0.052em] text-white leading-[0.9] font-sans drop-shadow-2xl select-none">
             vookly<span className="text-sky-400">.</span>
           </h1>

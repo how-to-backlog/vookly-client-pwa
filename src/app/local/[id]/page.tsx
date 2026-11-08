@@ -17,7 +17,9 @@ import {
   loadDemoSimulatorConfig,
   saveDemoSimulatorConfig,
   clearDemoSimulatorConfig,
-  applyDemoConfigToEntities
+  applyDemoConfigToEntities,
+  getDefaultDemoConfig,
+  getDemoSimulatorConfigSnapshot
 } from '@/services/demoSimulatorStorage';
 import {
   applyRedemptionsToWallet,
@@ -76,18 +78,37 @@ function LocalContent({ params }: LocalPageProps) {
     () => EMPTY_REDEMPTIONS
   );
 
-  // Estado del simulador demo inicializado desde localStorage si está en cliente
-  const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
-  const [simulatorConfig, setSimulatorConfig] = useState<DemoSimulatorConfig>(() => {
-    if (business && baseRules && initialWallet) {
-      return loadDemoSimulatorConfig(businessId, business.name, baseRules, initialWallet);
+  const subscribeToStorage = useCallback((onStoreChange: () => void) => {
+    if (typeof window === 'undefined') return () => {};
+    window.addEventListener('storage', onStoreChange);
+    return () => window.removeEventListener('storage', onStoreChange);
+  }, []);
+
+  const simulatorConfig = useSyncExternalStore(
+    subscribeToStorage,
+    () => {
+      if (business && baseRules && initialWallet) {
+        return getDemoSimulatorConfigSnapshot(businessId, business.name, baseRules, initialWallet);
+      }
+      return {
+        businessName: 'Coffee Shop',
+        tiers: [{ id: 'tier-1', stampsFromPrevious: 5, rewardTitle: 'Premio Especial' }],
+        simulatedCurrentStamps: 1
+      };
+    },
+    () => {
+      if (business && baseRules && initialWallet) {
+        return getDefaultDemoConfig(business.name, baseRules, initialWallet);
+      }
+      return {
+        businessName: 'Coffee Shop',
+        tiers: [{ id: 'tier-1', stampsFromPrevious: 5, rewardTitle: 'Premio Especial' }],
+        simulatedCurrentStamps: 1
+      };
     }
-    return {
-      businessName: 'Coffee Shop',
-      tiers: [{ id: 'tier-1', stampsFromPrevious: 5, rewardTitle: 'Premio Especial' }],
-      simulatedCurrentStamps: 1
-    };
-  });
+  );
+
+  const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
 
   // Derivamos dinámicamente las reglas y la billetera en función de la configuración del simulador
   const activeEntities = (business && baseRules && wallet)
@@ -282,7 +303,6 @@ function LocalContent({ params }: LocalPageProps) {
   };
 
   const handleApplySimulator = (newConfig: DemoSimulatorConfig) => {
-    setSimulatorConfig(newConfig);
     saveDemoSimulatorConfig(businessId, newConfig);
     // Si el nodo seleccionado quedó fuera de rango tras el cambio, lo deseleccionamos
     setSelectedNode(null);
@@ -294,15 +314,11 @@ function LocalContent({ params }: LocalPageProps) {
     // comercio. Si no, el premio quedaría en estado "canjeado" y no se
     // podría volver a rasgar el ticket para obtener un código nuevo.
     clearAllRedemptions(customerId, businessId);
-    if (baseRules && initialWallet) {
-      const resetCfg = loadDemoSimulatorConfig(businessId, business.name, baseRules, initialWallet);
-      setSimulatorConfig(resetCfg);
-    }
     setSelectedNode(null);
   };
 
   return (
-    <main className="w-full max-w-md h-screen max-h-screen bg-white text-black relative flex flex-col overflow-hidden pb-[88px]">
+    <main className="w-full max-w-[640px] h-dvh max-h-dvh bg-white text-black relative flex flex-col overflow-hidden pb-[88px]">
       {/* 1. Barra superior fija minimalista con flecha volver y botón sintonizador */}
       <LocalTopBar onOpenSimulator={() => setIsSimulatorOpen(true)} />
 

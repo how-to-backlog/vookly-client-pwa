@@ -31,7 +31,10 @@ export const AURORA_PRESET_ARCTIC: AuroraProps = {
  * Fondo blanco luminoso original donde la cortina clara de 2 tonos se difumina.
  */
 export const AuroraBackdrop: React.FC = () => (
-  <div className="absolute inset-0 z-0 overflow-hidden bg-white" aria-hidden="true">
+  <div
+    className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[100vw] z-0 overflow-hidden bg-white"
+    aria-hidden="true"
+  >
     <Aurora {...AURORA_PRESET_ARCTIC} className="h-full w-full" />
   </div>
 );

@@ -169,9 +169,8 @@ export function LocalDemoSimulatorModal({
         {/* Cabecera del Simulador */}
         <div className="flex items-center justify-between pb-3 mb-4 border-b border-neutral-100">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
             <h3 className="text-[14px] font-black text-neutral-900 tracking-tight">
-              Simulador Demo de Comercio
+              Editor de Premios y Sellos
             </h3>
           </div>
           <button
@@ -190,7 +189,7 @@ export function LocalDemoSimulatorModal({
         <div className="flex flex-col gap-3 mb-4">
           <div className="flex flex-col gap-1.5">
             <label className="text-[10.5px] font-bold uppercase tracking-wider text-neutral-500">
-              Nombre del Local
+              Nombre de tu local
             </label>
             <input
               type="text"
@@ -255,7 +254,7 @@ export function LocalDemoSimulatorModal({
         <div className="flex flex-col gap-2 mb-4">
           <div className="flex items-center justify-between">
             <label className="text-[10.5px] font-bold uppercase tracking-wider text-neutral-500">
-              Premios y Tramos ({draftTiers.length}/5)
+              Sellos y Premios ({draftTiers.length}/5)
             </label>
             <span className="text-[10.5px] font-bold text-neutral-900 bg-neutral-100 px-2 py-0.5 rounded-full">
               Total: {totalMaxStamps} sellos
@@ -298,7 +297,7 @@ export function LocalDemoSimulatorModal({
                   </div>
 
                   {/* Fila de controles del tramo: Sellos delta + Nombre del producto */}
-                  <div className="grid grid-cols-[82px_1fr] gap-2 items-center">
+                  <div className="grid grid-cols-[104px_1fr] gap-2 items-center">
                     {/* Stepper de Sellos delta */}
                     <div className="flex items-center justify-between bg-white border border-neutral-200 rounded-xl px-1.5 py-1">
                       <button
@@ -311,8 +310,14 @@ export function LocalDemoSimulatorModal({
                       >
                         −
                       </button>
-                      <span className="text-[11.5px] font-bold text-neutral-900">
-                        {isFirst ? `${tier.stampsFromPrevious}s` : `+${tier.stampsFromPrevious}s`}
+                      <span className="text-[11.5px] font-bold text-neutral-900 whitespace-nowrap">
+                        {isFirst
+                          ? tier.stampsFromPrevious === 1
+                            ? '1 Sello'
+                            : `${tier.stampsFromPrevious} Sellos`
+                          : tier.stampsFromPrevious === 1
+                            ? '+ 1 Sello'
+                            : `+ ${tier.stampsFromPrevious} Sellos`}
                       </span>
                       <button
                         type="button"

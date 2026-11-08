@@ -196,7 +196,7 @@ export function MerchantOnboardingSheet({
           </div>
         </div>
 
-        {/* SECCIÓN FINAL: PERSONALIZACIÓN VISUAL Y VISTA PREVIA EN VIVO */}
+        {/* SECCIÓN FINAL: PERSONALIZACIÓN VISUAL DE LA TARJETA */}
         <div className="flex flex-col gap-3.5 pt-2 border-t border-neutral-200/80">
           <div className="flex items-center gap-1.5 text-neutral-900">
             <Palette className="h-4 w-4 text-sky-600" />
@@ -205,7 +205,7 @@ export function MerchantOnboardingSheet({
             </span>
           </div>
 
-          {/* Vista previa en vivo */}
+          {/* Mini-tarjeta de preview */}
           <LiveCardPreview
             businessName={businessName}
             category={category}
@@ -222,7 +222,7 @@ export function MerchantOnboardingSheet({
             onSelectColor={handleColorSelect}
           />
 
-          {/* Selector de patrones Hero Patterns */}
+          {/* Selector de patrones */}
           <CardPatternPicker
             selectedPatternId={customPatternId}
             inkColor={customInkColor}

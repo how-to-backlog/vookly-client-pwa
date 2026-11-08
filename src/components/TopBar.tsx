@@ -26,7 +26,7 @@ export interface TopBarProps {
  * Incorpora el logo Vookly y botón directo a WhatsApp de soporte.
  */
 export const TopBar: React.FC<TopBarProps> = ({
-  supportPhone = '5493512345678',
+  supportPhone = '5493518799794',
   defaultMessage = 'Hola! Tengo una consulta sobre mi cuenta de Vookly.',
   variant = 'solid',
   action
@@ -48,13 +48,13 @@ export const TopBar: React.FC<TopBarProps> = ({
       <div className="w-full max-w-md mx-auto px-5 h-14 flex items-center justify-between">
         {/* Logotipo Vookly */}
         <span
-          className={`text-[19px] font-semibold tracking-tight select-none inline-flex items-baseline ${
+          className={`text-[28px] font-semibold tracking-tight select-none inline-flex items-baseline ${
             isTransparent
               ? 'text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.45)]'
               : 'text-neutral-900'
           }`}
         >
-          vookly<span className="text-[24px] leading-none text-neutral-400 font-black ml-[1px]">.</span>
+          vookly<span className="text-[35px] leading-none text-neutral-400 font-black ml-[1px]">.</span>
         </span>
 
         <div className="flex items-center gap-1">
