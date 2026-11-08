@@ -45,7 +45,7 @@ export const DEFAULT_CARDS: CardItem[] = [
     stamps: 15,
     totalStamps: 30,
     nextRewardTitle: 'Tostado Especial',
-    hasReadyReward: true // Tiene voucher de Tostado Especial listo
+    hasReadyReward: true
   },
   {
     id: '1-b',
@@ -57,7 +57,7 @@ export const DEFAULT_CARDS: CardItem[] = [
     stamps: 3,
     totalStamps: 10,
     nextRewardTitle: 'Espresso Doble',
-    hasReadyReward: true // Tiene Espresso Doble listo
+    hasReadyReward: true
   },
 
   // 2. Barberías
@@ -69,7 +69,7 @@ export const DEFAULT_CARDS: CardItem[] = [
     stamps: 2,
     totalStamps: 5,
     nextRewardTitle: 'Perfilado de Barba',
-    hasReadyReward: true // Tiene Perfilado de Barba listo
+    hasReadyReward: true
   },
   {
     id: '3-b',
@@ -81,7 +81,7 @@ export const DEFAULT_CARDS: CardItem[] = [
     stamps: 4,
     totalStamps: 6,
     nextRewardTitle: 'Corte Fade',
-    hasReadyReward: true // Tiene Corte Fade listo
+    hasReadyReward: true
   },
 
   // 3. Heladerías
@@ -129,7 +129,7 @@ export const DEFAULT_CARDS: CardItem[] = [
     stamps: 5,
     totalStamps: 10,
     nextRewardTitle: 'Café al paso + Medialunas',
-    hasReadyReward: true // Tiene voucher listo
+    hasReadyReward: true
   }
 ];
 
@@ -142,6 +142,13 @@ export interface CardContainerProps {
   /** Callback para abrir el directorio de comercios adheridos */
   onOpenDirectory?: () => void;
 }
+
+/**
+ * Sombra negra direccional a 45 grados:
+ * Se proyecta hacia la esquina inferior derecha (x: 4px, y: 7px, blur: 16px)
+ * otorgando profundidad y relieve tridimensional sin desbordes agresivos.
+ */
+const CARD_BOTTOM_RIGHT_SHADOW = '4px 7px 16px -2px rgba(0, 0, 0, 0.42), 1px 2px 5px 0px rgba(0, 0, 0, 0.22)';
 
 /**
  * CardContainer: Apila las tarjetas de comercios con ScrollStack.
@@ -176,7 +183,7 @@ export const CardContainer: React.FC<CardContainerProps> = ({
             key={card.id}
             padding="p-0"
             background="transparent"
-            boxShadow="none"
+            boxShadow={CARD_BOTTOM_RIGHT_SHADOW}
             itemClassName="h-[220px] rounded-[28px] overflow-hidden"
           >
             <ScrollStackCard
@@ -194,7 +201,7 @@ export const CardContainer: React.FC<CardContainerProps> = ({
           </ScrollStackItem>
         ))}
 
-        {/* Tarjeta de Descubrimiento (DiscoverNicheCard) como ancla final del mazo */}
+        {/* Tarjeta de Descubrimiento (DiscoverNicheCard) sin sombra (boxShadow="none") */}
         <ScrollStackItem
           key="discover-card-anchor"
           padding="p-0"
