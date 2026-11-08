@@ -6,6 +6,8 @@ import { CategoryCardSurface } from './CategoryCardSurface';
 import React from 'react';
 
 export interface ScrollStackCardProps {
+  /** Identificador de la tarjeta */
+  id?: string;
   /** URL destino al hacer click/tap */
   href?: string;
   /** Nombre del comercio */
@@ -37,6 +39,7 @@ export interface ScrollStackCardProps {
  * Mantiene la navegación con circular reveal nativo de Vookly.
  */
 export const ScrollStackCard: React.FC<ScrollStackCardProps> = ({
+  id,
   href,
   localName,
   categoryIcon,
@@ -82,6 +85,7 @@ export const ScrollStackCard: React.FC<ScrollStackCardProps> = ({
       {iconName && (
         <CategoryCardSurface
           name={iconName}
+          cardId={id}
           localName={localName}
           stamps={stamps}
           totalStamps={totalStamps}

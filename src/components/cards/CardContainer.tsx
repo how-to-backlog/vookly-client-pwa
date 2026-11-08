@@ -187,6 +187,7 @@ export const CardContainer: React.FC<CardContainerProps> = ({
             itemClassName="h-[220px] rounded-[28px] overflow-hidden"
           >
             <ScrollStackCard
+              id={card.id}
               href={card.href}
               localName={card.localName}
               categoryIcon={card.categoryIcon}

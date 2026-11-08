@@ -3,11 +3,12 @@
 import React from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { CategoryIcon, CATEGORY_PALETTE, type CategoryIconName } from '@/components/icons/CategoryIcon';
-import { Sparkles } from 'lucide-react';
 
 export interface CategoryCardSurfaceProps {
   /** Categoría cuyo icono y paleta se usan. */
   name: CategoryIconName;
+  /** Identificador de la tarjeta */
+  cardId?: string;
   /** Nombre del local comercial */
   localName?: string;
   /** Sellos acumulados */
@@ -33,6 +34,7 @@ export interface CategoryCardSurfaceProps {
 
 export const CategoryCardSurface: React.FC<CategoryCardSurfaceProps> = ({
   name,
+  cardId,
   localName,
   stamps,
   totalStamps,
@@ -54,6 +56,9 @@ export const CategoryCardSurface: React.FC<CategoryCardSurfaceProps> = ({
 
   const showStamps = typeof stamps === 'number' && typeof totalStamps === 'number';
 
+  // Patrón exacto provisto por el usuario exclusivamente para Coffee Shop (cardId === '1')
+  const isCoffeeShop = cardId === '1';
+
   return (
     <div
       className={`relative h-full w-full overflow-hidden flex flex-col justify-between p-6 select-none ${className}`.trim()}
@@ -62,10 +67,20 @@ export const CategoryCardSurface: React.FC<CategoryCardSurfaceProps> = ({
         opacity: muted ? 0.6 : 1
       }}
     >
+      {/* Patrón SVG Hero Patterns aplicado exclusivamente a Coffee Shop */}
+      {isCoffeeShop && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 opacity-80"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%23601bcf' fill-opacity='0.2' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+          }}
+        />
+      )}
+
       {/*
         EFECTO RESPLANDOR (SHIMMER) EXCLUSIVO:
-        Se activa únicamente si la tarjeta tiene un premio listo para canjear (hasReadyReward === true).
-        Es exactamente el mismo haz diagonal de luz suave que usa el botón flotante RewardFab.
+        Se activa únicamente si la tarjeta tiene un premio listo para canjear.
       */}
       {hasReadyReward && !reducedMotion && (
         <motion.div
