@@ -113,14 +113,14 @@ export function LandingScreen() {
         {/*
           Zona Inferior:
           1. Badge "Demo" centrado en el espacio intermedio entre las tarjetas y "Personaliza tu local".
-             Degradado animado exclusivo de 2 colores: blanco (#ffffff) y azul del fondo (#38bdf8), con peso font-black.
+             Degradado animado de 2 colores: blanco (#ffffff) y azul oscuro zafiro/cobalto (#2563eb).
           2. Botones de acción vertical centrados.
         */}
         <div className="shrink-0 flex flex-col items-center justify-center w-full gap-5 pb-1">
-          {/* Badge "Demo" con contorno redondo, más bold y centrado entre tarjetas y botón */}
+          {/* Badge "Demo" con contorno redondo, font-black y degradado blanco/azul oscuro */}
           <div className="flex items-center justify-center w-full">
             <GradientText
-              colors={['#ffffff', '#38bdf8']}
+              colors={['#ffffff', '#2563eb']}
               animationSpeed={3}
               showBorder={true}
               className="text-[13.5px] font-black tracking-[0.05em] px-4.5 py-1"
