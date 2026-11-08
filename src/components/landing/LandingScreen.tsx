@@ -68,23 +68,23 @@ export function LandingScreen() {
       {/* Fondo vivo: Mismo Aurora claro de la Billetera sobre blanco */}
       <LandingBackdrop />
 
-      {/* Badge "Demo" con colores oscuros legibles sobre fondo claro (azul cobalto y negro neutral) */}
+      {/* Badge "Demo" con fondo blanco sólido y degradado azul/negro */}
       <div className="absolute top-6 right-5 z-20">
         <GradientText
           colors={['#172554', '#2563eb', '#0f172a']}
           animationSpeed={3}
           showBorder={true}
-          className="text-[12px] font-black tracking-[0.06em] px-3.5 py-1 !bg-white/80 border border-neutral-300 shadow-2xs"
+          className="text-[12px] font-black tracking-[0.06em] px-3.5 py-1 !bg-white border border-neutral-200/80 shadow-xs"
         >
           Demo
         </GradientText>
       </div>
 
       <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-10 pt-20">
-        {/* Cabecera: Marca "vookly." en negro pleno (#171717) con punto celeste */}
+        {/* Cabecera: Marca "vookly." con su color original blanco y punto celeste */}
         <div className="shrink-0 w-full text-center pt-6 pb-2">
-          <h1 className="text-[54px] sm:text-[62px] font-black tracking-[-0.045em] text-neutral-900 leading-none font-sans select-none">
-            vookly<span className="text-sky-500">.</span>
+          <h1 className="text-[54px] sm:text-[62px] font-black tracking-[-0.045em] text-white leading-none font-sans drop-shadow-xl select-none">
+            vookly<span className="text-sky-400">.</span>
           </h1>
         </div>
 
@@ -119,7 +119,7 @@ export function LandingScreen() {
           </div>
         </div>
 
-        {/* Acciones de Navegación Inferiores con textos oscurecidos y alto contraste */}
+        {/* Acciones de Navegación Inferiores */}
         <div className="shrink-0 flex flex-col items-center justify-center w-full pb-1">
           <nav className="flex flex-col items-center justify-center gap-2.5 w-full">
             <button
