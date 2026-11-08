@@ -11,7 +11,7 @@ import { PitchCard } from '@/components/landing/PitchCard';
 import { Stack } from '@/components/registry/Stack';
 import { GradientText } from '@/components/registry/GradientText';
 import { usePageTransition } from '@/components/transition/TransitionProvider';
-import { LANDING_PITCH_MESSAGES, LANDING_TITLE } from '@/data/landingContent';
+import { LANDING_PITCH_MESSAGES } from '@/data/landingContent';
 import { saveDemoSimulatorConfig } from '@/services/demoSimulatorStorage';
 import type { DemoSimulatorConfig } from '@/types/loyalty';
 
@@ -71,18 +71,21 @@ export function LandingScreen() {
       {/* Fondo vivo: Aurora fluida sin franjas laterales */}
       <LandingBackdrop />
 
-      <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-10 pt-12">
-        {/* Cabecera: Palo ancho y centrado */}
-        <div className="shrink-0 w-full text-center">
-          <h1 className="text-[32px] sm:text-[36px] font-black tracking-[-0.035em] text-white leading-tight font-sans drop-shadow-md">
-            Bienvenido a <span className="text-sky-300">vookly.</span>
+      <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-10 pt-16">
+        {/*
+          Cabecera: Marca pura "vookly." en gran tamaño, palo ancho
+          y con posición más baja (pt-16 en contenedor + pt-4 interno)
+        */}
+        <div className="shrink-0 w-full text-center pt-3 pb-2">
+          <h1 className="text-[42px] sm:text-[46px] font-black tracking-[-0.04em] text-white leading-none font-sans drop-shadow-lg">
+            vookly<span className="text-sky-400">.</span>
           </h1>
         </div>
 
         {/*
           Zona Central:
           1. Stack Cuadrado Compacto en Gama de Azules
-          2. Badge "Demo" con efecto GradientText (azul y blanco con contorno redondo)
+          2. Badge "Demo" (capitalizado) con efecto GradientText
         */}
         <div className="my-auto flex flex-col items-center justify-center w-full py-1 gap-4">
           <div className="w-full max-w-[270px] aspect-square ml-4">
@@ -113,13 +116,13 @@ export function LandingScreen() {
             />
           </div>
 
-          {/* Badge "Demo" con GradientText de React Bits: contorno redondo y degradado animado azul/blanco */}
+          {/* Badge "Demo" capitalizado con contorno redondo y degradado animado azul/blanco */}
           <div className="pt-1">
             <GradientText
               colors={['#ffffff', '#38bdf8', '#60a5fa', '#ffffff']}
               animationSpeed={3.5}
               showBorder={true}
-              className="text-[12px] font-bold tracking-[0.18em] uppercase px-4 py-1"
+              className="text-[13px] font-semibold tracking-[0.04em] px-4 py-1"
             >
               Demo
             </GradientText>
