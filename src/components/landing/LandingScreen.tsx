@@ -71,13 +71,13 @@ export function LandingScreen() {
       {/* Fondo vivo: Aurora fluida sin franjas laterales */}
       <LandingBackdrop />
 
-      <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-10 pt-16">
+      <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-10 pt-20">
         {/*
-          Cabecera: Marca pura "vookly." en gran tamaño, palo ancho
-          y con posición más baja (pt-16 en contenedor + pt-4 interno)
+          Cabecera: Marca "vookly." en escala imponente (56px a 62px)
+          y con posición más baja (pt-20 en main + pt-6 interno)
         */}
-        <div className="shrink-0 w-full text-center pt-3 pb-2">
-          <h1 className="text-[42px] sm:text-[46px] font-black tracking-[-0.04em] text-white leading-none font-sans drop-shadow-lg">
+        <div className="shrink-0 w-full text-center pt-6 pb-2">
+          <h1 className="text-[54px] sm:text-[62px] font-black tracking-[-0.045em] text-white leading-none font-sans drop-shadow-xl select-none">
             vookly<span className="text-sky-400">.</span>
           </h1>
         </div>
@@ -85,7 +85,7 @@ export function LandingScreen() {
         {/*
           Zona Central:
           1. Stack Cuadrado Compacto en Gama de Azules
-          2. Badge "Demo" (capitalizado) con efecto GradientText
+          2. Badge "Demo" con efecto GradientText
         */}
         <div className="my-auto flex flex-col items-center justify-center w-full py-1 gap-4">
           <div className="w-full max-w-[270px] aspect-square ml-4">
