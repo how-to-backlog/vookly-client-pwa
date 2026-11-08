@@ -64,27 +64,27 @@ export function LandingScreen() {
   };
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-[#070d24]">
-      {/* Fondo vivo: Aurora fluida sin franjas laterales */}
+    <div className="relative h-screen w-full overflow-hidden bg-white">
+      {/* Fondo vivo: Mismo Aurora claro de la Billetera sobre blanco */}
       <LandingBackdrop />
 
-      {/* Badge "Demo" flotante anclado en la esquina superior derecha */}
+      {/* Badge "Demo" con colores oscuros legibles sobre fondo claro (azul cobalto y negro neutral) */}
       <div className="absolute top-6 right-5 z-20">
         <GradientText
-          colors={['#ffffff', '#2563eb']}
+          colors={['#172554', '#2563eb', '#0f172a']}
           animationSpeed={3}
           showBorder={true}
-          className="text-[12px] font-black tracking-[0.06em] px-3.5 py-1"
+          className="text-[12px] font-black tracking-[0.06em] px-3.5 py-1 !bg-white/80 border border-neutral-300 shadow-2xs"
         >
           Demo
         </GradientText>
       </div>
 
       <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-10 pt-20">
-        {/* Cabecera: Marca "vookly." en escala hero y con buen aire vertical */}
+        {/* Cabecera: Marca "vookly." en negro pleno (#171717) con punto celeste */}
         <div className="shrink-0 w-full text-center pt-6 pb-2">
-          <h1 className="text-[54px] sm:text-[62px] font-black tracking-[-0.045em] text-white leading-none font-sans drop-shadow-xl select-none">
-            vookly<span className="text-sky-400">.</span>
+          <h1 className="text-[54px] sm:text-[62px] font-black tracking-[-0.045em] text-neutral-900 leading-none font-sans select-none">
+            vookly<span className="text-sky-500">.</span>
           </h1>
         </div>
 
@@ -119,13 +119,13 @@ export function LandingScreen() {
           </div>
         </div>
 
-        {/* Acciones de Navegación Inferiores */}
+        {/* Acciones de Navegación Inferiores con textos oscurecidos y alto contraste */}
         <div className="shrink-0 flex flex-col items-center justify-center w-full pb-1">
           <nav className="flex flex-col items-center justify-center gap-2.5 w-full">
             <button
               type="button"
               onClick={() => setIsSheetOpen(true)}
-              className="inline-flex items-center justify-center gap-1.5 px-5 py-2 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 text-[13.5px] font-medium text-white transition-all active:scale-95 shadow-sm backdrop-blur-xs"
+              className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-[13.5px] font-bold text-white transition-all active:scale-95 shadow-sm"
             >
               Personaliza tu local
               <ChevronRight className="h-3.5 w-3.5 opacity-80" />
@@ -133,7 +133,7 @@ export function LandingScreen() {
             <button
               type="button"
               onClick={handleSkip}
-              className="flex items-center justify-center gap-1 text-[13px] font-normal text-white/60 hover:text-white/90 transition-colors py-0.5"
+              className="flex items-center justify-center gap-1 text-[13px] font-medium text-neutral-600 hover:text-neutral-900 transition-colors py-0.5"
             >
               Omitir
               <ChevronRight className="h-3 w-3 opacity-60" />
