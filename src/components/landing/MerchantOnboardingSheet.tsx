@@ -18,7 +18,6 @@ const BUSINESS_TYPES: { id: CategoryIconName; label: string }[] = [
   { id: 'panaderia', label: 'Panadería' }
 ];
 
-// Lógica de producto de fidelización: para un premio inicial alcanzable, el rango lógico es de 1 a 10 sellos.
 const MIN_STAMPS = 1;
 const MAX_STAMPS = 10;
 const DEFAULT_STAMPS = 5;
@@ -101,11 +100,16 @@ export function MerchantOnboardingSheet({
           />
         </label>
 
-        {/* Control de Sellos Compacto en Píldora auto-ajustada */}
+        {/* Control de Sellos Compacto con regla de equivalencia (1 compra = 1 sello) */}
         <div className="flex items-center justify-between py-0.5">
-          <span className="text-[12px] font-semibold uppercase tracking-wide text-neutral-500">
-            Sellos
-          </span>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[12px] font-semibold uppercase tracking-wide text-neutral-500">
+              Sellos
+            </span>
+            <span className="text-[11px] font-normal text-neutral-400 lowercase">
+              (1 compra = 1 sello)
+            </span>
+          </div>
 
           <div className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-neutral-50 px-2 py-1 shadow-2xs">
             <button
@@ -167,13 +171,13 @@ export function MerchantOnboardingSheet({
           </div>
         </div>
 
-        {/* Botón único de acción directo y sin distracciones */}
-        <div className="pt-2">
+        {/* Botón "Ir a vookly." achicado y centrado, sin estirarse de punta a punta */}
+        <div className="pt-2 flex justify-center w-full">
           <button
             type="button"
             onClick={handleSubmit}
             disabled={!canSubmit}
-            className="w-full rounded-full bg-neutral-900 py-3 text-[14.5px] font-bold text-white transition-opacity hover:opacity-90 active:scale-98 disabled:cursor-not-allowed disabled:opacity-40 shadow-sm"
+            className="inline-flex items-center justify-center px-8 py-2.5 rounded-full bg-neutral-900 text-[14.5px] font-bold text-white transition-all hover:bg-neutral-800 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 shadow-sm"
           >
             Ir a vookly.
           </button>
