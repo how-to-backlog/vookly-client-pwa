@@ -9,21 +9,12 @@ import MerchantOnboardingSheet, {
 } from '@/components/landing/MerchantOnboardingSheet';
 import { PitchCard } from '@/components/landing/PitchCard';
 import { Stack } from '@/components/registry/Stack';
+import { GradientText } from '@/components/registry/GradientText';
 import { usePageTransition } from '@/components/transition/TransitionProvider';
 import { LANDING_PITCH_MESSAGES, LANDING_TITLE } from '@/data/landingContent';
 import { saveDemoSimulatorConfig } from '@/services/demoSimulatorStorage';
 import type { DemoSimulatorConfig } from '@/types/loyalty';
 
-/**
- * Gama armónica de azules profundos y marinos para las tarjetas:
- * Contrastan de forma elegante con la Aurora sin generar choques de colores extraños:
- * 1. Azul Zafiro Profundo: #172554 con texto #e0f2fe
- * 2. Azul Cobalto Nocturno: #1e3a8a con texto #f0fdfa
- * 3. Azul Marino Índigo: #1e1b4b con texto #ede9fe
- * 4. Azul Océano Medianoche: #0f172a con texto #e2e8f0
- * 5. Azul Acero Oscuro: #1e293b con texto #f8fafc
- * 6. Azul Petróleo Profundo: #164e63 con texto #ecfeff
- */
 const CARD_BLUE_THEMES = [
   { bg: '#172554', ink: '#e0f2fe' }, // Azul Zafiro
   { bg: '#1e3a8a', ink: '#f0fdfa' }, // Azul Cobalto
@@ -76,12 +67,12 @@ export function LandingScreen() {
   };
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-[#0a0f2c]">
-      {/* Fondo vivo: Aurora azul multicapa y con movimiento ondulatorio continuo */}
+    <div className="relative h-screen w-full overflow-hidden bg-[#070d24]">
+      {/* Fondo vivo: Aurora fluida sin franjas laterales */}
       <LandingBackdrop />
 
       <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-10 pt-12">
-        {/* Cabecera: Tipografía llamativa con palo ancho, peso bold/black y centrado perfecto */}
+        {/* Cabecera: Palo ancho y centrado */}
         <div className="shrink-0 w-full text-center">
           <h1 className="text-[32px] sm:text-[36px] font-black tracking-[-0.035em] text-white leading-tight font-sans drop-shadow-md">
             Bienvenido a <span className="text-sky-300">vookly.</span>
@@ -89,12 +80,12 @@ export function LandingScreen() {
         </div>
 
         {/*
-          Contenedor del Stack Cuadrado Compacto en Gama de Azules:
-          - Formato 265px x 265px centrado con margen de desborde protegido.
-          - Texto en esquina inferior izquierda con tipografía contundente.
+          Zona Central:
+          1. Stack Cuadrado Compacto en Gama de Azules
+          2. Badge "Demo" con efecto GradientText (azul y blanco con contorno redondo)
         */}
-        <div className="my-auto flex items-center justify-center w-full py-2">
-          <div className="w-full max-w-[265px] aspect-square ml-4">
+        <div className="my-auto flex flex-col items-center justify-center w-full py-1 gap-4">
+          <div className="w-full max-w-[270px] aspect-square ml-4">
             <Stack
               cards={cardsWithColors.map((card) => (
                 <PitchCard
@@ -108,7 +99,7 @@ export function LandingScreen() {
               visible={4}
               spread={0.35}
               depth={0.08}
-              radius={24}
+              radius={26}
               frame={0}
               frameColor="transparent"
               shadow
@@ -121,18 +112,26 @@ export function LandingScreen() {
               pauseOnHover
             />
           </div>
+
+          {/* Badge "Demo" con GradientText de React Bits: contorno redondo y degradado animado azul/blanco */}
+          <div className="pt-1">
+            <GradientText
+              colors={['#ffffff', '#38bdf8', '#60a5fa', '#ffffff']}
+              animationSpeed={3.5}
+              showBorder={true}
+              className="text-[12px] font-bold tracking-[0.18em] uppercase px-4 py-1"
+            >
+              Demo
+            </GradientText>
+          </div>
         </div>
 
-        {/*
-          Acciones de Navegación Inferiores:
-          - Botón "Personaliza tu local" más compacto y refinado.
-          - "Omitir este paso" sutil debajo, con buena respiración del borde inferior.
-        */}
+        {/* Acciones de Navegación Inferiores */}
         <nav className="shrink-0 flex flex-col items-center justify-center gap-2.5 w-full">
           <button
             type="button"
             onClick={() => setIsSheetOpen(true)}
-            className="inline-flex items-center justify-center gap-1.5 px-4.5 py-2 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 text-[13.5px] font-medium text-white transition-all active:scale-95 shadow-sm backdrop-blur-xs"
+            className="inline-flex items-center justify-center gap-1.5 px-5 py-2 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 text-[13.5px] font-medium text-white transition-all active:scale-95 shadow-sm backdrop-blur-xs"
           >
             Personaliza tu local
             <ChevronRight className="h-3.5 w-3.5 opacity-80" />
