@@ -68,13 +68,13 @@ export function LandingScreen() {
       {/* Fondo vivo: Mismo Aurora claro de la Billetera sobre blanco */}
       <LandingBackdrop />
 
-      {/* Badge "Demo" con fondo blanco sólido y degradado azul/negro */}
+      {/* Badge "Demo" con fondo 100% transparente y contorno fino redondeado */}
       <div className="absolute top-6 right-5 z-20">
         <GradientText
           colors={['#172554', '#2563eb', '#0f172a']}
           animationSpeed={3}
           showBorder={true}
-          className="text-[12px] font-black tracking-[0.06em] px-3.5 py-1 !bg-white border border-neutral-200/80 shadow-xs"
+          className="text-[12px] font-black tracking-[0.06em] px-3 py-0.5 border border-neutral-400/50"
         >
           Demo
         </GradientText>

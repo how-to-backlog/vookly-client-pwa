@@ -15,8 +15,8 @@ export interface GradientTextProps {
 }
 
 /**
- * GradientText: Texto animado con degradado en movimiento continuo
- * adaptado de React Bits (@react-bits/GradientText-TS-TW).
+ * GradientText: Texto animado con degradado en movimiento continuo.
+ * Con fondo transparente para que solo se vea la palabra y el contorno redondeado.
  */
 export function GradientText({
   children,
@@ -99,27 +99,10 @@ export function GradientText({
 
   return (
     <motion.div
-      className={`relative mx-auto flex max-w-fit flex-row items-center justify-center rounded-full font-medium backdrop-blur transition-shadow duration-500 overflow-hidden ${showBorder ? 'py-1 px-3.5' : ''} ${className}`.trim()}
+      className={`relative mx-auto flex max-w-fit flex-row items-center justify-center rounded-full font-medium transition-shadow duration-500 overflow-hidden bg-transparent ${showBorder ? 'py-1 px-3.5 border border-sky-400/40' : ''} ${className}`.trim()}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {showBorder && (
-        <motion.div
-          className="absolute inset-0 z-0 pointer-events-none rounded-full"
-          style={{ ...gradientStyle, backgroundPosition }}
-        >
-          <div
-            className="absolute bg-[#070d24]/90 rounded-full z-[-1]"
-            style={{
-              width: 'calc(100% - 2px)',
-              height: 'calc(100% - 2px)',
-              left: '50%',
-              top: '50%',
-              transform: 'translate(-50%, -50%)'
-            }}
-          />
-        </motion.div>
-      )}
       <motion.div
         className="inline-block relative z-10 text-transparent bg-clip-text"
         style={{ ...gradientStyle, backgroundPosition, WebkitBackgroundClip: 'text' }}
