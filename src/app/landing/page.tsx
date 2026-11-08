@@ -1,10 +1,9 @@
-import { LandingScreen } from '@/components/landing/LandingScreen';
+import { redirect } from 'next/navigation';
 
 /**
- * Ruta de entrada de la demo. La landing muestra el pitch y deriva en dos
- * flujos: personalizar el local (alta en una lámina) u omitir y entrar con los
- * datos precargados del hub.
+ * `/landing` queda como alias de la ruta canónica (`/`), que es el entry point
+ * de la demo. Así hay una sola URL pública para la pantalla de bienvenida.
  */
-export default function LandingPage() {
-  return <LandingScreen />;
+export default function Landing() {
+  redirect('/');
 }

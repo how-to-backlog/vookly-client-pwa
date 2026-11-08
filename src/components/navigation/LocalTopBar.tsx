@@ -20,7 +20,7 @@ export const LocalTopBar: React.FC<LocalTopBarProps> = ({ onBack, onOpenSimulato
     if (onBack) {
       onBack();
     } else {
-      router.push('/');
+      router.push('/hub');
     }
   };
 

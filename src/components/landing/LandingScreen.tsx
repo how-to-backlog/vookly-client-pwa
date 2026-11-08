@@ -69,13 +69,13 @@ export function LandingScreen() {
     // resuelve la demo precargada de ese rubro.
     saveDemoSimulatorConfig(values.category, config);
     setIsSheetOpen(false);
-    triggerTransition(event, '/');
+    triggerTransition(event, '/hub');
   };
 
   const handleSkip = (event: React.MouseEvent<HTMLButtonElement>) => {
     // Omitir no guarda nada: entra a la demo con los datos precargados.
     setIsSheetOpen(false);
-    triggerTransition(event, '/');
+    triggerTransition(event, '/hub');
   };
 
   return (
