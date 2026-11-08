@@ -2,15 +2,16 @@
 
 import { useSyncExternalStore } from 'react';
 import type { CardItem } from '@/components/cards/CardContainer';
-import {
-  MOCK_BUSINESS_CAFETERIA,
-  MOCK_RULES_CAFETERIA,
-  MOCK_CUSTOMER_STATUS_CAFETERIA
-} from '@/data/mockLoyalty';
+import { extractBusinessSlug } from '@/components/home/useDynamicCards';
 import {
   loadDemoSimulatorConfig,
   applyDemoConfigToEntities
 } from '@/services/demoSimulatorStorage';
+import {
+  getBusinessSync,
+  getBusinessLoyaltyRulesSync,
+  getCustomerWalletSync
+} from '@/services/loyaltyRepository';
 
 /**
  * Estado de premio del cliente para el hub.
@@ -40,7 +41,16 @@ export type RewardStatus =
   | null;
 
 /**
+ * Cliente de la demo: el mismo que usa el hub para resolver las billeteras.
+ */
+const DEMO_CUSTOMER_ID = 'cust-01';
+
+/**
  * Deriva el estado de premio a partir del almacenamiento del simulador.
+ *
+ * Recorre las tarjetas del hub y resuelve el negocio de cada una (por el slug
+ * de su href) para que el anuncio no quede atado a un comercio en particular:
+ * el local que el comerciante da de alta en la landing es uno más de la lista.
  *
  * Vive fuera del componente que lo muestra para que la vista sea
  * presentacional: recibe el estado ya resuelto y no sabe de dónde sale.
@@ -48,53 +58,63 @@ export type RewardStatus =
 export function computeRewardStatus(cards: CardItem[]): RewardStatus {
   if (typeof window === 'undefined') return null;
 
-  const cafeteriaCard = cards.find((c) => c.href === '/local/cafeteria');
-  if (!cafeteriaCard) return null;
+  const candidates = cards
+    .map((card) => ({ card, slug: extractBusinessSlug(card.href) }))
+    .filter((entry): entry is { card: CardItem; slug: string } => Boolean(entry.slug));
 
-  const config = loadDemoSimulatorConfig(
-    'cafeteria',
-    MOCK_BUSINESS_CAFETERIA.name,
-    MOCK_RULES_CAFETERIA,
-    MOCK_CUSTOMER_STATUS_CAFETERIA
-  );
+  for (const { card, slug } of candidates) {
+    const business = getBusinessSync(slug);
+    const rules = getBusinessLoyaltyRulesSync(slug);
+    const wallet = getCustomerWalletSync(DEMO_CUSTOMER_ID, slug);
 
-  const { rules, wallet } = applyDemoConfigToEntities(
-    config,
-    MOCK_RULES_CAFETERIA,
-    MOCK_CUSTOMER_STATUS_CAFETERIA
-  );
+    if (!business || !rules || !wallet) continue;
 
-  const businessName = config.businessName || MOCK_BUSINESS_CAFETERIA.name;
+    const config = loadDemoSimulatorConfig(
+      slug,
+      card.localName || business.name,
+      rules,
+      wallet
+    );
 
-  const readyVoucher = (wallet.vouchers || []).find((v) => v.status === 'ready');
-  if (readyVoucher) {
-    return {
-      type: 'ready',
-      href: '/local/cafeteria',
-      businessName,
-      rewardTitle: readyVoucher.rewardTitle,
-      badgeText: '¡Premio listo!',
-      detail: `${readyVoucher.rewardTitle} en ${businessName}`
-    };
-  }
+    const { rules: resolvedRules, wallet: resolvedWallet } = applyDemoConfigToEntities(
+      config,
+      rules,
+      wallet
+    );
 
-  const sortedMilestones = [...rules.rewardMilestones].sort(
-    (a, b) => a.stampThreshold - b.stampThreshold
-  );
-  const nextMilestone = sortedMilestones.find((m) => m.stampThreshold > wallet.currentStamps);
+    const businessName = config.businessName?.trim() || card.localName || business.name;
+    const href = card.href || `/local/${slug}`;
 
-  if (nextMilestone) {
-    const stampsLeft = nextMilestone.stampThreshold - wallet.currentStamps;
-    if (stampsLeft === 1 || stampsLeft === 2) {
+    const readyVoucher = (resolvedWallet.vouchers || []).find((v) => v.status === 'ready');
+    if (readyVoucher) {
       return {
-        type: 'close',
-        href: '/local/cafeteria',
+        type: 'ready',
+        href,
         businessName,
-        rewardTitle: nextMilestone.rewardTitle,
-        stampsLeft,
-        badgeText: stampsLeft === 1 ? 'A solo 1 sello' : 'A solo 2 sellos',
-        detail: `para ganar ${nextMilestone.rewardTitle} en ${businessName}`
+        rewardTitle: readyVoucher.rewardTitle,
+        badgeText: '¡Premio listo!',
+        detail: `${readyVoucher.rewardTitle} en ${businessName}`
       };
+    }
+
+    const sortedMilestones = [...resolvedRules.rewardMilestones].sort(
+      (a, b) => a.stampThreshold - b.stampThreshold
+    );
+    const nextMilestone = sortedMilestones.find((m) => m.stampThreshold > resolvedWallet.currentStamps);
+
+    if (nextMilestone) {
+      const stampsLeft = nextMilestone.stampThreshold - resolvedWallet.currentStamps;
+      if (stampsLeft === 1 || stampsLeft === 2) {
+        return {
+          type: 'close',
+          href,
+          businessName,
+          rewardTitle: nextMilestone.rewardTitle,
+          stampsLeft,
+          badgeText: stampsLeft === 1 ? 'A solo 1 sello' : 'A solo 2 sellos',
+          detail: `para ganar ${nextMilestone.rewardTitle} en ${businessName}`
+        };
+      }
     }
   }
 

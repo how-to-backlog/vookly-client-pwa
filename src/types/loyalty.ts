@@ -193,6 +193,14 @@ export interface DemoSimulatorConfig {
   categoryIcon?: 'cafeteria' | 'barberia' | 'heladeria' | 'panaderia';
   tiers: DemoRewardTier[];
   simulatedCurrentStamps: number;
+  /** Producto a canjear que definió el comerciante en el alta del local. */
+  rewardTitle?: string;
+  /** Cantidad de sellos necesarios para canjear ese producto. */
+  stampsRequired?: number;
+  /** Marca que el local completó el alta de comercio (onboarding). */
+  onboardingCompleted?: boolean;
+  /** Fecha de cierre del alta en formato ISO 8601. */
+  completedAt?: string;
 }
 
 /**

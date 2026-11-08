@@ -10,6 +10,12 @@ export interface BottomSheetNodeDetailProps {
   onInfoClick?: () => void;
   onResetTicketClick?: () => void;
   className?: string;
+  /** Contenido a la izquierda de la cabecera (título, por ejemplo). */
+  headerContent?: React.ReactNode;
+  /** Clases extra para el contenedor de contenido scrollable. */
+  contentClassName?: string;
+  /** Desactiva el desenfoque del fondo para no velar el fondo de la pantalla. */
+  disableBackdropBlur?: boolean;
 }
 
 /**
@@ -29,7 +35,10 @@ export function BottomSheetNodeDetail({
   ariaLabel = 'Detalle del nodo',
   onInfoClick,
   onResetTicketClick,
-  className = ''
+  className = '',
+  headerContent,
+  contentClassName = '',
+  disableBackdropBlur = false
 }: BottomSheetNodeDetailProps) {
   // Derivamos renderizado y visibilidad sin cascading renders en useEffect
   const [isVisible, setIsVisible] = useState(false);
@@ -127,7 +136,9 @@ export function BottomSheetNodeDetail({
       aria-label={ariaLabel}
       onClick={handleBackdropClick}
       className={`fixed inset-0 z-50 flex flex-col justify-end transition-colors duration-300 ease-out select-none ${
-        isOpen && isVisible ? 'bg-black/40 backdrop-blur-xs' : 'bg-transparent pointer-events-none'
+        isOpen && isVisible
+          ? `bg-black/40 ${disableBackdropBlur ? '' : 'backdrop-blur-xs'}`
+          : 'bg-transparent pointer-events-none'
       }`}
     >
       {/* Contenedor flotante de la lámina */}
@@ -151,6 +162,7 @@ export function BottomSheetNodeDetail({
 
         {/* Cabecera Agnóstica Minimalista: botón de Reset (demo), botón de Info (si aplica) y botón X a la derecha */}
         <div className="px-4 pb-0 pt-0 flex items-center justify-end gap-1.5 flex-shrink-0 min-h-[30px]">
+          {headerContent && <span className="mr-auto truncate">{headerContent}</span>}
           {onResetTicketClick && (
             <button
               type="button"
@@ -218,7 +230,7 @@ export function BottomSheetNodeDetail({
         </div>
 
         {/* Contenido scrolleable interno compacto */}
-        <div className="px-5 pb-6 pt-0 overflow-y-auto no-scrollbar flex-1">
+        <div className={`px-5 pb-6 pt-0 overflow-y-auto no-scrollbar flex-1 ${contentClassName}`}>
           {children}
         </div>
       </div>
