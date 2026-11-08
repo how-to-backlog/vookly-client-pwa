@@ -81,9 +81,12 @@ export function LandingScreen() {
       </div>
 
       <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-10 pt-16">
-        {/* Cabecera: Marca "vookly." al doble de tamaño (escala monumental 96px a 110px) */}
-        <div className="shrink-0 w-full text-center pt-2 pb-1">
-          <h1 className="text-[92px] sm:text-[108px] font-black tracking-[-0.055em] text-white leading-[0.88] font-sans drop-shadow-2xl select-none">
+        {/*
+          Cabecera: Marca "vookly." reducida un 20% (74px a 86px)
+          y con posición más baja (pt-8 en el bloque para bajarla sin mover las tarjetas ni los botones)
+        */}
+        <div className="shrink-0 w-full text-center pt-8 pb-1">
+          <h1 className="text-[74px] sm:text-[86px] font-black tracking-[-0.05em] text-white leading-[0.92] font-sans drop-shadow-2xl select-none">
             vookly<span className="text-sky-400">.</span>
           </h1>
         </div>

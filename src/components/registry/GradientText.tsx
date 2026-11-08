@@ -15,22 +15,21 @@ export interface GradientTextProps {
 }
 
 /**
- * GradientText: Texto animado y contorno vivo con degradado en movimiento continuo
- * adaptado de React Bits (@react-bits/GradientText-TS-TW).
- * El borde se dibuja con una máscara hueca transparente que hereda exactamente el mismo gradiente animado.
+ * GradientText: Texto animado y contorno vivo con degradado en movimiento unidireccional.
+ * El efecto se desplaza continuamente de derecha a izquierda (100% -> 0%) en loop continuo, sin rebotar.
  */
 export function GradientText({
   children,
   className = '',
   colors = ['#ffffff', '#2563eb'],
-  animationSpeed = 4,
+  animationSpeed = 3,
   showBorder = false,
   direction = 'horizontal',
   pauseOnHover = false,
-  yoyo = true
+  yoyo = false
 }: GradientTextProps) {
   const [isPaused, setIsPaused] = useState(false);
-  const progress = useMotionValue(0);
+  const progress = useMotionValue(100);
   const elapsedRef = useRef(0);
   const lastTimeRef = useRef<number | null>(null);
 
@@ -51,24 +50,16 @@ export function GradientText({
     lastTimeRef.current = time;
     elapsedRef.current += deltaTime;
 
-    if (yoyo) {
-      const fullCycle = animationDuration * 2;
-      const cycleTime = elapsedRef.current % fullCycle;
-
-      if (cycleTime < animationDuration) {
-        progress.set((cycleTime / animationDuration) * 100);
-      } else {
-        progress.set(100 - ((cycleTime - animationDuration) / animationDuration) * 100);
-      }
-    } else {
-      progress.set((elapsedRef.current / animationDuration) * 100);
-    }
+    // Desplazamiento siempre de derecha a izquierda (100% -> 0%) en loop continuo
+    const cycleTime = elapsedRef.current % animationDuration;
+    const currentProgress = 100 - (cycleTime / animationDuration) * 100;
+    progress.set(currentProgress);
   });
 
   useEffect(() => {
     elapsedRef.current = 0;
-    progress.set(0);
-  }, [animationSpeed, yoyo]);
+    progress.set(100);
+  }, [animationSpeed]);
 
   const backgroundPosition = useTransform(progress, p => {
     if (direction === 'horizontal') {
@@ -104,7 +95,7 @@ export function GradientText({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Contorno vivo sincronizado: hereda el mismo degradado animado */}
+      {/* Contorno vivo sincronizado: corre siempre de derecha a izquierda */}
       {showBorder && (
         <motion.div
           className="absolute inset-0 z-0 pointer-events-none rounded-full"
@@ -119,7 +110,7 @@ export function GradientText({
         />
       )}
 
-      {/* Texto con el degradado animado en movimiento */}
+      {/* Texto con el degradado animado de derecha a izquierda */}
       <motion.div
         className="inline-block relative z-10 text-transparent bg-clip-text"
         style={{ ...gradientStyle, backgroundPosition, WebkitBackgroundClip: 'text' }}
