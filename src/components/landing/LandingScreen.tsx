@@ -128,7 +128,7 @@ export function LandingScreen() {
             <button
               type="button"
               onClick={() => setIsSheetOpen(true)}
-              className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-[13.5px] font-bold text-white transition-all active:scale-95 shadow-sm"
+              className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-[#172554] hover:bg-[#1e3a8a] text-[13.5px] font-bold text-white transition-all active:scale-95 shadow-md shadow-blue-950/20 border border-blue-900/40"
             >
               Personaliza tu local
               <ChevronRight className="h-3.5 w-3.5 opacity-80" />
