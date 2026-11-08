@@ -40,15 +40,13 @@ export function LandingScreen() {
     values: MerchantOnboardingValues,
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
-    // Ensamblamos automáticamente el roadmap de 3 tramos:
-    // Tier 1 con el producto del comerciante + Tiers 2 y 3 complementarios del nicho
     const tiers = buildOnboardingTiers(values.rewardTitle, values.stampsRequired, values.category);
 
     const config: DemoSimulatorConfig = {
       businessName: values.businessName,
       categoryIcon: values.category,
       tiers,
-      simulatedCurrentStamps: 1, // Arranca con su primera compra simulada ya acreditada
+      simulatedCurrentStamps: 1,
       rewardTitle: values.rewardTitle,
       stampsRequired: values.stampsRequired,
       onboardingCompleted: true,
@@ -69,6 +67,18 @@ export function LandingScreen() {
     <div className="relative h-screen w-full overflow-hidden bg-[#070d24]">
       {/* Fondo vivo: Aurora fluida sin franjas laterales */}
       <LandingBackdrop />
+
+      {/* Badge "Demo" flotante anclado en la esquina superior derecha */}
+      <div className="absolute top-6 right-5 z-20">
+        <GradientText
+          colors={['#ffffff', '#2563eb']}
+          animationSpeed={3}
+          showBorder={true}
+          className="text-[12px] font-black tracking-[0.06em] px-3.5 py-1"
+        >
+          Demo
+        </GradientText>
+      </div>
 
       <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-10 pt-20">
         {/* Cabecera: Marca "vookly." en escala hero y con buen aire vertical */}
@@ -109,25 +119,8 @@ export function LandingScreen() {
           </div>
         </div>
 
-        {/*
-          Zona Inferior:
-          1. Badge "Demo" centrado en el espacio intermedio entre las tarjetas y "Personaliza tu local".
-          2. Botones de acción vertical centrados.
-        */}
-        <div className="shrink-0 flex flex-col items-center justify-center w-full gap-5 pb-1">
-          {/* Badge "Demo" con contorno redondo, font-black y degradado blanco/azul oscuro */}
-          <div className="flex items-center justify-center w-full">
-            <GradientText
-              colors={['#ffffff', '#2563eb']}
-              animationSpeed={3}
-              showBorder={true}
-              className="text-[13.5px] font-black tracking-[0.05em] px-4.5 py-1"
-            >
-              Demo
-            </GradientText>
-          </div>
-
-          {/* Acciones de Navegación Inferiores */}
+        {/* Acciones de Navegación Inferiores */}
+        <div className="shrink-0 flex flex-col items-center justify-center w-full pb-1">
           <nav className="flex flex-col items-center justify-center gap-2.5 w-full">
             <button
               type="button"

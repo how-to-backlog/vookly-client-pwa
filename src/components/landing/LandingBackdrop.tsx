@@ -23,7 +23,7 @@ export const AURORA_PRESET_LANDING: AuroraProps = {
   blend: 0.90,
   glow: 0.75,
   scale: 0.4,
-  speed: 1.05,
+  speed: 1.15,
   brightness: 1.1,
   layers: 1,
   opacity: 0.95,
