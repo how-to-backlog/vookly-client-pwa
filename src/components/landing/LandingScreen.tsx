@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 
 import LandingBackdrop from '@/components/landing/LandingBackdrop';
@@ -15,12 +15,34 @@ import { saveDemoSimulatorConfig } from '@/services/demoSimulatorStorage';
 import type { DemoSimulatorConfig } from '@/types/loyalty';
 
 /**
- * Landing de la demo: Aurora azul, mensaje de bienvenida, pila cuadrada de pitches
- * y los dos caminos de navegación (personalizar el local u omitir e ir al hub).
+ * Paleta exacta de los 8 comercios de la billetera:
+ * - Cafeterías: Coffee Shop (#f3e2d0 / #6f4423), Café Roma (#dfc2a6 / #4a2810)
+ * - Barberías: La Barbería Club (#dce3ec / #3c4959), Barber Studio (#b8c7db / #172554)
+ * - Heladerías: Heladería del Parque (#f9dbe5 / #a83b63), Gelato & Co. (#d1ecd9 / #1b5e32)
+ * - Panaderías: La Espiga (#f7e7c6 / #8a6420), Masa Madre Bakery (#e6c594 / #583a0a)
  */
+const CARD_COLOR_THEMES = [
+  { bg: '#f3e2d0', ink: '#6f4423' }, // Cafetería A
+  { bg: '#dce3ec', ink: '#3c4959' }, // Barbería A
+  { bg: '#f9dbe5', ink: '#a83b63' }, // Heladería A
+  { bg: '#f7e7c6', ink: '#8a6420' }, // Panadería A
+  { bg: '#d1ecd9', ink: '#1b5e32' }, // Heladería B
+  { bg: '#b8c7db', ink: '#172554' }, // Barbería B
+  { bg: '#dfc2a6', ink: '#4a2810' }, // Cafetería B
+  { bg: '#e6c594', ink: '#583a0a' }  // Panadería B
+];
+
 export function LandingScreen() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { triggerTransition } = usePageTransition();
+
+  // Asigna de forma determinista y variada un tema de color a cada mensaje
+  const cardsWithColors = useMemo(() => {
+    return LANDING_PITCH_MESSAGES.map((message, index) => {
+      const theme = CARD_COLOR_THEMES[index % CARD_COLOR_THEMES.length];
+      return { message, ...theme };
+    });
+  }, []);
 
   const handleSubmit = (
     values: MerchantOnboardingValues,
@@ -57,7 +79,7 @@ export function LandingScreen() {
     <div className="relative h-screen w-full overflow-hidden bg-[#050b26]">
       <LandingBackdrop />
 
-      <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-5 pb-8 pt-12">
+      <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-8 pt-12">
         {/* Cabecera de Bienvenida */}
         <div className="shrink-0">
           <h1 className="text-[34px] font-normal leading-[1.1] tracking-[-0.03em] text-neutral-100 font-sans antialiased">
@@ -66,25 +88,36 @@ export function LandingScreen() {
         </div>
 
         {/*
-          Contenedor del Stack Cuadrado:
-          - Centrado verticalmente en el viewport.
-          - Con aspect-square (1:1) y ancho máximo de 310px para asegurar proporción cuadrada exacta en móviles.
+          Contenedor del Stack Cuadrado Compacto:
+          - Ancho reducido a 260px (aspect-square) para que las tarjetas de atrás
+            queden contenidas holgadamente dentro de la pantalla sin tocar ni traspasar el borde izquierdo.
+          - `spread={0.35}`: tarjetas mucho más juntas, revelando el filo superior-izquierdo completo.
+          - `visible={4}`: muestra hasta 4 cartas apiladas con escala suave (depth 0.08).
         */}
-        <div className="my-auto flex items-center justify-center w-full py-4">
-          <div className="w-full max-w-[310px] aspect-square">
+        <div className="my-auto flex items-center justify-center w-full py-2">
+          {/*
+            Margen izquierdo compensatorio `ml-4` para que el stack en cascada (-x)
+            quede visualmente centrado en la pantalla y el borde izquierdo respire al 100%.
+          */}
+          <div className="w-full max-w-[260px] aspect-square ml-4">
             <Stack
-              cards={LANDING_PITCH_MESSAGES.map((message) => (
-                <PitchCard key={message} message={message} />
+              cards={cardsWithColors.map((card) => (
+                <PitchCard
+                  key={card.message}
+                  message={card.message}
+                  backgroundColor={card.bg}
+                  inkColor={card.ink}
+                />
               ))}
               layout="cascade"
-              visible={5}
-              spread={0.8}
-              depth={0.12}
-              radius={28}
+              visible={4}
+              spread={0.35}
+              depth={0.08}
+              radius={24}
               frame={0}
               frameColor="transparent"
               shadow
-              tilt={30}
+              tilt={22}
               threshold={70}
               speed={0.65}
               sendToBackOnClick={false}
