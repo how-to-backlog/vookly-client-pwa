@@ -155,7 +155,6 @@ export function LandingScreen() {
         isOpen={isSheetOpen}
         onClose={() => setIsSheetOpen(false)}
         onSubmit={handleSubmit}
-        onSkip={handleSkip}
       />
     </div>
   );

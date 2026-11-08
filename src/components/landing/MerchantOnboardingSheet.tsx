@@ -34,7 +34,6 @@ export interface MerchantOnboardingSheetProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (values: MerchantOnboardingValues, event: React.MouseEvent<HTMLButtonElement>) => void;
-  onSkip: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 /**
@@ -43,8 +42,7 @@ export interface MerchantOnboardingSheetProps {
 export function MerchantOnboardingSheet({
   isOpen,
   onClose,
-  onSubmit,
-  onSkip
+  onSubmit
 }: MerchantOnboardingSheetProps) {
   const [businessName, setBusinessName] = useState('');
   const [rewardTitle, setRewardTitle] = useState('');
@@ -103,11 +101,7 @@ export function MerchantOnboardingSheet({
           />
         </label>
 
-        {/*
-          Control de Sellos Compacto:
-          - No ocupa todo el ancho de la pantalla: es un bloque auto-ajustado y minimalista.
-          - Límite lógico de producto: 1 a 10 sellos (más de 10 pierde efectividad de fidelización).
-        */}
+        {/* Control de Sellos Compacto en Píldora auto-ajustada */}
         <div className="flex items-center justify-between py-0.5">
           <span className="text-[12px] font-semibold uppercase tracking-wide text-neutral-500">
             Sellos
@@ -173,21 +167,15 @@ export function MerchantOnboardingSheet({
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 pt-1">
+        {/* Botón único de acción directo y sin distracciones */}
+        <div className="pt-2">
           <button
             type="button"
             onClick={handleSubmit}
             disabled={!canSubmit}
-            className="w-full rounded-full bg-neutral-900 py-3 text-[14px] font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="w-full rounded-full bg-neutral-900 py-3 text-[14.5px] font-bold text-white transition-opacity hover:opacity-90 active:scale-98 disabled:cursor-not-allowed disabled:opacity-40 shadow-sm"
           >
-            Guardar y arrancar
-          </button>
-          <button
-            type="button"
-            onClick={onSkip}
-            className="w-full py-2 text-center text-[13px] font-medium text-neutral-500 transition-colors hover:text-neutral-900"
-          >
-            Omitir este paso
+            Ir a vookly.
           </button>
         </div>
       </div>
