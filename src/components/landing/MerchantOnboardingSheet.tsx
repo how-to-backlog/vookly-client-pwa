@@ -76,7 +76,7 @@ export function MerchantOnboardingSheet({
       <div className="flex flex-col gap-4 pt-1">
         <label className="flex flex-col gap-1.5">
           <span className="text-[12px] font-semibold uppercase tracking-wide text-neutral-500">
-            Nombre del local
+            Nombre de tu negocio
           </span>
           <input
             type="text"
@@ -89,7 +89,7 @@ export function MerchantOnboardingSheet({
 
         <label className="flex flex-col gap-1.5">
           <span className="text-[12px] font-semibold uppercase tracking-wide text-neutral-500">
-            Producto a canjear
+            Tu producto a canjear
           </span>
           <input
             type="text"

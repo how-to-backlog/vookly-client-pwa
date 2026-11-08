@@ -142,7 +142,7 @@ export function LandingScreen() {
               onClick={handleSkip}
               className="flex items-center justify-center gap-1 text-[13px] font-normal text-white/60 hover:text-white/90 transition-colors py-0.5"
             >
-              Omitir este paso
+              Omitir
               <ChevronRight className="h-3 w-3 opacity-60" />
             </button>
           </nav>
