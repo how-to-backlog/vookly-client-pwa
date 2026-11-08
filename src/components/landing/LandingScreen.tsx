@@ -68,22 +68,22 @@ export function LandingScreen() {
       {/* Fondo vivo: Mismo Aurora claro de la Billetera sobre blanco */}
       <LandingBackdrop />
 
-      {/* Badge "Demo" con fondo 100% transparente y contorno fino redondeado */}
+      {/* Badge "Demo" con degradado animado en blanco y azul (afecta tanto a texto como al contorno vivo) */}
       <div className="absolute top-6 right-5 z-20">
         <GradientText
-          colors={['#172554', '#2563eb', '#0f172a']}
+          colors={['#ffffff', '#2563eb']}
           animationSpeed={3}
           showBorder={true}
-          className="text-[12px] font-black tracking-[0.06em] px-3 py-0.5 border border-neutral-400/50"
+          className="text-[12px] font-black tracking-[0.06em] px-3.5 py-1"
         >
           Demo
         </GradientText>
       </div>
 
-      <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-10 pt-20">
-        {/* Cabecera: Marca "vookly." con su color original blanco y punto celeste */}
-        <div className="shrink-0 w-full text-center pt-6 pb-2">
-          <h1 className="text-[54px] sm:text-[62px] font-black tracking-[-0.045em] text-white leading-none font-sans drop-shadow-xl select-none">
+      <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-10 pt-16">
+        {/* Cabecera: Marca "vookly." al doble de tamaño (escala monumental 96px a 110px) */}
+        <div className="shrink-0 w-full text-center pt-2 pb-1">
+          <h1 className="text-[92px] sm:text-[108px] font-black tracking-[-0.055em] text-white leading-[0.88] font-sans drop-shadow-2xl select-none">
             vookly<span className="text-sky-400">.</span>
           </h1>
         </div>

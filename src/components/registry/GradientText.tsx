@@ -15,13 +15,14 @@ export interface GradientTextProps {
 }
 
 /**
- * GradientText: Texto animado con degradado en movimiento continuo.
- * Con fondo transparente para que solo se vea la palabra y el contorno redondeado.
+ * GradientText: Texto animado y contorno vivo con degradado en movimiento continuo
+ * adaptado de React Bits (@react-bits/GradientText-TS-TW).
+ * El borde se dibuja con una máscara hueca transparente que hereda exactamente el mismo gradiente animado.
  */
 export function GradientText({
   children,
   className = '',
-  colors = ['#38bdf8', '#ffffff', '#60a5fa', '#93c5fd'],
+  colors = ['#ffffff', '#2563eb'],
   animationSpeed = 4,
   showBorder = false,
   direction = 'horizontal',
@@ -99,10 +100,26 @@ export function GradientText({
 
   return (
     <motion.div
-      className={`relative mx-auto flex max-w-fit flex-row items-center justify-center rounded-full font-medium transition-shadow duration-500 overflow-hidden bg-transparent ${showBorder ? 'py-1 px-3.5 border border-sky-400/40' : ''} ${className}`.trim()}
+      className={`relative mx-auto flex max-w-fit flex-row items-center justify-center rounded-full font-medium transition-shadow duration-500 overflow-hidden bg-transparent ${showBorder ? 'py-1 px-3.5' : ''} ${className}`.trim()}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
+      {/* Contorno vivo sincronizado: hereda el mismo degradado animado */}
+      {showBorder && (
+        <motion.div
+          className="absolute inset-0 z-0 pointer-events-none rounded-full"
+          style={{
+            ...gradientStyle,
+            backgroundPosition,
+            padding: '1.25px',
+            WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+            WebkitMaskComposite: 'xor',
+            maskComposite: 'exclude'
+          }}
+        />
+      )}
+
+      {/* Texto con el degradado animado en movimiento */}
       <motion.div
         className="inline-block relative z-10 text-transparent bg-clip-text"
         style={{ ...gradientStyle, backgroundPosition, WebkitBackgroundClip: 'text' }}
