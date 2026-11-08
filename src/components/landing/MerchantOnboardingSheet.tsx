@@ -18,8 +18,9 @@ const BUSINESS_TYPES: { id: CategoryIconName; label: string }[] = [
   { id: 'panaderia', label: 'Panadería' }
 ];
 
+// Lógica de producto de fidelización: para un premio inicial alcanzable, el rango lógico es de 1 a 10 sellos.
 const MIN_STAMPS = 1;
-const MAX_STAMPS = 20;
+const MAX_STAMPS = 10;
 const DEFAULT_STAMPS = 5;
 
 export interface MerchantOnboardingValues {
@@ -75,7 +76,7 @@ export function MerchantOnboardingSheet({
       disableBackdropBlur
       contentClassName="pb-2"
     >
-      <div className="flex flex-col gap-4.5 pt-1">
+      <div className="flex flex-col gap-4 pt-1">
         <label className="flex flex-col gap-1.5">
           <span className="text-[12px] font-semibold uppercase tracking-wide text-neutral-500">
             Nombre del local
@@ -102,35 +103,40 @@ export function MerchantOnboardingSheet({
           />
         </label>
 
-        {/* Sección de Sellos: Ultra limpia, solo "-" y "+" con el número en el medio */}
-        <div className="flex flex-col gap-1.5">
+        {/*
+          Control de Sellos Compacto:
+          - No ocupa todo el ancho de la pantalla: es un bloque auto-ajustado y minimalista.
+          - Límite lógico de producto: 1 a 10 sellos (más de 10 pierde efectividad de fidelización).
+        */}
+        <div className="flex items-center justify-between py-0.5">
           <span className="text-[12px] font-semibold uppercase tracking-wide text-neutral-500">
             Sellos
           </span>
-          <div className="flex items-center justify-between rounded-xl border border-neutral-200 bg-neutral-50 px-3.5 py-2">
-            <span className="text-[15px] font-semibold text-neutral-900 tabular-nums">
+
+          <div className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-neutral-50 px-2 py-1 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setStampsRequired((value) => Math.max(MIN_STAMPS, value - 1))}
+              disabled={stampsRequired <= MIN_STAMPS}
+              aria-label="Quitar un sello"
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-700 transition-colors hover:bg-neutral-100 disabled:opacity-30 disabled:pointer-events-none active:scale-95"
+            >
+              <Minus className="h-3.5 w-3.5" />
+            </button>
+
+            <span className="min-w-[68px] text-center text-[14px] font-bold text-neutral-900 tabular-nums">
               {stampsRequired} {stampsRequired === 1 ? 'sello' : 'sellos'}
             </span>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setStampsRequired((value) => Math.max(MIN_STAMPS, value - 1))}
-                disabled={stampsRequired <= MIN_STAMPS}
-                aria-label="Quitar un sello"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-700 transition-colors hover:bg-neutral-100 disabled:opacity-30 disabled:pointer-events-none shadow-2xs"
-              >
-                <Minus className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setStampsRequired((value) => Math.min(MAX_STAMPS, value + 1))}
-                disabled={stampsRequired >= MAX_STAMPS}
-                aria-label="Agregar un sello"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-700 transition-colors hover:bg-neutral-100 disabled:opacity-30 disabled:pointer-events-none shadow-2xs"
-              >
-                <Plus className="h-4 w-4" />
-              </button>
-            </div>
+
+            <button
+              type="button"
+              onClick={() => setStampsRequired((value) => Math.min(MAX_STAMPS, value + 1))}
+              disabled={stampsRequired >= MAX_STAMPS}
+              aria-label="Agregar un sello"
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-700 transition-colors hover:bg-neutral-100 disabled:opacity-30 disabled:pointer-events-none active:scale-95"
+            >
+              <Plus className="h-3.5 w-3.5" />
+            </button>
           </div>
         </div>
 
