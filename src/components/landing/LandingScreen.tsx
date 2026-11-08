@@ -82,11 +82,11 @@ export function LandingScreen() {
 
       <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-10 pt-16">
         {/*
-          Cabecera: Marca "vookly." reducida un 20% (74px a 86px)
-          y con posición más baja (pt-8 en el bloque para bajarla sin mover las tarjetas ni los botones)
+          Cabecera: Marca "vookly." aumentada un 10% (82px a 95px)
+          y con posición más baja (pt-14 en el bloque para acercarse más al mazo)
         */}
-        <div className="shrink-0 w-full text-center pt-8 pb-1">
-          <h1 className="text-[74px] sm:text-[86px] font-black tracking-[-0.05em] text-white leading-[0.92] font-sans drop-shadow-2xl select-none">
+        <div className="shrink-0 w-full text-center pt-14 pb-1">
+          <h1 className="text-[82px] sm:text-[95px] font-black tracking-[-0.052em] text-white leading-[0.9] font-sans drop-shadow-2xl select-none">
             vookly<span className="text-sky-400">.</span>
           </h1>
         </div>
