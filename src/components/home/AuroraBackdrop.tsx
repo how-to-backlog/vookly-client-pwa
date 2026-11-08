@@ -25,7 +25,7 @@ import Aurora, { type AuroraProps } from '@/components/registry/Aurora';
  * banda visible, sin tapar el texto que vive arriba.
  */
 export const AURORA_PRESET_ARCTIC: AuroraProps = {
-  colorStops: ['#8fe3ff', '#e8f6ff', '#6f9bff'],
+  colorStops: ['#00014A', '#2800F2', '#0E005E'],
   direction: 'top',
   height: 0.72,
   amplitude: 0.7,
