@@ -72,22 +72,15 @@ export function LandingScreen() {
       <LandingBackdrop />
 
       <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-10 pt-20">
-        {/*
-          Cabecera: Marca "vookly." en escala imponente (56px a 62px)
-          y con posición más baja (pt-20 en main + pt-6 interno)
-        */}
+        {/* Cabecera: Marca "vookly." en escala hero y con buen aire vertical */}
         <div className="shrink-0 w-full text-center pt-6 pb-2">
           <h1 className="text-[54px] sm:text-[62px] font-black tracking-[-0.045em] text-white leading-none font-sans drop-shadow-xl select-none">
             vookly<span className="text-sky-400">.</span>
           </h1>
         </div>
 
-        {/*
-          Zona Central:
-          1. Stack Cuadrado Compacto en Gama de Azules
-          2. Badge "Demo" con efecto GradientText
-        */}
-        <div className="my-auto flex flex-col items-center justify-center w-full py-1 gap-4">
+        {/* Zona Central: Stack Cuadrado Compacto en Gama de Azules */}
+        <div className="my-auto flex items-center justify-center w-full py-1">
           <div className="w-full max-w-[270px] aspect-square ml-4">
             <Stack
               cards={cardsWithColors.map((card) => (
@@ -115,39 +108,47 @@ export function LandingScreen() {
               pauseOnHover
             />
           </div>
+        </div>
 
-          {/* Badge "Demo" capitalizado con contorno redondo y degradado animado azul/blanco */}
-          <div className="pt-1">
+        {/*
+          Zona Inferior:
+          1. Badge "Demo" centrado en el espacio intermedio entre las tarjetas y "Personaliza tu local".
+             Degradado animado exclusivo de 2 colores: blanco (#ffffff) y azul del fondo (#38bdf8), con peso font-black.
+          2. Botones de acción vertical centrados.
+        */}
+        <div className="shrink-0 flex flex-col items-center justify-center w-full gap-5 pb-1">
+          {/* Badge "Demo" con contorno redondo, más bold y centrado entre tarjetas y botón */}
+          <div className="flex items-center justify-center w-full">
             <GradientText
-              colors={['#ffffff', '#38bdf8', '#60a5fa', '#ffffff']}
-              animationSpeed={3.5}
+              colors={['#ffffff', '#38bdf8']}
+              animationSpeed={3}
               showBorder={true}
-              className="text-[13px] font-semibold tracking-[0.04em] px-4 py-1"
+              className="text-[13.5px] font-black tracking-[0.05em] px-4.5 py-1"
             >
               Demo
             </GradientText>
           </div>
-        </div>
 
-        {/* Acciones de Navegación Inferiores */}
-        <nav className="shrink-0 flex flex-col items-center justify-center gap-2.5 w-full">
-          <button
-            type="button"
-            onClick={() => setIsSheetOpen(true)}
-            className="inline-flex items-center justify-center gap-1.5 px-5 py-2 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 text-[13.5px] font-medium text-white transition-all active:scale-95 shadow-sm backdrop-blur-xs"
-          >
-            Personaliza tu local
-            <ChevronRight className="h-3.5 w-3.5 opacity-80" />
-          </button>
-          <button
-            type="button"
-            onClick={handleSkip}
-            className="flex items-center justify-center gap-1 text-[13px] font-normal text-white/60 hover:text-white/90 transition-colors py-0.5"
-          >
-            Omitir este paso
-            <ChevronRight className="h-3 w-3 opacity-60" />
-          </button>
-        </nav>
+          {/* Acciones de Navegación Inferiores */}
+          <nav className="flex flex-col items-center justify-center gap-2.5 w-full">
+            <button
+              type="button"
+              onClick={() => setIsSheetOpen(true)}
+              className="inline-flex items-center justify-center gap-1.5 px-5 py-2 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 text-[13.5px] font-medium text-white transition-all active:scale-95 shadow-sm backdrop-blur-xs"
+            >
+              Personaliza tu local
+              <ChevronRight className="h-3.5 w-3.5 opacity-80" />
+            </button>
+            <button
+              type="button"
+              onClick={handleSkip}
+              className="flex items-center justify-center gap-1 text-[13px] font-normal text-white/60 hover:text-white/90 transition-colors py-0.5"
+            >
+              Omitir este paso
+              <ChevronRight className="h-3 w-3 opacity-60" />
+            </button>
+          </nav>
+        </div>
       </main>
 
       <MerchantOnboardingSheet
