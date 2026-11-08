@@ -3,49 +3,38 @@
 import { usePageTransition } from '@/components/transition/TransitionProvider';
 import { resolveCategoryIcon, type CategoryIconName } from '@/components/icons/CategoryIcon';
 import { CategoryCardSurface } from './CategoryCardSurface';
-
 import React from 'react';
-
-
-// ! FIDELIZAR-4- BUGFIX
-// ? Eliminado [ShowProgress, localName, stamps]; Revisar y considerar refactor de la Card.
-
-
 
 export interface ScrollStackCardProps {
   /** URL destino al hacer click/tap */
   href?: string;
-  /** Nombre del comercio, mostrado en la píldora superior */
+  /** Nombre del comercio */
   localName: string;
-  /**
-   * Icono de categoría. Si se omite se resuelve desde `href` o `localName`.
-   */
+  /** Icono de categoría */
   categoryIcon?: CategoryIconName;
   /** Color de fondo opcional para diferenciar tarjetas del mismo nicho. */
   backgroundColor?: string;
   /** Color de trazo opcional para el icono. */
   inkColor?: string;
-  /** Sellos acumulados del cliente en este comercio -- DEPRECATED */
+  /** Sellos acumulados del cliente en este comercio */
   stamps?: number;
-  /** Sellos totales del roadmap de este comercio -- DEPRECATED */
+  /** Sellos totales del roadmap de este comercio */
   totalStamps?: number;
-  /** Nombre del próximo premio pendiente  -- DEPRECATED */
+  /** Nombre del próximo premio pendiente */
   nextRewardTitle?: string;
+  /** Si tiene premio listo para canjear en mostrador */
+  hasReadyReward?: boolean;
   /** Cuando es true la tarjeta se muestra como no disponible y no navega */
   unavailable?: boolean;
   className?: string;
   children?: React.ReactNode;
-  /**
-   * Contenido del pie de la tarjeta. Reservado para el nombre del comercio y
-   * el contador de sellos.
-   */
+  /** Contenido del pie de la tarjeta */
   footer?: React.ReactNode;
 }
 
 /**
  * ScrollStackCard: Tarjeta atómica para el ScrollStack.
  * Mantiene la navegación con circular reveal nativo de Vookly.
- *
  */
 export const ScrollStackCard: React.FC<ScrollStackCardProps> = ({
   href,
@@ -53,6 +42,10 @@ export const ScrollStackCard: React.FC<ScrollStackCardProps> = ({
   categoryIcon,
   backgroundColor,
   inkColor,
+  stamps,
+  totalStamps,
+  nextRewardTitle,
+  hasReadyReward = false,
   unavailable = false,
   className = '',
   children,
@@ -60,7 +53,6 @@ export const ScrollStackCard: React.FC<ScrollStackCardProps> = ({
 }) => {
   const { triggerTransition } = usePageTransition();
 
-  // Una tarjeta sin href o marcada como no disponible no navega.
   const navigable = Boolean(href) && !unavailable;
 
   const handleClick = (e: React.MouseEvent) => {
@@ -76,8 +68,6 @@ export const ScrollStackCard: React.FC<ScrollStackCardProps> = ({
     triggerTransition(e, href);
   };
 
-  // El icono de categoría se resuelve por el slug del comercio (`/local/cafeteria`)
-  // y, si no hay ruta, por el nombre del comercio sin acentos.
   const iconName = categoryIcon ?? resolveCategoryIcon(href ?? localName);
 
   return (
@@ -92,6 +82,11 @@ export const ScrollStackCard: React.FC<ScrollStackCardProps> = ({
       {iconName && (
         <CategoryCardSurface
           name={iconName}
+          localName={localName}
+          stamps={stamps}
+          totalStamps={totalStamps}
+          nextRewardTitle={nextRewardTitle}
+          hasReadyReward={hasReadyReward}
           backgroundColor={backgroundColor}
           inkColor={inkColor}
           muted={unavailable}

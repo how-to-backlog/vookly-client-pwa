@@ -475,6 +475,20 @@
 - **Etiquetas:** `#reunion #asamblea #plane #coreweb #pwa #mvp #alta`
 - **Tópico / Componente Afectado:** `docs/minuta_reunion_general_lunes_02_11.md`, `p-fidelizar_master_notes.md`.
 
+### [NOTA-022] Copy y Micro-Mensajes de Venta Vookly para Tarjeta Rotativa en Billetera
+- **Fecha:** 2026-11-03 14:15
+- **Categoría:** UX / Copywriting / Branding / Billetera
+- **Diagnóstico / Contexto:** Selección y curación de frases cortas de alto impacto comercial para integrar en una tarjeta apilable o ticker interactivo dentro del mazo principal de la Billetera (PWA). Enfocado en agilidad de caja para el cajero y practicidad absoluta para el cliente, eliminando tecnicismos o palabras complejas.
+- **Frases Canónicas Seleccionadas:**
+  1. *"Vookly agiliza tu mostrador: fidelizás sin demorar ni un segundo la fila."*
+  2. *"Tus clientes llevan tu local en el bolsillo gracias a Vookly."*
+  3. *"Vookly convierte compras comunes en premios que dan ganas de volver."*
+  4. *"Tus clientes abren Vookly directo desde WhatsApp."*
+  5. *"Con Vookly, tus clientes nunca más pierden una tarjeta ni se olvidan de volver."*
+  6. *"Vookly une a los mejores comercios de tu zona en una sola experiencia agilizada."*
+- **Etiquetas:** `#copywriting #branding #vookly #billetera #ux #microcopy`
+- **Tópico / Componente Afectado:** `docs/p-fidelizar_master_notes.md`, `src/components/cards/*`.
+
 ---
 - **Fecha:** 2026-11-01 05:00
 - **Categoría:** Arquitectura / Negocio / Backend / Gamificación

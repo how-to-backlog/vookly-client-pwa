@@ -23,20 +23,17 @@ export interface CardItem {
   totalStamps: number;
   /** Nombre del próximo premio pendiente. */
   nextRewardTitle: string;
+  /** Si tiene al menos un premio listo para canjear en mostrador */
+  hasReadyReward?: boolean;
   /**
    * Cuando es true la tarjeta se muestra como no disponible, no navega y
-   * se etiqueta como "Próximamente". Es el caso de los comercios que todavía
-   * no tienen reglas ni billetera en el repositorio de la demo.
+   * se etiqueta como "Próximamente".
    */
   unavailable?: boolean;
 }
 
 /**
- * Datos de demostración del hub.
- *
- * Se hardcodean acá a propósito (y no en `loyaltyRepository`) porque la demo
- * se ajusta con datos, no con lógica de negocio: para cambiar lo que se
- * ve frente al comercio alcanza con editar este array.
+ * Datos de demostración iniciales del hub.
  */
 export const DEFAULT_CARDS: CardItem[] = [
   // 1. Cafeterías
@@ -47,19 +44,20 @@ export const DEFAULT_CARDS: CardItem[] = [
     href: '/local/cafeteria',
     stamps: 15,
     totalStamps: 30,
-    nextRewardTitle: 'Tostado Especial'
+    nextRewardTitle: 'Tostado Especial',
+    hasReadyReward: true // Tiene voucher de Tostado Especial listo
   },
   {
     id: '1-b',
     localName: 'Café Roma',
     categoryIcon: 'cafeteria',
-    // Moca tostado profundo: genera un contraste evidente frente al beige claro de Coffee Shop
     backgroundColor: '#dfc2a6',
     inkColor: '#4a2810',
     href: '/local/cafeteria-roma',
     stamps: 3,
     totalStamps: 10,
-    nextRewardTitle: 'Taza Coleccionable Roma'
+    nextRewardTitle: 'Espresso Doble',
+    hasReadyReward: true // Tiene Espresso Doble listo
   },
 
   // 2. Barberías
@@ -70,19 +68,20 @@ export const DEFAULT_CARDS: CardItem[] = [
     href: '/local/barberia',
     stamps: 2,
     totalStamps: 5,
-    nextRewardTitle: 'Perfilado de Barba'
+    nextRewardTitle: 'Perfilado de Barba',
+    hasReadyReward: true // Tiene Perfilado de Barba listo
   },
   {
     id: '3-b',
     localName: 'Barber Studio',
     categoryIcon: 'barberia',
-    // Pizarra azul petróleo: contrasta marcadamente con el gris celeste clásico
     backgroundColor: '#b8c7db',
     inkColor: '#172554',
     href: '/local/barberia-studio',
     stamps: 4,
     totalStamps: 6,
-    nextRewardTitle: 'Corte Fade'
+    nextRewardTitle: 'Corte Fade',
+    hasReadyReward: true // Tiene Corte Fade listo
   },
 
   // 3. Heladerías
@@ -93,19 +92,20 @@ export const DEFAULT_CARDS: CardItem[] = [
     href: '/local/heladeria',
     stamps: 4,
     totalStamps: 10,
-    nextRewardTitle: 'Cucurucho 2 bochas'
+    nextRewardTitle: 'Cucurucho 2 bochas',
+    hasReadyReward: false
   },
   {
     id: '2-b',
     localName: 'Gelato & Co.',
     categoryIcon: 'heladeria',
-    // Menta pistacho pastel: contraste temático fresco contra el frutilla/rosa de Heladería del Parque
     backgroundColor: '#d1ecd9',
     inkColor: '#1b5e32',
     href: '/local/heladeria-gelato',
     stamps: 2,
     totalStamps: 9,
-    nextRewardTitle: 'Cucurucho Bañado'
+    nextRewardTitle: 'Cucurucho Bañado',
+    hasReadyReward: false
   },
 
   // 4. Panaderías
@@ -116,31 +116,26 @@ export const DEFAULT_CARDS: CardItem[] = [
     href: '/local/panaderia',
     stamps: 2,
     totalStamps: 8,
-    nextRewardTitle: 'Pan de Masa Madre'
+    nextRewardTitle: 'Pan de Masa Madre',
+    hasReadyReward: false
   },
   {
     id: '4-b',
     localName: 'Masa Madre Bakery',
     categoryIcon: 'panaderia',
-    // Centeno tostado / corteza oscura: se distingue claramente del trigo dorado claro de La Espiga
     backgroundColor: '#e6c594',
     inkColor: '#583a0a',
     href: '/local/panaderia-masamadre',
     stamps: 5,
     totalStamps: 10,
-    nextRewardTitle: 'Baguette Rústica'
+    nextRewardTitle: 'Café al paso + Medialunas',
+    hasReadyReward: true // Tiene voucher listo
   }
 ];
 
 export interface CardContainerProps {
   cards?: CardItem[];
-  /**
-   * Clave de identidad del conjunto visible de tarjetas.
-   *
-   * Al cambiarla, el stack se remonta y vuelve al inicio. Se usa cuando el
-   * filtro reemplaza el conjunto de tarjetas, para que la nueva vista arranque
-   * desde arriba en lugar de quedar en una posición de scroll que ya no existe.
-   */
+  /** Clave de identidad del conjunto visible de tarjetas. */
   stackKey?: string;
   /** Categoría activa actual en el filtro superior. */
   activeCategory?: CategoryIconName | 'all';
@@ -150,7 +145,6 @@ export interface CardContainerProps {
 
 /**
  * CardContainer: Apila las tarjetas de comercios con ScrollStack.
- * Cada tarjeta se fija (sticky) y se desplaza sobre la anterior al hacer scroll.
  */
 export const CardContainer: React.FC<CardContainerProps> = ({
   cards = DEFAULT_CARDS,
@@ -163,14 +157,8 @@ export const CardContainer: React.FC<CardContainerProps> = ({
       <ScrollStack
         key={stackKey}
         itemDistance={64}
-        // Mazo parejo: cada tarjeta se fija 20px más abajo que la anterior, así
-        // se ve el filo de las que quedan detrás (efecto de apilamiento) y al
-        // mismo tiempo los bordes quedan rectos y alineados. Con 0 el mazo se
-        // convertía en una sola carta superpuesta.
         itemStackDistance={20}
         stackPosition={24}
-        // Sin escala, tilt ni rotación: cada carta es idéntica a la anterior,
-        // el mazo se ve parejo y no un montón torcido.
         itemScale={0}
         baseScale={0.92}
         dimAmount={0.25}
@@ -200,6 +188,7 @@ export const CardContainer: React.FC<CardContainerProps> = ({
               stamps={card.stamps}
               totalStamps={card.totalStamps}
               nextRewardTitle={card.nextRewardTitle}
+              hasReadyReward={card.hasReadyReward}
               unavailable={card.unavailable}
             />
           </ScrollStackItem>

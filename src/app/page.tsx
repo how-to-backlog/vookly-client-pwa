@@ -8,16 +8,19 @@ import { WalletSectionHeader } from '@/components/home/WalletSectionHeader';
 import { CategoryFilterBar } from '@/components/home/CategoryFilterBar';
 import { useCategoryFilter } from '@/components/home/useCategoryFilter';
 import { useRewardStatus } from '@/components/home/useRewardStatus';
+import { useDynamicCards } from '@/components/home/useDynamicCards';
 import { AuroraBackdrop } from '@/components/home/AuroraBackdrop';
-import { CardContainer, DEFAULT_CARDS } from '@/components/cards/CardContainer';
+import { CardContainer } from '@/components/cards/CardContainer';
 import { MerchantDirectoryModal } from '@/components/home/MerchantDirectoryModal';
 
 export default function Home() {
-  const { selected, setSelected, visibleCards } = useCategoryFilter(DEFAULT_CARDS);
+  // Las 8 tarjetas ahora se resuelven dinámicamente con reactividad al simulador y al Onboarding
+  const dynamicCards = useDynamicCards();
+  const { selected, setSelected, visibleCards } = useCategoryFilter(dynamicCards);
   const [isDirectoryOpen, setIsDirectoryOpen] = useState(false);
-  // El estado de premio se resuelve una vez y se reparte entre el mensaje del
-  // saludo y la acción flotante: la vista no vuelve a derivar los datos.
-  const rewardStatus = useRewardStatus(DEFAULT_CARDS);
+
+  // El estado de premio se resuelve una vez y se reparte entre el saludo y la acción flotante
+  const rewardStatus = useRewardStatus(dynamicCards);
 
   return (
     <div className="h-screen bg-neutral-100 flex justify-center overflow-hidden">
@@ -37,7 +40,7 @@ export default function Home() {
           <WalletSectionHeader
             totalCards={visibleCards.length}
             isFiltered={selected !== 'all'}
-            totalAvailable={DEFAULT_CARDS.length}
+            totalAvailable={dynamicCards.length}
           />
 
           {/* 4. Filtro por rubro del comercio */}

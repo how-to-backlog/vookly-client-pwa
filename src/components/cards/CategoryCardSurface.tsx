@@ -1,29 +1,23 @@
 'use client';
 
 import React from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import { CategoryIcon, CATEGORY_PALETTE, type CategoryIconName } from '@/components/icons/CategoryIcon';
-
-/**
- * CategoryCardSurface: la superficie de marca de una tarjeta de comercio.
- *
- * Reemplaza por completo a la fotografía JPG: en vez de una imagen de fondo,
- * la tarjeta es una superficie de color sólido pastel propia de la categoría,
- * con el icono de rubro como referencia principal, alineado al costado
- * izquierdo y dibujado directamente sobre el color (sin disco, sin bordes).
- *
- * La banda de color va a sangre (el ScrollStack la_pega a los bordes de la
- * pantalla) y su contenido respira desde el margen de página: el ícono
- * arranca en el mismo eje vertical que el saludo y el encabezado de sección,
- * de modo que todo el contenido de la home comparte una sola columna de
- * alineación.
- *
- * La arquitectura deja preparado el espacio para sumar nombre del comercio y
- * contador de sellos (ver `footer`): hoy la tarjeta es sólo el icono.
- */
+import { Sparkles } from 'lucide-react';
 
 export interface CategoryCardSurfaceProps {
   /** Categoría cuyo icono y paleta se usan. */
   name: CategoryIconName;
+  /** Nombre del local comercial */
+  localName?: string;
+  /** Sellos acumulados */
+  stamps?: number;
+  /** Sellos totales */
+  totalStamps?: number;
+  /** Título del próximo premio */
+  nextRewardTitle?: string;
+  /** Si tiene premio listo para canjear en mostrador */
+  hasReadyReward?: boolean;
   /** Lado del icono en píxeles. */
   iconSize?: number;
   /** Color de fondo opcional para diferenciar tarjetas del mismo nicho. */
@@ -33,43 +27,131 @@ export interface CategoryCardSurfaceProps {
   /** Cuando es true la superficie se ve atenuada (comercio no disponible). */
   muted?: boolean;
   className?: string;
-  /** Contenido opcional para el footer, reservado para nombre y sellos. */
+  /** Contenido opcional para el footer. */
   footer?: React.ReactNode;
 }
 
 export const CategoryCardSurface: React.FC<CategoryCardSurfaceProps> = ({
   name,
-  iconSize = 64,
+  localName,
+  stamps,
+  totalStamps,
+  nextRewardTitle,
+  hasReadyReward = false,
+  iconSize = 56,
   backgroundColor,
   inkColor,
   muted = false,
   className = '',
   footer
 }) => {
+  const reducedMotion = useReducedMotion();
   const palette = CATEGORY_PALETTE[name];
   if (!palette) return null;
 
   const bg = backgroundColor || palette.background;
   const ink = inkColor || palette.ink;
 
+  const showStamps = typeof stamps === 'number' && typeof totalStamps === 'number';
+
   return (
     <div
-      className={`relative h-full w-full overflow-hidden ${className}`.trim()}
+      className={`relative h-full w-full overflow-hidden flex flex-col justify-between p-6 select-none ${className}`.trim()}
       style={{
         backgroundColor: bg,
-        opacity: 1
+        opacity: muted ? 0.6 : 1
       }}
     >
       {/*
-        Icono del rubro: ubicado en la esquina superior derecha.
-        Deja todo el cuerpo y pie de la tarjeta despejados para futuros elementos
-        (nombre del comercio, sellos, chips, etc.).
+        EFECTO RESPLANDOR (SHIMMER) EXCLUSIVO:
+        Se activa únicamente si la tarjeta tiene un premio listo para canjear (hasReadyReward === true).
+        Es exactamente el mismo haz diagonal de luz suave que usa el botón flotante RewardFab.
       */}
-      <div className="absolute top-5 right-5 pointer-events-none">
-        <CategoryIcon name={name} size={iconSize} stroke={ink} strokeWidth={1.4} />
+      {hasReadyReward && !reducedMotion && (
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-10 w-full h-full"
+          style={{
+            background:
+              'linear-gradient(105deg, transparent 25%, rgba(255,255,255,0.48) 50%, transparent 75%)'
+          }}
+          animate={{
+            x: ['-130%', '160%']
+          }}
+          transition={{
+            duration: 2.4,
+            repeat: Infinity,
+            repeatDelay: 2.2,
+            ease: 'easeInOut'
+          }}
+        />
+      )}
+
+      {/* FILA SUPERIOR: Insignia 'Premio Listo' (si aplica) e Icono del Rubro a la derecha */}
+      <div className="relative z-20 flex items-start justify-between w-full">
+        <div className="flex-1 pr-3">
+          {hasReadyReward ? (
+            <motion.div
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-900/90 text-white shadow-sm backdrop-blur-sm"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <span className="text-[11px] font-semibold tracking-wide uppercase">¡Premio listo!</span>
+            </motion.div>
+          ) : (
+            <div className="h-5" />
+          )}
+        </div>
+
+        {/* Icono vectorial temático del rubro en esquina superior derecha */}
+        <div className="pointer-events-none shrink-0" style={{ color: ink }}>
+          <CategoryIcon name={name} size={iconSize} stroke={ink} strokeWidth={1.5} />
+        </div>
       </div>
 
-      {footer && <div className="relative z-10 h-full w-full">{footer}</div>}
+      {/* ZONA INFERIOR: Nombre del local + Contador de sellos y próximo premio */}
+      <div className="relative z-20 flex flex-col gap-1.5 mt-auto">
+        {localName && (
+          <h3
+            className="text-[22px] font-bold tracking-[-0.02em] leading-tight line-clamp-1"
+            style={{ color: ink }}
+          >
+            {localName}
+          </h3>
+        )}
+
+        {showStamps && (
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Chip de progreso de sellos */}
+            <div
+              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[12px] font-semibold tabular-nums border shadow-2xs"
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.72)',
+                borderColor: 'rgba(0, 0, 0, 0.08)',
+                color: ink
+              }}
+            >
+              {stamps} de {totalStamps} sellos
+            </div>
+
+            {/* Próximo premio sutil */}
+            {nextRewardTitle && (
+              <span
+                className="text-[11.5px] font-medium opacity-80 truncate max-w-[190px]"
+                style={{ color: ink }}
+              >
+                • Próximo: {nextRewardTitle}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+
+      {footer && <div className="relative z-20 w-full">{footer}</div>}
     </div>
   );
 };
