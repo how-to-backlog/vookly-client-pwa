@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Minus, Plus } from 'lucide-react';
 
 import BottomSheetNodeDetail from '@/components/local/BottomSheetNodeDetail';
 import CategoryIcon, { type CategoryIconName } from '@/components/icons/CategoryIcon';
@@ -21,9 +22,6 @@ const MIN_STAMPS = 1;
 const MAX_STAMPS = 20;
 const DEFAULT_STAMPS = 5;
 
-// Opciones rápidas de 1 toque idénticas a las del simulador comercial
-const PRESET_STAMP_OPTIONS = [3, 5, 8, 10];
-
 export interface MerchantOnboardingValues {
   businessName: string;
   rewardTitle: string;
@@ -39,8 +37,7 @@ export interface MerchantOnboardingSheetProps {
 }
 
 /**
- * Hoja de alta del local personalizado: nombre, producto a canjear, cantidad
- * de sellos y tipo de negocio. Simplificada y alineada al simulador comercial.
+ * Hoja de alta del local personalizado: ultra simplificada, limpia y directa.
  */
 export function MerchantOnboardingSheet({
   isOpen,
@@ -105,62 +102,34 @@ export function MerchantOnboardingSheet({
           />
         </label>
 
-        {/* Sección simplificada idéntica a la tool del Simulador Demo */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <span className="text-[12px] font-semibold uppercase tracking-wide text-neutral-500">
-              Cantidad de sellos para canjear dicho producto
-            </span>
-            <span className="text-[11px] font-bold text-neutral-900 bg-neutral-100 px-2.5 py-0.5 rounded-full">
+        {/* Sección de Sellos: Ultra limpia, solo "-" y "+" con el número en el medio */}
+        <div className="flex flex-col gap-1.5">
+          <span className="text-[12px] font-semibold uppercase tracking-wide text-neutral-500">
+            Sellos
+          </span>
+          <div className="flex items-center justify-between rounded-xl border border-neutral-200 bg-neutral-50 px-3.5 py-2">
+            <span className="text-[15px] font-semibold text-neutral-900 tabular-nums">
               {stampsRequired} {stampsRequired === 1 ? 'sello' : 'sellos'}
             </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Stepper compacto estilo simulador (− / +) */}
-            <div className="flex items-center bg-neutral-50 border border-neutral-200 rounded-xl px-2 py-1 gap-2.5 shadow-2xs">
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => setStampsRequired((value) => Math.max(MIN_STAMPS, value - 1))}
                 disabled={stampsRequired <= MIN_STAMPS}
                 aria-label="Quitar un sello"
-                className="w-7 h-7 rounded-lg hover:bg-neutral-200/70 disabled:opacity-30 disabled:pointer-events-none text-neutral-800 font-bold text-[14px] flex items-center justify-center transition-colors"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-700 transition-colors hover:bg-neutral-100 disabled:opacity-30 disabled:pointer-events-none shadow-2xs"
               >
-                −
+                <Minus className="h-4 w-4" />
               </button>
-              <span className="text-[14px] font-bold text-neutral-900 tabular-nums min-w-[28px] text-center">
-                {stampsRequired}s
-              </span>
               <button
                 type="button"
                 onClick={() => setStampsRequired((value) => Math.min(MAX_STAMPS, value + 1))}
                 disabled={stampsRequired >= MAX_STAMPS}
                 aria-label="Agregar un sello"
-                className="w-7 h-7 rounded-lg hover:bg-neutral-200/70 disabled:opacity-30 disabled:pointer-events-none text-neutral-800 font-bold text-[14px] flex items-center justify-center transition-colors"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-700 transition-colors hover:bg-neutral-100 disabled:opacity-30 disabled:pointer-events-none shadow-2xs"
               >
-                +
+                <Plus className="h-4 w-4" />
               </button>
-            </div>
-
-            {/* Presets rápidos de 1 toque (3, 5, 8, 10 sellos) */}
-            <div className="flex items-center gap-1.5 flex-1">
-              {PRESET_STAMP_OPTIONS.map((val) => {
-                const isActive = stampsRequired === val;
-                return (
-                  <button
-                    key={val}
-                    type="button"
-                    onClick={() => setStampsRequired(val)}
-                    className={`flex-1 py-1.5 rounded-xl text-[12px] font-bold border transition-all ${
-                      isActive
-                        ? 'bg-neutral-900 text-white border-neutral-900 shadow-2xs'
-                        : 'bg-neutral-50 hover:bg-neutral-100 text-neutral-600 border-neutral-200'
-                    }`}
-                  >
-                    {val}s
-                  </button>
-                );
-              })}
             </div>
           </div>
         </div>
