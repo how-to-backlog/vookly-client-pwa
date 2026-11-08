@@ -80,12 +80,18 @@ export function RedemptionChoreography({
   const [tokenPending, setTokenPending] = useState(false);
   const [tokenError, setTokenError] = useState<string | null>(null);
 
-  // Sincronizar el token de sesión con existingToken cuando el padre lo limpia o resetea
-  useEffect(() => {
-    if (!existingToken) {
+  // Sincronizar el token de sesión con existingToken cuando el padre lo limpia o
+  // resetea. El ajuste se hace durante el render y no en un efecto para no
+  // provocar renders en cascada; la comparación es por código para que no
+  // dependa de la identidad del objeto que arma el padre.
+  const liveTokenCode = existingToken?.code ?? null;
+  const [lastLiveTokenCode, setLastLiveTokenCode] = useState(liveTokenCode);
+  if (liveTokenCode !== lastLiveTokenCode) {
+    setLastLiveTokenCode(liveTokenCode);
+    if (!liveTokenCode) {
       setSessionToken(null);
     }
-  }, [existingToken]);
+  }
 
   // The live token is the one issued by the parent (persisted redemption) or,
   // while the sheet is open, the one issued in this session. The parent is the

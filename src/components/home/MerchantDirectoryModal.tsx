@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { X, ChevronRight, ExternalLink, ArrowLeft } from 'lucide-react';
 import type { CategoryIconName } from '@/components/icons/CategoryIcon';
 import { CATEGORY_LABELS, CategoryIcon } from '@/components/icons/CategoryIcon';
@@ -120,14 +120,9 @@ export const MerchantDirectoryModal: React.FC<MerchantDirectoryModalProps> = ({
   const [selectedFilter, setSelectedFilter] = useState<CategoryIconName | 'all'>(initialCategory);
   const [activeMerchant, setActiveMerchant] = useState<DirectoryMerchant | null>(null);
 
-  // Cada vez que se abre el modal, se resetea la vista detallada al listado
-  // y se sincroniza el filtro con el nicho activo desde el cual se hizo tap.
-  useEffect(() => {
-    if (isOpen) {
-      setActiveMerchant(null);
-      setSelectedFilter(initialCategory);
-    }
-  }, [isOpen, initialCategory]);
+  // El modal se monta sólo cuando se abre (ver `src/app/hub/page.tsx`), así que
+  // el listado arranca siempre en el filtro con el que se abrió y sin detalle
+  // activo. Sin efecto de reseteo: el estado inicial ya es el correcto.
 
   const handleClose = () => {
     setActiveMerchant(null);

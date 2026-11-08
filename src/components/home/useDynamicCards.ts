@@ -107,6 +107,20 @@ const subscribeToStorage = (onStoreChange: () => void) => {
 
 const cardsCache = { key: '', cards: [] as CardStateWithSim[] };
 
+// El snapshot del servidor tiene que devolver siempre la misma referencia:
+// React lo compara por identidad y, si cambia en cada render, avisa que
+// puede entrar en un bucle infinito.
+const serverCardsCache = { key: '', cards: [] as CardStateWithSim[] };
+
+const getServerCards = (initialCards: CardItem[]): CardStateWithSim[] => {
+  const key = initialCards.map((c) => c.id).join('|');
+  if (key !== serverCardsCache.key) {
+    serverCardsCache.key = key;
+    serverCardsCache.cards = initialCards.map((c) => ({ ...c, hasReadyReward: false }));
+  }
+  return serverCardsCache.cards;
+};
+
 /**
  * Hook reactivo que escucha cambios en el simulador / localStorage
  * y mantiene las 8 tarjetas actualizadas en tiempo real con nombre y sellos dinámicos.
@@ -126,6 +140,6 @@ export function useDynamicCards(initialCards: CardItem[] = DEFAULT_CARDS): CardS
       }
       return cardsCache.cards;
     },
-    () => initialCards.map((c) => ({ ...c, hasReadyReward: false }))
+    () => getServerCards(initialCards)
   );
 }
