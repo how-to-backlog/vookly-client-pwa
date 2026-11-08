@@ -62,7 +62,8 @@ export const HomeGreeting: React.FC<HomeGreetingProps> = ({ forcedHour, reward }
       <h1 className="text-[36px] font-normal tracking-[-0.03em] text-neutral-900 leading-[1.1] font-sans antialiased">
         {greeting}
       </h1>
-      <p className="text-[14px] font-normal text-neutral-300 mt-4 mb-2 leading-[1.4]">
+      {/* Copy dinámico: negro pleno con alto contraste sobre la aurora */}
+      <p className="text-[14.5px] font-medium text-neutral-900 mt-4 mb-2 leading-[1.4]">
         {reward ? (
           <>
             {/* El punto convierte la línea en un aviso escaneable: el estado

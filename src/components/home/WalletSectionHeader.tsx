@@ -33,11 +33,11 @@ export const WalletSectionHeader: React.FC<WalletSectionHeaderProps> = ({
 
   return (
     <div className="px-5 pt-5 pb-1 flex justify-between items-baseline gap-2 select-none">
-      <h2 className="text-[12px] font-black uppercase tracking-[0.12em] text-neutral-500">
+      <h2 className="text-[13px] font-light uppercase tracking-[0.12em] text-neutral-800 font-sans">
         Tus tarjetas
       </h2>
       {showCount ? (
-        <span className="text-[12px] font-black text-neutral-500 tabular-nums">
+        <span className="text-[13px] font-light text-neutral-800 tabular-nums font-sans">
           {totalCards} de {totalAvailable}
         </span>
       ) : null}
