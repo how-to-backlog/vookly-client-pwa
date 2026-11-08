@@ -489,6 +489,19 @@
 - **Etiquetas:** `#copywriting #branding #vookly #billetera #ux #microcopy`
 - **Tópico / Componente Afectado:** `docs/p-fidelizar_master_notes.md`, `src/components/cards/*`.
 
+### [NOTA-023] Personalización Completa de Tarjeta en Onboarding (12 Hero Patterns y Cero Colisiones)
+- **Fecha:** 2026-11-08 04:55
+- **Categoría:** Frontend / UI-UX / Onboarding / PWA
+- **Diagnóstico / Contexto:** Cierre de la etapa de bienvenida y personalización de local en la PWA Vookly. Se integró un selector de diseño de tarjeta en el Bottom Sheet de Onboarding (`MerchantOnboardingSheet.tsx`) y se unificó la estética del Aurora claro entre el Home (`/hub`) y la bienvenida (`/`).
+- **Implementación Técnica:**
+  1. **Catálogo de 12 Hero Patterns:** Integración de los 12 patrones exactos de heropatterns.com (Steve Schoger): *Formal Invitation, Topography, Hideout, Falling Triangles, Hexagons, Autumn, I Like Food, Anchors Away, Bubbles, Glamorous, Skulls, Endless Clouds* en `src/data/cardPatternsRegistry.ts`. Todos operan como data-URIs SVG ultralivianas (<1 KB) con inyección dinámica de color y opacidad calibrada (0.18).
+  2. **Garantía Matemática de 0 Colisiones:** Mediante `getUniqueCardPatternAssignment`, si el comerciante elige un patrón, este se reserva para su tarjeta en 1ra fila y los 11 restantes se asignan de forma única a las 7 tarjetas mockeadas restantes del Hub. Si omite el paso, cada una de las 8 tarjetas recibe igualmente un patrón diferente.
+  3. **Live Card Preview Reactivo:** Subcomponente `LiveCardPreview.tsx` que refleja en tiempo real el nombre, rubro, sellos, color de fondo y patrón seleccionado.
+  4. **Paleta Oficial Estricta:** Subcomponente `CardColorPicker.tsx` limitado a los 8 colores de fondo oficiales del Hub.
+  5. **Próximo Paso Inmediato:** Establecer e implementar el tour interactivo guiado con **Driver.js** sobre la PWA.
+- **Etiquetas:** `#frontend #ui-ux #onboarding #heropatterns #pwa #livepreview #alta`
+- **Tópico / Componente Afectado:** `src/components/landing/*`, `src/components/cards/*`, `src/data/cardPatternsRegistry.ts`.
+
 ---
 - **Fecha:** 2026-11-01 05:00
 - **Categoría:** Arquitectura / Negocio / Backend / Gamificación
