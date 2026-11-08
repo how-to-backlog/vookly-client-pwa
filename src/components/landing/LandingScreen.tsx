@@ -15,31 +15,31 @@ import { saveDemoSimulatorConfig } from '@/services/demoSimulatorStorage';
 import type { DemoSimulatorConfig } from '@/types/loyalty';
 
 /**
- * Paleta exacta de los 8 comercios de la billetera:
- * - Cafeterías: Coffee Shop (#f3e2d0 / #6f4423), Café Roma (#dfc2a6 / #4a2810)
- * - Barberías: La Barbería Club (#dce3ec / #3c4959), Barber Studio (#b8c7db / #172554)
- * - Heladerías: Heladería del Parque (#f9dbe5 / #a83b63), Gelato & Co. (#d1ecd9 / #1b5e32)
- * - Panaderías: La Espiga (#f7e7c6 / #8a6420), Masa Madre Bakery (#e6c594 / #583a0a)
+ * Paleta de colores enriquecida, más oscura y profunda para las tarjetas:
+ * Armoniza con el fondo de la Aurora sin deslumbrar, con contraste blanco/marfil nítido:
+ * - Cafetería tostada: #3b2314 (moca espresso)
+ * - Barbería noche: #172554 (azul noche pizarra)
+ * - Heladería frutos rojos: #4a1528 (borgoña profundo)
+ * - Panadería centeno: #3d2a10 (corteza tostada)
+ * - Verde bosque: #123524 (menta oscura)
+ * - Púrpura índigo: #261642 (amatista oscuro)
  */
-const CARD_COLOR_THEMES = [
-  { bg: '#f3e2d0', ink: '#6f4423' }, // Cafetería A
-  { bg: '#dce3ec', ink: '#3c4959' }, // Barbería A
-  { bg: '#f9dbe5', ink: '#a83b63' }, // Heladería A
-  { bg: '#f7e7c6', ink: '#8a6420' }, // Panadería A
-  { bg: '#d1ecd9', ink: '#1b5e32' }, // Heladería B
-  { bg: '#b8c7db', ink: '#172554' }, // Barbería B
-  { bg: '#dfc2a6', ink: '#4a2810' }, // Cafetería B
-  { bg: '#e6c594', ink: '#583a0a' }  // Panadería B
+const CARD_DARK_THEMES = [
+  { bg: '#3b2314', ink: '#fef3e7' }, // Cafetería Tostada profunda
+  { bg: '#172554', ink: '#eef4ff' }, // Azul Noche Pizarra
+  { bg: '#4a1528', ink: '#fcebf1' }, // Frutos Rojos / Borgoña
+  { bg: '#3d2a10', ink: '#fef7ea' }, // Trigo / Centeno Tostado
+  { bg: '#123524', ink: '#ebfaef' }, // Menta Bosque Oscura
+  { bg: '#261642', ink: '#f5effe' }  // Índigo Profundo
 ];
 
 export function LandingScreen() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { triggerTransition } = usePageTransition();
 
-  // Asigna de forma determinista y variada un tema de color a cada mensaje
   const cardsWithColors = useMemo(() => {
     return LANDING_PITCH_MESSAGES.map((message, index) => {
-      const theme = CARD_COLOR_THEMES[index % CARD_COLOR_THEMES.length];
+      const theme = CARD_DARK_THEMES[index % CARD_DARK_THEMES.length];
       return { message, ...theme };
     });
   }, []);
@@ -77,9 +77,10 @@ export function LandingScreen() {
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-[#050b26]">
+      {/* Fondo vivo: Aurora azul profunda animada en tiempo real */}
       <LandingBackdrop />
 
-      <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-8 pt-12">
+      <main className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col justify-between px-6 pb-12 pt-12">
         {/* Cabecera de Bienvenida */}
         <div className="shrink-0">
           <h1 className="text-[34px] font-normal leading-[1.1] tracking-[-0.03em] text-neutral-100 font-sans antialiased">
@@ -89,17 +90,12 @@ export function LandingScreen() {
 
         {/*
           Contenedor del Stack Cuadrado Compacto:
-          - Ancho reducido a 260px (aspect-square) para que las tarjetas de atrás
-            queden contenidas holgadamente dentro de la pantalla sin tocar ni traspasar el borde izquierdo.
-          - `spread={0.35}`: tarjetas mucho más juntas, revelando el filo superior-izquierdo completo.
-          - `visible={4}`: muestra hasta 4 cartas apiladas con escala suave (depth 0.08).
+          - Formato 265px x 265px centrado con margen de desborde protegido.
+          - Texto en esquina inferior izquierda con tipografía más gorda.
+          - Cascada suave y controlada sin fugas en el viewport.
         */}
         <div className="my-auto flex items-center justify-center w-full py-2">
-          {/*
-            Margen izquierdo compensatorio `ml-4` para que el stack en cascada (-x)
-            quede visualmente centrado en la pantalla y el borde izquierdo respire al 100%.
-          */}
-          <div className="w-full max-w-[260px] aspect-square ml-4">
+          <div className="w-full max-w-[265px] aspect-square ml-4">
             <Stack
               cards={cardsWithColors.map((card) => (
                 <PitchCard
@@ -128,23 +124,27 @@ export function LandingScreen() {
           </div>
         </div>
 
-        {/* Acciones de Navegación Inferiores */}
-        <nav className="shrink-0 flex items-center justify-between gap-4 pt-2">
+        {/*
+          Acciones de Navegación Inferiores Reordenadas:
+          - "Personaliza tu local": centrado como acción principal.
+          - "Omitir este paso": debajo, centrado y con respiración vertical holgada respecto al pie.
+        */}
+        <nav className="shrink-0 flex flex-col items-center justify-center gap-3 w-full">
           <button
             type="button"
             onClick={() => setIsSheetOpen(true)}
-            className="flex items-center gap-1 text-[14px] font-medium text-white transition-opacity hover:opacity-80 active:scale-98"
+            className="flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-[15px] font-medium text-white transition-all active:scale-98 shadow-sm backdrop-blur-xs"
           >
             Personaliza tu local
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4 opacity-80" />
           </button>
           <button
             type="button"
             onClick={handleSkip}
-            className="flex items-center gap-1 text-[14px] font-medium text-white/70 transition-opacity hover:opacity-100 active:scale-98"
+            className="flex items-center justify-center gap-1 text-[13.5px] font-normal text-white/60 hover:text-white/90 transition-colors py-1"
           >
             Omitir este paso
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-3.5 w-3.5 opacity-60" />
           </button>
         </nav>
       </main>
