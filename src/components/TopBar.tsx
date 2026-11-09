@@ -1,10 +1,10 @@
 import React from 'react';
-import { Headphones } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 
 export interface TopBarProps {
   /** Número de WhatsApp de soporte oficial (formato internacional sin signos). */
   supportPhone?: string;
-  /** Mensaje inicial precargado en WhatsApp. */
+  /** Mensaje inicial precargado en WhatsApp (orientado a adhesión comercial). */
   defaultMessage?: string;
   /**
    * Superficie de la cabecera.
@@ -27,7 +27,7 @@ export interface TopBarProps {
  */
 export const TopBar: React.FC<TopBarProps> = ({
   supportPhone = '5493518799794',
-  defaultMessage = 'Hola! Tengo una consulta sobre mi cuenta de Vookly.',
+  defaultMessage = '¡Hola! Estoy interesado en que mi negocio forme parte de la red Vookly.',
   variant = 'solid',
   action
 }) => {
@@ -72,19 +72,16 @@ export const TopBar: React.FC<TopBarProps> = ({
             </div>
           ) : null}
 
-          {/* Botón de Soporte WhatsApp */}
+          {/* Botón de Contacto Comercial / WhatsApp (sin contenedor circular, ícono puro) */}
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Contactar soporte técnico por WhatsApp"
-            className={`p-2 rounded-full active:scale-95 transition-all duration-150 flex items-center justify-center ${
-              isTransparent
-                ? 'text-white/85 hover:text-white hover:bg-white/20'
-                : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100/80'
-            }`}
+            aria-label="Contactar a Vookly por WhatsApp"
+            data-tour="topbar-whatsapp-btn"
+            className="p-1.5 active:scale-90 transition-transform duration-150 flex items-center justify-center text-emerald-600 hover:text-emerald-700"
           >
-            <Headphones className="w-5 h-5" strokeWidth={2.2} />
+            <MessageCircle className="w-6 h-6 animate-cta-shake" strokeWidth={2.4} />
           </a>
         </div>
       </div>

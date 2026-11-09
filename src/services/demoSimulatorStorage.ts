@@ -34,14 +34,22 @@ export function computeTotalStampsFromTiers(tiers: DemoRewardTier[]): number {
   return milestones[milestones.length - 1].stampThreshold;
 }
 
+const defaultConfigCache = new Map<string, DemoSimulatorConfig>();
+
 /**
- * Genera la configuración predeterminada a partir de los mocks del negocio
+ * Genera la configuración predeterminada a partir de los mocks del negocio,
+ * cacheando la referencia por businessName + rules + wallet para evitar
+ * loops infinitos en getServerSnapshot de useSyncExternalStore.
  */
 export function getDefaultDemoConfig(
   businessName: string,
   rules: BusinessLoyaltyRules,
   wallet: CustomerWalletStatus
 ): DemoSimulatorConfig {
+  const cacheKey = `${businessName}|${rules.totalRoadmapStamps}|${wallet.currentStamps}|${rules.rewardMilestones.map(m => m.stampThreshold).join(',')}`;
+  const existing = defaultConfigCache.get(cacheKey);
+  if (existing) return existing;
+
   let previous = 0;
   const tiers: DemoRewardTier[] = rules.rewardMilestones
     .slice()
@@ -56,11 +64,14 @@ export function getDefaultDemoConfig(
       };
     });
 
-  return {
+  const config: DemoSimulatorConfig = {
     businessName: businessName || 'Coffee Shop',
     tiers: tiers.length > 0 ? tiers : [{ id: 'tier-1', stampsFromPrevious: 5, rewardTitle: 'Premio Especial' }],
     simulatedCurrentStamps: Math.max(1, Math.min(wallet.currentStamps, rules.totalRoadmapStamps))
   };
+
+  defaultConfigCache.set(cacheKey, config);
+  return config;
 }
 
 const configCache = new Map<string, { raw: string; parsed: DemoSimulatorConfig }>();

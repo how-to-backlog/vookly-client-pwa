@@ -144,6 +144,7 @@ export function BottomSheetNodeDetail({
       {/* Contenedor flotante de la lámina */}
       <div
         ref={sheetRef}
+        data-tour="redemption-sheet-token"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}

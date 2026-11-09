@@ -83,7 +83,10 @@ export const HomeGreeting: React.FC<HomeGreetingProps> = ({ forcedHour, reward }
           layout de abajo nunca salte al alternar mensajes de 1 o 2 líneas.
           Los grupos nowrap (producto / "en local") garantizan que jamás
           supere las 2 líneas y que los cortes caigan en fronteras limpias. */}
-      <p className="text-[14.5px] font-medium text-neutral-900 mt-4 mb-2 leading-[1.4] min-h-[2.8em]">
+      <p
+        data-tour="rotating-notifications"
+        className="text-[14.5px] font-medium text-neutral-900 mt-4 mb-2 leading-[1.4] min-h-[2.8em]"
+      >
         <AnimatePresence mode="wait" initial={false}>
           {reward ? (
             <motion.span

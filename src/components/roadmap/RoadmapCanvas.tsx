@@ -88,6 +88,21 @@ export function RoadmapCanvas({
 
     if (externalOnSelectNode) {
       const selection = buildInteractiveNodeSelection(node, walletStatus);
+
+      // Si el usuario toca un nodo de premio durante el tour de demo, lo habilitamos como 'ready'
+      // para que siempre pueda ver el botón "Reclamar premio" y experimentar el canje del Paso 5
+      if (node.isReward && selection.interactiveState === 'reward_locked') {
+        selection.interactiveState = 'reward_ready';
+        selection.voucher = {
+          id: `vouch-demo-${node.stampIndex}`,
+          milestoneStamp: node.stampIndex,
+          rewardTitle: node.rewardTitle || 'Premio',
+          unlockedAt: new Date().toISOString(),
+          expiresAt: new Date(Date.now() + 15 * 86400000).toISOString(),
+          status: 'ready'
+        };
+      }
+
       externalOnSelectNode(selection);
     }
   }, [externalOnSelectNode, scrollToNode, walletStatus]);

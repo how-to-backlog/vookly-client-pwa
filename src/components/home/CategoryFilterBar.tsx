@@ -101,7 +101,7 @@ export const CategoryFilterBar: React.FC<CategoryFilterBarProps> = ({
           inset
         />
       </div>
-      <p className="text-center text-sm font-semibold text-neutral-600 tracking-wide pt-2.5">
+      <p className="text-center text-[15px] font-medium tracking-[-0.01em] text-neutral-800 font-sans antialiased pt-1.5">
         {currentLabel}
       </p>
     </div>

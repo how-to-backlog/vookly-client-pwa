@@ -180,7 +180,7 @@ export const CardContainer: React.FC<CardContainerProps> = ({
         innerPadding="px-5"
         className="w-full h-full no-scrollbar"
       >
-        {cards.map((card) => (
+        {cards.map((card, idx) => (
           <ScrollStackItem
             key={card.id}
             padding="p-0"
@@ -188,20 +188,25 @@ export const CardContainer: React.FC<CardContainerProps> = ({
             boxShadow={CARD_BOTTOM_RIGHT_SHADOW}
             itemClassName="h-[220px] rounded-[28px] overflow-hidden"
           >
-            <ScrollStackCard
-              id={card.id}
-              href={card.href}
-              localName={card.localName}
-              categoryIcon={card.categoryIcon}
-              backgroundColor={card.backgroundColor}
-              inkColor={card.inkColor}
-              patternId={card.patternId}
-              stamps={card.stamps}
-              totalStamps={card.totalStamps}
-              nextRewardTitle={card.nextRewardTitle}
-              hasReadyReward={card.hasReadyReward}
-              unavailable={card.unavailable}
-            />
+            <div
+              {...(idx === 0 ? { 'data-tour': 'first-card-target' } : {})}
+              className="w-full h-full"
+            >
+              <ScrollStackCard
+                id={card.id}
+                href={card.href}
+                localName={card.localName}
+                categoryIcon={card.categoryIcon}
+                backgroundColor={card.backgroundColor}
+                inkColor={card.inkColor}
+                patternId={card.patternId}
+                stamps={card.stamps}
+                totalStamps={card.totalStamps}
+                nextRewardTitle={card.nextRewardTitle}
+                hasReadyReward={card.hasReadyReward}
+                unavailable={card.unavailable}
+              />
+            </div>
           </ScrollStackItem>
         ))}
 

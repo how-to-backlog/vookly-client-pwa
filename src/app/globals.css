@@ -35,6 +35,31 @@ html, body {
   overflow-x: hidden;
 }
 
+/* Micro-animación enérgica de shake (sacudida continua y claramente visible) */
+@keyframes ctaShake {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-14deg);
+  }
+  40% {
+    transform: rotate(14deg);
+  }
+  60% {
+    transform: rotate(-10deg);
+  }
+  80% {
+    transform: rotate(10deg);
+  }
+}
+
+.animate-cta-shake {
+  display: inline-flex;
+  animation: ctaShake 1.8s ease-in-out infinite;
+  transform-origin: center;
+}
+
 @keyframes rippleExpandBlack {
   0% {
     transform: translate(-50%, -50%) scale(1);

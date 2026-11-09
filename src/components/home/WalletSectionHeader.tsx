@@ -32,12 +32,12 @@ export const WalletSectionHeader: React.FC<WalletSectionHeaderProps> = ({
   const showCount = isFiltered && typeof totalAvailable === 'number';
 
   return (
-    <div className="px-5 pt-5 pb-1 flex justify-between items-baseline gap-2 select-none">
-      <h2 className="text-[13px] font-light uppercase tracking-[0.12em] text-neutral-800 font-sans">
+    <div className="px-5 pt-4 pb-0.5 flex justify-between items-baseline gap-2 select-none">
+      <h2 className="text-[17px] font-medium tracking-[-0.015em] text-neutral-900 font-sans antialiased">
         Tus tarjetas
       </h2>
       {showCount ? (
-        <span className="text-[13px] font-light text-neutral-800 tabular-nums font-sans">
+        <span className="text-[13px] font-normal text-neutral-500 tabular-nums font-sans antialiased">
           {totalCards} de {totalAvailable}
         </span>
       ) : null}

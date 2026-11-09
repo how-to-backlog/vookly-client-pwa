@@ -3,6 +3,10 @@
 import React, { useState } from 'react';
 import { DemoRewardTier, DemoSimulatorConfig } from '@/types/loyalty';
 import { computeMilestonesFromTiers, computeTotalStampsFromTiers } from '@/services/demoSimulatorStorage';
+import LiveCardPreview from '@/components/landing/onboarding/LiveCardPreview';
+import CardColorPicker from '@/components/landing/onboarding/CardColorPicker';
+import CardPatternPicker from '@/components/landing/onboarding/CardPatternPicker';
+import { OFFICIAL_CARD_COLORS } from '@/data/cardPatternsRegistry';
 
 export interface LocalDemoSimulatorModalProps {
   isOpen: boolean;
@@ -80,6 +84,17 @@ export function LocalDemoSimulatorModal({
   const [draftStamps, setDraftStamps] = useState(config.simulatedCurrentStamps);
   const [draftTiers, setDraftTiers] = useState<DemoRewardTier[]>(config.tiers);
 
+  // Estado borrador de apariencia (Color y Patrón de la tarjeta)
+  const [draftBgColor, setDraftBgColor] = useState<string>(
+    config.customBackgroundColor || OFFICIAL_CARD_COLORS[0].bg
+  );
+  const [draftInkColor, setDraftInkColor] = useState<string>(
+    config.customInkColor || OFFICIAL_CARD_COLORS[0].ink
+  );
+  const [draftPatternId, setDraftPatternId] = useState<string>(
+    config.customPatternId || 'formalInvitation'
+  );
+
   if (!isOpen) return null;
 
   // Calculamos hitos y sellos totales resultantes de los tramos en tiempo real
@@ -140,17 +155,28 @@ export function LocalDemoSimulatorModal({
     setDraftCategory(preset.categoryIcon);
     setDraftTiers(preset.tiers);
     setDraftStamps(1);
+
+    // Ajustamos paleta asociada al rubro del preset si no había una personalizada
+    const matchingColor = OFFICIAL_CARD_COLORS.find(c => c.id.startsWith(preset.categoryIcon));
+    if (matchingColor) {
+      setDraftBgColor(matchingColor.bg);
+      setDraftInkColor(matchingColor.ink);
+    }
   };
 
   const handleApply = () => {
     onApply({
+      ...config,
       businessName: draftBusinessName.trim() || 'Coffee Shop',
       categoryIcon: draftCategory,
       tiers: draftTiers.map((t, idx) => ({
         ...t,
         rewardTitle: t.rewardTitle.trim() || `Premio ${idx + 1}`
       })),
-      simulatedCurrentStamps: safeStamps
+      simulatedCurrentStamps: safeStamps,
+      customBackgroundColor: draftBgColor,
+      customInkColor: draftInkColor,
+      customPatternId: draftPatternId
     });
     onClose();
   };
@@ -163,24 +189,46 @@ export function LocalDemoSimulatorModal({
       className="fixed inset-0 z-60 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 select-none animate-in fade-in duration-200"
     >
       <div
+        data-tour="merchant-editor-modal"
         onClick={(e) => e.stopPropagation()}
         className="w-full max-w-[380px] bg-white rounded-3xl p-5 shadow-2xl border border-neutral-100 flex flex-col max-h-[90vh] overflow-y-auto no-scrollbar animate-in zoom-in-95 duration-150 text-left"
       >
         {/* Cabecera del Simulador */}
-        <div className="flex items-center justify-between pb-3 mb-4 border-b border-neutral-100">
+        <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-100">
           <div className="flex items-center gap-2">
             <h3 className="text-[14px] font-black text-neutral-900 tracking-tight">
-              Editor de Premios y Sellos
+              Editor de Comercio
             </h3>
           </div>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Cerrar simulador"
+            aria-label="Cerrar editor"
             className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-500 hover:text-black flex items-center justify-center text-[12px] font-bold transition-colors"
           >
             ✕
           </button>
+        </div>
+
+        {/* ============================================================== */}
+        {/* BLOQUE SUPERIOR: PRESETS RÁPIDOS (AISLADOS COMO ATRACTOR)      */}
+        {/* ============================================================== */}
+        <div className="flex flex-col gap-1.5 mb-4 p-2.5 bg-neutral-50 rounded-2xl border border-neutral-100">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+            Cargar ejemplo rápido
+          </span>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {DEMO_PRESETS.map((preset) => (
+              <button
+                key={preset.name}
+                type="button"
+                onClick={() => handleLoadPreset(preset)}
+                className="px-2.5 py-1 rounded-full bg-white hover:bg-neutral-100 border border-neutral-200 active:scale-95 text-neutral-800 font-semibold text-[11px] transition-all shadow-2xs"
+              >
+                {preset.name}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* ============================================================== */}
@@ -227,25 +275,50 @@ export function LocalDemoSimulatorModal({
               ))}
             </div>
           </div>
+        </div>
 
-          {/* Presets Rápidos: reubicado justo debajo de Elegí rubro */}
-          <div className="flex flex-col gap-1.5 pt-1">
-            <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
-              Presets Rápidos
+        {/* ============================================================== */}
+        {/* BLOQUE INTERMEDIO: APARIENCIA Y VISTA PREVIA EN VIVO (LEGO)    */}
+        {/* ============================================================== */}
+        <div
+          data-tour="merchant-editor-preview-card"
+          className="flex flex-col gap-3.5 mb-5 p-3.5 bg-neutral-50 rounded-2xl border border-neutral-100"
+        >
+          <div className="flex items-center justify-between">
+            <label className="text-[10.5px] font-bold uppercase tracking-wider text-neutral-500">
+              Diseño de tu tarjeta
             </label>
-            <div className="flex items-center gap-1.5 flex-wrap">
-              {DEMO_PRESETS.map((preset) => (
-                <button
-                  key={preset.name}
-                  type="button"
-                  onClick={() => handleLoadPreset(preset)}
-                  className="px-2.5 py-1 rounded-full bg-neutral-100 hover:bg-neutral-200 active:scale-95 text-neutral-700 font-semibold text-[11px] transition-all"
-                >
-                  {preset.name}
-                </button>
-              ))}
-            </div>
+            <span className="text-[10px] font-medium text-neutral-400">
+              Vista previa
+            </span>
           </div>
+
+          {/* Mini-tarjeta de preview en vivo reutilizada */}
+          <LiveCardPreview
+            businessName={draftBusinessName}
+            category={draftCategory}
+            stampsRequired={totalMaxStamps}
+            rewardTitle={draftTiers[draftTiers.length - 1]?.rewardTitle || 'Premio mayor'}
+            backgroundColor={draftBgColor}
+            inkColor={draftInkColor}
+            patternId={draftPatternId}
+          />
+
+          {/* Selector de color oficial */}
+          <CardColorPicker
+            selectedBgColor={draftBgColor}
+            onSelectColor={(bg, ink) => {
+              setDraftBgColor(bg);
+              setDraftInkColor(ink);
+            }}
+          />
+
+          {/* Selector de patrones */}
+          <CardPatternPicker
+            selectedPatternId={draftPatternId}
+            inkColor={draftInkColor}
+            onSelectPattern={setDraftPatternId}
+          />
         </div>
 
         {/* ============================================================== */}
@@ -475,9 +548,9 @@ export function LocalDemoSimulatorModal({
           <button
             type="button"
             onClick={handleApply}
-            className="px-5 py-2 rounded-full bg-neutral-950 hover:bg-neutral-800 text-white font-bold text-[13px] shadow-2xs active:scale-95 transition-all"
+            className="px-6 py-2 rounded-full bg-neutral-950 hover:bg-neutral-800 text-white font-bold text-[13px] shadow-2xs active:scale-95 transition-all"
           >
-            Aplicar al mapa
+            Guardar
           </button>
         </div>
       </div>

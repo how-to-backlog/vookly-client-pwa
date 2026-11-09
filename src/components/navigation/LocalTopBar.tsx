@@ -31,6 +31,7 @@ export const LocalTopBar: React.FC<LocalTopBarProps> = ({ onBack, onOpenSimulato
         type="button"
         onClick={handleBack}
         aria-label="Volver a la billetera"
+        data-tour="local-back-btn"
         className="pointer-events-auto w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-black hover:bg-neutral-100 active:scale-90 transition-all border border-black/5"
       >
         <svg
@@ -51,7 +52,8 @@ export const LocalTopBar: React.FC<LocalTopBarProps> = ({ onBack, onOpenSimulato
         <button
           type="button"
           onClick={onOpenSimulator}
-          aria-label="Configurar simulador de demo"
+          aria-label="Abrir Editor de Comercio"
+          data-tour="simulator-trigger-btn"
           className="pointer-events-auto w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-neutral-800 hover:text-black hover:bg-neutral-100 active:scale-90 transition-all border border-black/5"
         >
           {/* Ícono Sliders / Sintonizador minimalista */}

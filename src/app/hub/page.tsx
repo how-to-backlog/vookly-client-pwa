@@ -54,7 +54,24 @@ function HubContent() {
         */}
         <div className="relative z-10 flex flex-col h-full min-h-0 w-full max-w-md mx-auto">
           {/* 1. Cabecera Minimalista */}
-          <TopBar variant="bare" />
+          <TopBar
+            variant="bare"
+            action={
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    (window as unknown as { vooklyResetTour?: () => void }).vooklyResetTour?.();
+                  }
+                }}
+                aria-label="Reiniciar tour guiado"
+                title="Reiniciar tour demo"
+                className="px-2.5 py-1 rounded-full text-[11px] font-bold text-neutral-600 bg-neutral-100 hover:bg-neutral-200 active:scale-95 transition-all"
+              >
+                Tour
+              </button>
+            }
+          />
 
           {/* 2. Saludo Contextual por Horario + mensaje dinámico de premio */}
           <HomeGreeting reward={rotatingReward} />
@@ -67,16 +84,18 @@ function HubContent() {
           />
 
           {/* 4. Filtro por rubro del comercio (con el nicho del comerciante activo por defecto) */}
-          <CategoryFilterBar value={selected} onChange={setSelected} />
+          <div data-tour="wallet-cards-stack" className="flex flex-col flex-1 min-h-0 w-full">
+            <CategoryFilterBar value={selected} onChange={setSelected} />
 
-          {/* 5. Contenedor Modular de Tarjetas (ScrollStack) */}
-          <div className="flex-1 w-full bg-transparent min-h-0">
-            <CardContainer
-              cards={visibleCards}
-              stackKey={selected}
-              activeCategory={selected}
-              onOpenDirectory={() => setIsDirectoryOpen(true)}
-            />
+            {/* 5. Contenedor Modular de Tarjetas (ScrollStack) */}
+            <div className="flex-1 w-full bg-transparent min-h-0">
+              <CardContainer
+                cards={visibleCards}
+                stackKey={selected}
+                activeCategory={selected}
+                onOpenDirectory={() => setIsDirectoryOpen(true)}
+              />
+            </div>
           </div>
         </div>
 

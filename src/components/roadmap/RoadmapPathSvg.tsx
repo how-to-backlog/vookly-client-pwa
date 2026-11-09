@@ -101,15 +101,27 @@ export function RoadmapPathSvg({
       {originPoint && <RoadmapOriginBadge point={originPoint} />}
 
       {/* 5. Nodos visuales e Hitos de premio */}
-      {nodes.map((node) => (
-        <RoadmapNodeItem
-          key={`node-${node.stampIndex}`}
-          node={node}
-          canvasWidth={width}
-          isSelected={selectedNodeIndex === node.stampIndex}
-          onSelect={onSelectNode}
-        />
-      ))}
+      {(() => {
+        let firstRewardAssigned = false;
+        return nodes.map((node) => {
+          const isFirstReward = node.isReward && !firstRewardAssigned;
+          if (isFirstReward) firstRewardAssigned = true;
+
+          return (
+            <g
+              key={`node-wrapper-${node.stampIndex}`}
+              {...(isFirstReward ? { 'data-tour': 'first-reward-node' } : {})}
+            >
+              <RoadmapNodeItem
+                node={node}
+                canvasWidth={width}
+                isSelected={selectedNodeIndex === node.stampIndex}
+                onSelect={onSelectNode}
+              />
+            </g>
+          );
+        });
+      })()}
 
       {/* 6. Indicador del Punto de corte / Sello actual */}
       {currentPoint && (

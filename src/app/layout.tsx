@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Script from "next/script";
 import './globals.css';
 import { TransitionProvider } from '@/components/transition/TransitionProvider';
+import { DemoTourProvider } from '@/components/tour/DemoTourProvider';
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +31,9 @@ export default function RootLayout({
       </head>
       <body className="h-full bg-white text-[#061b31]">
         <TransitionProvider>
-          {children}
+          <DemoTourProvider>
+            {children}
+          </DemoTourProvider>
         </TransitionProvider>
       </body>
     </html>

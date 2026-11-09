@@ -76,6 +76,7 @@ export const LocalFooterSummary: React.FC<LocalFooterSummaryProps> = ({
             {readyVoucher ? (
               <button
                 type="button"
+                data-tour="claim-reward-cta-btn"
                 onClick={onClaimReward}
                 className="h-8 inline-flex items-center gap-1.5 px-3 rounded-full bg-white border border-neutral-950 text-neutral-950 text-[12.5px] font-bold tracking-tight shadow-2xs hover:bg-neutral-50 active:scale-95 transition-all select-none max-w-full"
                 aria-label={`Reclamar premio: ${readyVoucher.rewardTitle}`}

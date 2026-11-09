@@ -74,19 +74,20 @@ const getQueueSnapshot = (cards: CardItem[]): RewardStatus[] => {
   return queueCache.queue;
 };
 
+const EMPTY_QUEUE: RewardStatus[] = [];
+const getServerSnapshot = () => EMPTY_QUEUE;
+
 /**
  * Hook que expone la cola completa de mensajes del hub.
  *
- * En el servidor devuelve una lista vacía para que el HTML inicial coincida
- * con la hidratación; los mensajes reales aparecen al montar el cliente.
+ * En el servidor devuelve una lista vacía referencialmente estable para
+ * evitar re-renders y cumplir con la regla de getServerSnapshot de React.
  */
 export function useRewardStatusQueue(cards: CardItem[]): RewardStatus[] {
   return useSyncExternalStore(
     subscribeToStorage,
     () => getQueueSnapshot(cards),
-    () => queueCache.queue.length > 0 && queueCache.key !== ''
-      ? queueCache.queue
-      : []
+    getServerSnapshot
   );
 }
 

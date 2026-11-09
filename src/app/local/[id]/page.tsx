@@ -47,6 +47,11 @@ interface LocalPageProps {
 // referencia en cada llamada, si no React avisa que puede haber un loop
 // infinito de renders.
 const EMPTY_REDEMPTIONS: Map<number, VoucherTokenEntity> = new Map();
+const FALLBACK_SIMULATOR_CONFIG: DemoSimulatorConfig = {
+  businessName: 'Coffee Shop',
+  tiers: [{ id: 'tier-1', stampsFromPrevious: 5, rewardTitle: 'Premio Especial' }],
+  simulatedCurrentStamps: 1
+};
 
 function LocalContent({ params }: LocalPageProps) {
   // Consumimos params de forma segura en Next.js 16
@@ -90,21 +95,13 @@ function LocalContent({ params }: LocalPageProps) {
       if (business && baseRules && initialWallet) {
         return getDemoSimulatorConfigSnapshot(businessId, business.name, baseRules, initialWallet);
       }
-      return {
-        businessName: 'Coffee Shop',
-        tiers: [{ id: 'tier-1', stampsFromPrevious: 5, rewardTitle: 'Premio Especial' }],
-        simulatedCurrentStamps: 1
-      };
+      return FALLBACK_SIMULATOR_CONFIG;
     },
     () => {
       if (business && baseRules && initialWallet) {
         return getDefaultDemoConfig(business.name, baseRules, initialWallet);
       }
-      return {
-        businessName: 'Coffee Shop',
-        tiers: [{ id: 'tier-1', stampsFromPrevious: 5, rewardTitle: 'Premio Especial' }],
-        simulatedCurrentStamps: 1
-      };
+      return FALLBACK_SIMULATOR_CONFIG;
     }
   );
 

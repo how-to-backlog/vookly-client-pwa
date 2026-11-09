@@ -1,0 +1,136 @@
+/* ==========================================================================
+   Driver.js - Vookly Custom Theme
+   Adapta los popovers, botones y backdrop de Driver.js al sistema de diseño
+   minimalista y elegante de Vookly.
+   ========================================================================== */
+
+@import 'driver.js/dist/driver.css';
+
+/* Contenedor principal del popover */
+.driver-popover.vookly-driver-popover {
+  background-color: #ffffff;
+  color: #171717;
+  border-radius: 24px;
+  padding: 18px 20px 16px 20px;
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  max-width: 320px;
+  border: none;
+}
+
+/* Flecha del popover */
+.driver-popover.vookly-driver-popover .driver-popover-arrow-side-left.driver-popover-arrow {
+  border-left-color: #ffffff;
+}
+.driver-popover.vookly-driver-popover .driver-popover-arrow-side-right.driver-popover-arrow {
+  border-right-color: #ffffff;
+}
+.driver-popover.vookly-driver-popover .driver-popover-arrow-side-top.driver-popover-arrow {
+  border-top-color: #ffffff;
+}
+.driver-popover.vookly-driver-popover .driver-popover-arrow-side-bottom.driver-popover-arrow {
+  border-bottom-color: #ffffff;
+}
+
+/* Descripción del texto (sin título redundante) */
+.driver-popover.vookly-driver-popover .driver-popover-description {
+  font-size: 13.5px;
+  line-height: 1.45;
+  font-weight: 500;
+  color: #262626;
+  margin-bottom: 14px;
+}
+
+/* Barra de pie con botones y progreso */
+.driver-popover.vookly-driver-popover .driver-popover-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* Indicador de progreso de pasos */
+.driver-popover.vookly-driver-popover .driver-popover-progress-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: #737373;
+}
+
+/* Botón Siguiente / Primario */
+.driver-popover.vookly-driver-popover .driver-popover-next-btn,
+.driver-popover.vookly-driver-popover .driver-popover-done-btn {
+  background-color: #0a0a0a !important;
+  color: #ffffff !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  padding: 7px 16px !important;
+  border-radius: 9999px !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  text-shadow: none !important;
+}
+
+.driver-popover.vookly-driver-popover .driver-popover-next-btn:hover,
+.driver-popover.vookly-driver-popover .driver-popover-done-btn:hover {
+  background-color: #262626 !important;
+  transform: scale(0.98);
+}
+
+/* Botón Anterior / Omitir */
+.driver-popover.vookly-driver-popover .driver-popover-prev-btn,
+.driver-popover.vookly-driver-popover .driver-popover-close-btn {
+  color: #737373 !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  padding: 6px 12px !important;
+  border-radius: 9999px !important;
+  border: none !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  transition: color 0.15s ease !important;
+}
+
+.driver-popover.vookly-driver-popover .driver-popover-prev-btn:hover,
+.driver-popover.vookly-driver-popover .driver-popover-close-btn:hover {
+  color: #0a0a0a !important;
+}
+
+/* Botón de cerrar cruz superior */
+.driver-popover.vookly-driver-popover .driver-popover-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
+/* ==========================================================================
+   Recorte del spotlight: BORDES DIFUMINADOS Y DESENFOCADOS
+   Aplica blur orgánico y desenfoque perimetral para eliminar cualquier
+   borde recto o filoso en el spotlight.
+   ========================================================================== */
+.driver-overlay path {
+  fill: rgba(0, 0, 0, 0.72) !important;
+  stroke: rgba(0, 0, 0, 0.72) !important;
+  stroke-width: 14px !important;
+  stroke-linejoin: round !important;
+  filter: blur(8px) drop-shadow(0 0 16px rgba(0, 0, 0, 0.65)) !important;
+  transition: all 0.25s ease !important;
+}
+
+/* La etapa activa (el hueco transparente sobre el elemento) */
+.driver-stage {
+  box-shadow: 0 0 35px 15px rgba(0, 0, 0, 0.45) !important;
+  border-radius: 28px !important;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
