@@ -79,16 +79,16 @@ export const TOUR_STEPS: VooklyTourStepConfig[] = [
     }
   },
 
-  // Paso 4: Dinámica del Roadmap y Prueba de Canje (Roadmap)
+  // Paso 4: Dinámica del Roadmap y Prueba de Canje (Foco directo en el botón de canje del footer)
   {
     stepIndex: 4,
     route: '/local',
-    element: '[data-tour="first-reward-node"]',
+    element: '[data-tour="claim-reward-cta-btn"]',
     popover: {
       description:
-        'Cada compra avanza en el camino. Tocá en este sello para ver cómo tu cliente solicita su premio en el mostrador.',
-      side: 'bottom',
-      align: 'center',
+        'Cada compra avanza en el camino. Tocá en este botón para ver cómo tu cliente solicita su premio en el mostrador.',
+      side: 'top',
+      align: 'end',
       showButtons: ['close'],
       popoverClass: 'vookly-driver-popover'
     }

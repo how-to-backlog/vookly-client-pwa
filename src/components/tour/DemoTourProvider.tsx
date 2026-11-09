@@ -243,10 +243,10 @@ function DemoTourInternal({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // Paso 4: Al hacer tap en el nodo de premio (o en el botón Reclamar del footer si está visible)
+    // Paso 4: Al hacer tap en el botón de canje
     if (stepIndex === 4) {
-      const rewardEl = document.querySelector('[data-tour="first-reward-node"]');
       const footerBtn = document.querySelector('[data-tour="claim-reward-cta-btn"]');
+      const rewardEl = document.querySelector('[data-tour="first-reward-node"]');
 
       const handleRewardClick = () => {
         driverObj.destroy();
@@ -256,11 +256,11 @@ function DemoTourInternal({ children }: { children: React.ReactNode }) {
         }, 350);
       };
 
-      if (rewardEl) {
-        rewardEl.addEventListener('click', handleRewardClick, { once: true });
-      }
       if (footerBtn) {
         footerBtn.addEventListener('click', handleRewardClick, { once: true });
+      }
+      if (rewardEl) {
+        rewardEl.addEventListener('click', handleRewardClick, { once: true });
       }
     }
 

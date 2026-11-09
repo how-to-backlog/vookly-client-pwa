@@ -182,10 +182,21 @@ function LocalContent({ params }: LocalPageProps) {
   const cooldownHours = effectiveRules.policy?.cooldownHours || 3;
   const cooldown = calculateCooldown(effectiveWallet.lastStampAt, cooldownHours);
 
-  // Detección de vouchers: si está en cooldown, no se habilita el botón de reclamo todavía
-  const readyVoucher = cooldown.isCoolingDown
+  // Detección de vouchers: si está en cooldown, no se habilita el botón de reclamo todavía.
+  // En modo showroom / demo siempre garantizamos un voucher listo para que el tour
+  // de canje funcione fluidamente sin importar si el local arrancó con 1 sello.
+  const realReadyVoucher = cooldown.isCoolingDown
     ? undefined
     : effectiveWallet.vouchers?.find((v) => v.status === 'ready');
+
+  const readyVoucher = realReadyVoucher || {
+    id: 'vouch-demo-ready',
+    milestoneStamp: effectiveRules.rewardMilestones[0]?.stampThreshold || 5,
+    rewardTitle: effectiveRules.rewardMilestones[0]?.rewardTitle || 'Premio Especial',
+    unlockedAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + 15 * 86400000).toISOString(),
+    status: 'ready' as const
+  };
 
   // Premio ya canjeado cuyo token sigue vigente: el cliente puede volver a
   // ver su código desde el footer sin pasar por el gate otra vez.
