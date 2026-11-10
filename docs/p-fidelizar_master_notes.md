@@ -502,6 +502,29 @@
 - **Etiquetas:** `#frontend #ui-ux #onboarding #heropatterns #pwa #livepreview #alta`
 - **Tópico / Componente Afectado:** `src/components/landing/*`, `src/components/cards/*`, `src/data/cardPatternsRegistry.ts`.
 
+### [NOTA-024] Tour Guiado Interactivo B2B con Driver.js, Editor de Comercio y Canal Comercial
+- **Fecha:** 2026-11-09 21:30
+- **Categoría:** Frontend / UI-UX / Driver.js / Ventas / PWA
+- **Diagnóstico / Contexto:** Implementación de la Fase 4 de `[FIDELIZAR-4]` en Plane. El objetivo fue diseñar un tour guiado persuasivo de 8 pasos para comerciantes, balanceando la experiencia adictiva del cliente con el control y retorno para el dueño del negocio.
+- **Implementación Técnica y Arquitectura:**
+  1. **Orquestador Modular Aislado (`DemoTourProvider.tsx`):** Client Component puro protegido con `<React.Suspense>` (Next.js 16) montado en `layout.tsx`. Cero acoplamiento de páginas; ciclo de vida encapsulado y selectores semánticos inmutables `[data-tour="..."]`.
+  2. **Persistencia Dual (`tourStorage.ts`):** `localStorage` versionado (`vookly_demo_tour_completed_v1`) para evitar re-aperturas molestas, y `sessionStorage` (`vookly_demo_tour_active_step_v1`) para reanudar el paso activo de forma transparente durante la navegación entre rutas (`/hub` <-> `/local/[id]`).
+  3. **Guion de 8 Pasos Validados (`tourSteps.ts`):**
+     - Paso 0: Bienvenida modal centrada (billetera digital en 1 min).
+     - Paso 1: Cartelera giratoria bajo el saludo (fidelización pasiva y recurrencia sin pauta).
+     - Paso 2: Billetera y ecosistema de tráfico cruzado (clientes compartidos entre nichos).
+     - Paso 3: Entrada a tu negocio ("Tocá en tu tarjeta").
+     - Paso 4: Dinámica del Roadmap y foco en el botón inferior de canje (`claim-reward-cta-btn`).
+     - Paso 5: Lámina de canje, ticket rasgable, código de 4 dígitos válido por 15 minutos e ingreso en teclado numérico en mostrador.
+     - Paso 6: Botón sintonizador para abrir el Editor de Comercio.
+     - Paso 7: Editor de Comercio (mini-tarjeta `LiveCardPreview`, paleta de 8 colores en grilla completa, 12 patrones y botón "Guardar"). Aclara que a futuro se sumarán estilos propios e imágenes.
+     - Paso 8 (Fases A y B): Regreso asistido al Hub por flecha superior y cierre comercial iluminando el ícono verde de WhatsApp con micro-shake animado.
+  4. **Estética del Spotlight (`driver-theme.css`):** Recorte desenfocado con `filter: blur(8px)`, trazo perimetral grueso `stroke-width: 14px` y sombra ambiental `box-shadow: 0 0 35px 15px rgba(0,0,0,0.45)`, eliminando cualquier borde filoso o recto.
+  5. **Botonera de Reinicio Rápido:** Botón visual *"Tour"* en la TopBar del Hub para relanzar la demo con un solo tap sin requerir comandos de consola.
+  6. **Garantía en Demo de Roadmap:** `readyVoucher` forzado en modo demo para que el botón "Reclamar premio" esté siempre activo y el paso de canje nunca se trabe sin importar el estado inicial de sellos.
+- **Etiquetas:** `#frontend #driverjs #tour-guiado #ventas #b2b #pwa #alta`
+- **Tópico / Componente Afectado:** `src/components/tour/*`, `src/components/TopBar.tsx`, `src/components/local/LocalDemoSimulatorModal.tsx`, `src/app/local/[id]/page.tsx`, `docs/TOUR_GUIDE_SPEC.md`.
+
 ---
 - **Fecha:** 2026-11-01 05:00
 - **Categoría:** Arquitectura / Negocio / Backend / Gamificación
