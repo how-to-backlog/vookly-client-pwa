@@ -26,7 +26,7 @@ export interface TopBarProps {
  * Incorpora el logo Vookly y botón directo a WhatsApp de soporte.
  */
 export const TopBar: React.FC<TopBarProps> = ({
-  supportPhone = '5493518799794',
+  supportPhone = '5493516063909',
   defaultMessage = '¡Hola! Estoy interesado en que mi negocio forme parte de la red Vookly.',
   variant = 'solid',
   action
