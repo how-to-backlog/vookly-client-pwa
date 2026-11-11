@@ -552,6 +552,25 @@
 - **Etiquetas:** `#reunion #asamblea #ventas #gamificacion #modelo-negocio #roadmap #pwa #alta`
 - **Tópico / Componente Afectado:** `docs/minuta_reunion_general_miercoles_11_11.md`, `docs/p-fidelizar_master_notes.md`.
 
+### [NOTA-026] Especificación de Fix: Desacople y Sincronización Dinámica de Primer Hito en Driver.js (Roadmap vs Footer)
+- **Fecha:** 2026-11-11 18:30
+- **Categoría:** Frontend / UI-UX / Driver.js / Roadmap / Bugfix-Spec
+- **Diagnóstico / Contexto:** Detección de inconsistencia durante la demostración en vivo de la PWA. En la vista `/local/[id]` (Coffee Shop predeterminado), el footer summary muestra el botón de canje para "Café Clásico" (hito del sello 5) a pesar de que el local inicia con 15 sellos acumulados en el mock. Al mismo tiempo, el Paso 4 del tour de Driver.js asume de forma estática o desalineada la presencia del botón de reclamo, generando una desconexión visual entre la posición del cliente en el Roadmap y lo que ofrece el footer.
+- **Análisis de los 2 Escenarios de Entrada:**
+  1. **Escenario A (Omitir Onboarding):** El comerciante entra directo por la bienvenida sin configurar nada. Cae en la tarjeta predeterminada (Coffee Shop, 15 sellos). El primer hito de premio histórico es el Sello 5 ("Café Clásico"), pero el progreso real del cliente en el mock es 15, cuyo hito correspondiente es el Sello 15 ("Tostado Especial").
+  2. **Escenario B (Onboarding Personalizado):** El comerciante crea su local en la bienvenida (ej: Heladería, 2 sellos para "Helado 2 bochas", o 3 sellos para "Corte clásico"). El primer hito de premio puede ubicarse en **cualquier umbral arbitrario de sellos (N sellos)**.
+- **Invariante Universal Identificado por Jesús:**
+  - Lo único común e inmutable entre el Escenario A y el Escenario B es que **ambos productos representan el primer hito de entrega del roadmap (`rewardMilestones[0]`)** configurado para ese local.
+- **Lineamientos de Corrección Técnica (Para Próxima Sesión - Cero Código Hoy):**
+  1. **Sincronización de Coherencia en Footer (`LocalFooterSummary`):**
+     - Si el cliente tiene 15 sellos y el hito de 15 es "Tostado Especial", el footer no puede decir "Café Clásico". Debe reflejar con total fidelidad el premio que realmente corresponde al estado de sellos actual (`currentStamps`), o sincronizar el estado demo para que coincida exactamente con el hito en foco.
+  2. **Driver.js Dinámico y Desacoplado (Paso 4):**
+     - El selector de Driver.js debe estar preparado para identificar y enfocar con total precisión el **primer producto a reclamar** de forma agnóstica:
+       - Si enfoca el Roadmap: debe apuntar dinámicamente al primer nodo de premio del mapa (`[data-tour="first-reward-node"]` o el nodo que represente `rewardMilestones[0]`), sin importar si está ubicado en el sello 2, 5 o 10.
+       - Si enfoca el footer inferior: el botón `[data-tour="claim-reward-cta-btn"]` debe contener el nombre y los sellos exactamente vinculados a ese primer hito o al hito alcanzado, garantizando que el usuario entienda qué está canjeando y por qué.
+- **Etiquetas:** `#driverjs #roadmap #bugfix-spec #onboarding #sync #alta`
+- **Tópico / Componente Afectado:** `src/components/tour/tourSteps.ts`, `src/components/tour/DemoTourProvider.tsx`, `src/app/local/[id]/page.tsx`, `src/components/local/LocalFooterSummary.tsx`, `src/components/roadmap/RoadmapCanvas.tsx`.
+
 ---
 - **Fecha:** 2026-11-01 05:00
 - **Categoría:** Arquitectura / Negocio / Backend / Gamificación
