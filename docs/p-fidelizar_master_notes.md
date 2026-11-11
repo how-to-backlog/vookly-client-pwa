@@ -525,6 +525,33 @@
 - **Etiquetas:** `#frontend #driverjs #tour-guiado #ventas #b2b #pwa #alta`
 - **Tópico / Componente Afectado:** `src/components/tour/*`, `src/components/TopBar.tsx`, `src/components/local/LocalDemoSimulatorModal.tsx`, `src/app/local/[id]/page.tsx`, `docs/TOUR_GUIDE_SPEC.md`.
 
+### [NOTA-025] Acuerdos de Asamblea Semanal: Salidas en Formosa, Protocolo Presencial, Roadmap Infinito y Planes por Feature Flags
+- **Fecha:** 2026-11-11 17:15
+- **Categoría:** Gestión / Comercial / Modelo de Negocio / PWA / Asamblea
+- **Diagnóstico / Contexto:** Asamblea general del equipo (Jesús, Pedro, Facundo, Nahuel, Ramiro). Se contrastaron los resultados de la calle en Formosa (heladerías/panaderías) con Córdoba (cafeterías) y Buenos Aires (barberías). Se consolidó el protocolo comercial para el equipo, se debatió el modelo de precios y la psicología del roadmap infinito frente a las tarjetas tradicionales.
+- **Resoluciones Principales:**
+  1. **Validación en Formosa (Locales Independientes vs. Franquicias):** Facundo y Nahuel relevaron 3-4 heladerías y 3 panaderías. En franquicias (Duomo, Cremolatti) hay traba burocrática centralizada; en independientes la recepción fue sobresaliente:
+     - **Panadería Flora:** El encargado propuso reunión fuera de hora para ver la app en profundidad.
+     - **Heladería Artesanal Necochea:** Se gestionan 100% con papel y lápiz (cero Excel), pidieron precio y coordinan reunión con los dueños.
+  2. **Protocolo Comercial Presencial Obligatorio (Jesús):**
+     - Prioridad presencial: el empleado no es vendedor de apps; no mandar el link solo por WhatsApp sin haberles guiado la demo en persona primero.
+     - Efecto memoria: recordar y llamar por su nombre al local y al personal que atendió antes.
+     - Manejo de "No soy el dueño": revalorizar la opinión del empleado de mostrador por ser quien mejor conoce al cliente final.
+     - Respuesta ante "¿Cuánto cuesta?": no inventar precios fijos en fase 0; ofrecer 2-3 semanas de prueba gratis y anclar el costo a ventas chicas del propio local (*"con vender 3 kg de pan o 4 galletas pagás el servicio del mes"*).
+  3. **Psicología de Gamificación (Roadmap Continuo vs. Reseteo a Cero):**
+     - Las tarjetas tradicionales que vuelven a cero provocan sensación de pérdida de progreso y abandono.
+     - Vookly adopta el modelo Duolingo/Candy Crush: progreso continuo donde los sellos no vuelven a cero al canjear un premio intermedio, reteniendo al cliente durante 4-6 meses.
+  4. **Modelo de Planes por Límites de Hitos y Feature Flags:**
+     - En vez de limitar qué productos pueden regalar, se restringe la cantidad de premios en el mapa (Plan Básico: 2-3 premios gratis; Plan Pro: 7-8 premios y personalización visual con branding propio).
+     - Arquitectura técnica: construir el MVP con todas las features activas y degradar planes mediante flags/switches condicionales limpios.
+  5. **Infraestructura, Dominio y Caja:**
+     - Nahuel pasará CBU para adquirir el dominio de Vookly (~30k ARS) prorrateado entre todos.
+     - Twilio ($10-15 USD/mes) se financiará como inversión inicial del equipo.
+     - Pedro creará hoja bloqueada de gastos e inversión inicial en el Excel compartido.
+     - Cierre estricto de Fase 0 (10 nichos por ciudad) para esta semana; reunión técnica para Meta Business API con Facundo jueves/viernes.
+- **Etiquetas:** `#reunion #asamblea #ventas #gamificacion #modelo-negocio #roadmap #pwa #alta`
+- **Tópico / Componente Afectado:** `docs/minuta_reunion_general_miercoles_11_11.md`, `docs/p-fidelizar_master_notes.md`.
+
 ---
 - **Fecha:** 2026-11-01 05:00
 - **Categoría:** Arquitectura / Negocio / Backend / Gamificación
